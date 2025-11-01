@@ -1,0 +1,134 @@
+<div class="p-6">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Add New Udhaar</h1>
+                    <p class="text-slate-600 mt-1">Record a credit transaction</p>
+                </div>
+                <a wire:navigate href="{{ route('udaar.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Udhaar
+                </a>
+            </div>
+        </div>
+
+        @if (session()->has('message'))
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+                <i class="fas fa-check-circle"></i>
+                {{ session('message') }}
+            </div>
+        @endif
+
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
+            <!-- Card header bar -->
+            <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2"></div>
+
+            <form wire:submit.prevent="save" class="p-6 md:p-8">
+                <!-- Customer Information -->
+                <div class="mb-8">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Customer Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                            <label for="buy_date" class="block text-sm font-medium text-slate-700 mb-2">Buy Date *</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar"></i></span>
+                                <input type="date" wire:model="buy_date" id="buy_date" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
+                            </div>
+                            @error('buy_date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                                        </div>
+                        <div>
+                            <label for="customer_name" class="block text-sm font-medium text-slate-700 mb-2">Customer Name *</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
+                                <input type="text" wire:model="customer_name" id="customer_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Enter customer name">
+                                                </div>
+                            @error('customer_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                            </div>
+                        <div>
+                            <label for="customer_number" class="block text-sm font-medium text-slate-700 mb-2">Customer Number</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-phone"></i></span>
+                                <input type="text" wire:model="customer_number" id="customer_number" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Enter phone number">
+                                            </div>
+                            @error('customer_number') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                    </div>
+                        <div>
+                            <label for="due_date" class="block text-sm font-medium text-slate-700 mb-2">Due Date</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar-alt"></i></span>
+                                <input type="date" wire:model="due_date" id="due_date" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
+                </div>
+                            @error('due_date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+            </div>
+                </div>
+                </div>
+
+                <!-- Amount Information -->
+                <div class="mb-8">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Amount Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                            <label for="total_amount" class="block text-sm font-medium text-slate-700 mb-2">Total Amount *</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-dollar-sign"></i></span>
+                                <input type="number" step="0.01" wire:model="total_amount" id="total_amount" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="0.00">
+                </div>
+                            @error('total_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+            </div>
+                <div>
+                            <label for="paid_amount" class="block text-sm font-medium text-slate-700 mb-2">Paid Amount *</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-money-bill-wave"></i></span>
+                                <input type="number" step="0.01" wire:model="paid_amount" id="paid_amount" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="0.00">
+                            </div>
+                            @error('paid_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                            <label for="interest_amount" class="block text-sm font-medium text-slate-700 mb-2">Interest Amount</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-percent"></i></span>
+                                <input type="number" step="0.01" wire:model="interest_amount" id="interest_amount" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="0.00">
+                            </div>
+                            @error('interest_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                            <label for="remaining_amount" class="block text-sm font-medium text-slate-700 mb-2">Remaining Amount</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-file-invoice-dollar"></i></span>
+                                <input type="number" step="0.01" wire:model="remaining_amount" id="remaining_amount" readonly class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 cursor-not-allowed" placeholder="Auto-calculated">
+                            </div>
+                            @error('remaining_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="mb-8">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Additional Information</h2>
+                <div>
+                        <label for="notes" class="block text-sm font-medium text-slate-700 mb-2">Notes</label>
+                        <div class="relative">
+                            <span class="pointer-events-none absolute top-3 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-sticky-note"></i></span>
+                            <textarea wire:model="notes" id="notes" rows="4" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Add any additional notes or remarks..."></textarea>
+                        </div>
+                        @error('notes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                    <a wire:navigate href="{{ route('udaar.index') }}" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg transition-all shadow-soft-xl">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Udhaar
+                    </button>
+                </div>
+            </form>
+            </div>
+    </div>
+</div>

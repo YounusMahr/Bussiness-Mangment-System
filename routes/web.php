@@ -12,21 +12,21 @@ Route::group([
     'middleware' => ['setLocaleFromRoute', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
 ], function() {
     
-    Route::get('login', App\Livewire\Auth\Login::class)->name('login');
+    Route::get('login', App\Livewire\Auth\Login::class)->middleware('guest')->name('login');
 
     // Protected Routes - Require Authentication
     Route::middleware('auth')->group(function () {
     // User Management Routes
     Route::get('/', function() {
-        return redirect()->route('index');
+        return redirect()->route('index', ['locale' => app()->getLocale()]);
     });
     Route::get('users', App\Livewire\User\Manage::class)->name('users.index');
 
     // Grocery Routes
-    Route::get('/index', App\Livewire\Finance\Index::class)->name('index');
+    Route::get('index', App\Livewire\Finance\Index::class)->name('index');
     Route::get('grocery/products', App\Livewire\Grocery\Products::class)->name('products');
-    Route::get('/products/add', App\Livewire\Grocery\AddProduct::class)->name('products.add');
-    Route::get('/products/{product}/edit', App\Livewire\Grocery\EditProduct::class)->name('products.edit');
+    Route::get('products/add', App\Livewire\Grocery\AddProduct::class)->name('products.add');
+    Route::get('products/{product}/edit', App\Livewire\Grocery\EditProduct::class)->name('products.edit');
     Route::get('grocery/categories', App\Livewire\Grocery\Category\Index::class)->name('categories');
     Route::get('grocery/categories/add', App\Livewire\Grocery\Category\Add::class)->name('categories.add');
     Route::get('grocery/categories/{category}/edit', App\Livewire\Grocery\Category\Edit::class)->name('categories.edit');

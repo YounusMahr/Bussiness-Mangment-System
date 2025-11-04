@@ -6,6 +6,26 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 // Language switching route (without locale prefix)
 Route::get('language/{locale}', [App\Http\Controllers\LanguageController::class, 'switchLanguage'])->name('language.switch');
 
+// Base URL redirect: send guests to localized login, authenticated to localized index
+Route::get('/', function () {
+    $locale = session('locale', config('app.locale', 'en'));
+    if (auth()->check()) {
+        return redirect()->route('index', ['locale' => $locale]);
+    }
+    return redirect()->route('login', ['locale' => $locale]);
+});
+
+// Locale root redirect: '/en' -> '/en/index' (auth) or '/en/login' (guest)
+Route::get('{locale}', function (string $locale) {
+    if (!in_array($locale, ['en', 'ur', 'ps'])) {
+        $locale = config('app.locale', 'en');
+    }
+    if (auth()->check()) {
+        return redirect()->route('index', ['locale' => $locale]);
+    }
+    return redirect()->route('login', ['locale' => $locale]);
+})->where('locale', 'en|ur|ps');
+
 // Public Routes - Localized
 Route::group([
     'prefix' => '{locale?}',

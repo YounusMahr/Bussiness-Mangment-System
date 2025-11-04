@@ -54,7 +54,7 @@ class Add extends Component
 
         session()->flash('message', 'Category created successfully!');
 
-        return $this->redirectRoute('categories');
+        return $this->redirectRoute('categories', ['locale' => app()->getLocale()]);
     }
 
     public function render()

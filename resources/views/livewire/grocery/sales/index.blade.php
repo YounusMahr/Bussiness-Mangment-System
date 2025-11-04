@@ -8,7 +8,7 @@
             <div class="mt-2 sm:mt-0 flex-shrink-0">
                 <a 
                     wire:navigate
-                    href="{{ route('sales.add') }}"
+                    href="{{ localized_route('sales.add') }}"
                     class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-soft-xl"
                 >
                     <i class="fas fa-plus"></i> New Sale
@@ -62,7 +62,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     {{ $sale->saleItems->sum('quantity') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">${{ number_format($sale->paid_amount, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">Rs {{ number_format($sale->paid_amount, 2) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         @if($sale->status === 'paid') bg-green-100 text-green-800
@@ -74,7 +74,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
-                                        <a wire:navigate title="Edit" href="{{ route('sales.edit', $sale) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
+                                        <a wire:navigate title="Edit" href="{{ localized_route('sales.edit', $sale) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
                                         <button title="Delete" class="text-red-600 hover:text-red-800" onclick="if(!confirm('Delete this sale?')) return false;" wire:click="deleteSale({{ $sale->id }})">
                                             <i class="fas fa-trash"></i>
                                         </button>

@@ -54,7 +54,7 @@ class AddProduct extends Component
         ]);
 
         session()->flash('message', 'Product created successfully!');
-        return $this->redirectRoute('products');
+        return $this->redirectRoute('products', ['locale' => app()->getLocale()]);
     }
 
     public function removeImage()

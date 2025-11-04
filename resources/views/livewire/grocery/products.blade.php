@@ -10,7 +10,7 @@
                 <p class="text-gray-600 mt-1">Manage your product inventory</p>
                     <a 
                         wire:navigate
-                        href="{{ route('products.add') }}" 
+                        href="{{ localized_route('products.add') }}" 
                         class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-plus"></i>
@@ -162,9 +162,9 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">${{ number_format($product->price, 2) }}</div>
+                                    <div class="text-sm font-medium text-gray-900">Rs {{ number_format($product->price, 2) }}</div>
                                     @if($product->cost)
-                                        <div class="text-sm text-gray-500">Cost: ${{ number_format($product->cost, 2) }}</div>
+                                        <div class="text-sm text-gray-500">Cost: Rs {{ number_format($product->cost, 2) }}</div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -177,7 +177,7 @@
                                     <div class="flex items-center gap-2 space-x-2 ">
                                         <a
                                             wire:navigate
-                                            href="{{ route('products.edit', $product) }}"
+                                            href="{{ localized_route('products.edit', $product) }}"
                                             class="text-indigo-600 hover:text-indigo-900 transition-colors"
                                             title="Edit Product"
                                         >
@@ -242,7 +242,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Price:</span>
-                                <span class="font-medium">${{ number_format($product->price, 2) }}</span>
+                                <span class="font-medium">Rs {{ number_format($product->price, 2) }}</span>
                             </div>
                             @if($product->description)
                                 <div class="mt-2">
@@ -253,7 +253,7 @@
                         <div class="flex justify-end space-x-2 mt-3">
                             <a 
                                 wire:navigate
-                                href="{{ route('products.edit', $product) }}"
+                                href="{{ localized_route('products.edit', $product) }}"
                                 class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
                             >
                                 <i class="fas fa-edit mr-1"></i>Edit

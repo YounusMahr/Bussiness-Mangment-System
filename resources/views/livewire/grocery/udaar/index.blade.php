@@ -2,16 +2,16 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Udhaar</h1>
-                <p class="text-gray-600 mt-1">All credit transactions</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.udaar') }}</h1>
+                <p class="text-gray-600 mt-1">{{ __('messages.all_credit_transactions') }}</p>
             </div>
             <div class="mt-2 sm:mt-0 flex-shrink-0">
                 <a 
                     wire:navigate
-                    href="{{ route('udaar.add') }}"
+                    href="{{ localized_route('udaar.add') }}"
                     class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-soft-xl"
                 >
-                    <i class="fas fa-plus"></i> Add Udhaar
+                    <i class="fas fa-plus"></i> {{ __('messages.add_udaar') }}
                 </a>
             </div>
         </div>
@@ -70,13 +70,13 @@
                                     {{ $udaar->customer_number ?: '--' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                    ${{ number_format($udaar->paid_amount, 2) }}
+                                    Rs {{ number_format($udaar->paid_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                                    ${{ number_format($udaar->remaining_amount, 2) }}
+                                    Rs {{ number_format($udaar->remaining_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">
-                                    ${{ number_format($udaar->interest_amount, 2) }}
+                                    Rs {{ number_format($udaar->interest_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     @if($udaar->due_date)
@@ -89,16 +89,16 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
-                                        <button title="View" wire:click="viewUdaar({{ $udaar->id }})" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
-                                        <a wire:navigate title="Edit" href="{{ route('udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
-                                        <button title="Delete" class="text-red-600 hover:text-red-800" onclick="if(!confirm('Delete this Udhaar record?')) return false;" wire:click="deleteUdaar({{ $udaar->id }})">
+                                        <button title="{{ __('messages.view') }}" wire:click="viewUdaar({{ $udaar->id }})" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
+                                        <a wire:navigate title="{{ __('messages.edit') }}" href="{{ localized_route('udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
+                                        <button title="{{ __('messages.delete') }}" class="text-red-600 hover:text-red-800" onclick="if(!confirm('{{ __('messages.delete_udaar_record') }}')) return false;" wire:click="deleteUdaar({{ $udaar->id }})">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="9" class="px-6 py-12 text-center text-gray-500">No Udhaar records found.</td></tr>
+                            <tr><td colspan="9" class="px-6 py-12 text-center text-gray-500">{{ __('messages.no_udaar_records_found') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -179,24 +179,24 @@
                             <div>
                                 <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4 flex items-center">
                                     <i class="fas fa-dollar-sign mr-2 text-purple-600"></i>
-                                    Amounts
+                                    {{ __('messages.amounts') }}
                                 </h4>
                                 <div class="space-y-3">
                                     <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Total:</span>
-                                        <span class="text-sm font-bold text-gray-900">${{ number_format($this->viewingUdaar->paid_amount + $this->viewingUdaar->remaining_amount - $this->viewingUdaar->interest_amount, 2) }}</span>
+                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.total') }}:</span>
+                                        <span class="text-sm font-bold text-gray-900">Rs {{ number_format($this->viewingUdaar->paid_amount + $this->viewingUdaar->remaining_amount - $this->viewingUdaar->interest_amount, 2) }}</span>
                                     </div>
                                     <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Paid:</span>
-                                        <span class="text-sm font-bold text-blue-600">${{ number_format($this->viewingUdaar->paid_amount, 2) }}</span>
+                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.paid') }}:</span>
+                                        <span class="text-sm font-bold text-blue-600">Rs {{ number_format($this->viewingUdaar->paid_amount, 2) }}</span>
                                     </div>
                                     <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Remaining:</span>
-                                        <span class="text-sm font-bold text-red-600">${{ number_format($this->viewingUdaar->remaining_amount, 2) }}</span>
+                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.remaining') }}:</span>
+                                        <span class="text-sm font-bold text-red-600">Rs {{ number_format($this->viewingUdaar->remaining_amount, 2) }}</span>
                                     </div>
                                     <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Interest:</span>
-                                        <span class="text-sm font-bold text-orange-600">${{ number_format($this->viewingUdaar->interest_amount, 2) }}</span>
+                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.interest') }}:</span>
+                                        <span class="text-sm font-bold text-orange-600">Rs {{ number_format($this->viewingUdaar->interest_amount, 2) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -219,10 +219,10 @@
                     <!-- Footer -->
                     <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
                         <button wire:click="closeView" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors">
-                            Close
+                            {{ __('messages.close') }}
                         </button>
-                        <a wire:navigate href="{{ route('udaar.edit', $this->viewingUdaar) }}" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg transition-all">
-                            <i class="fas fa-edit mr-2"></i> Edit
+                        <a wire:navigate href="{{ localized_route('udaar.edit', $this->viewingUdaar) }}" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg transition-all">
+                            <i class="fas fa-edit mr-2"></i> {{ __('messages.edit') }}
                         </a>
                     </div>
                 </div>

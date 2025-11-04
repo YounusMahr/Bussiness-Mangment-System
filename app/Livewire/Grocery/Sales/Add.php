@@ -142,7 +142,7 @@ class Add extends Component
         });
 
         session()->flash('message', 'Sale recorded successfully!');
-        return $this->redirectRoute('sales');
+        return $this->redirectRoute('sales', ['locale' => app()->getLocale()]);
     }
     public function resetForm() {
         $this->items = [];

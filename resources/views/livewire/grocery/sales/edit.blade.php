@@ -113,7 +113,7 @@
             <div class="my-3 flex flex-row gap-6 items-end justify-end">
                 <div>
                     <label class="block text-sm font-medium">Subtotal</label>
-                    <div class="text-base font-semibold">${{ number_format(collect($items)->sum('total') + ($overall_discount ?: 0), 2) }}</div>
+                    <div class="text-base font-semibold">Rs {{ number_format(collect($items)->sum('total') + ($overall_discount ?: 0), 2) }}</div>
                 </div>
                 <div class="flex items-center gap-2">
                     <label class="block text-sm font-medium mr-1">Overall Discount</label>
@@ -122,7 +122,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium">Grand Total</label>
-                    <div class="text-xl font-bold text-green-700">${{ number_format($this->total_amount, 2) }}</div>
+                    <div class="text-xl font-bold text-green-700">Rs {{ number_format($this->total_amount, 2) }}</div>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -157,7 +157,7 @@
                 </div>
             </div>
             <div class="flex gap-3 justify-end pt-2">
-                <a wire:navigate href="{{ route('sales') }}" class="px-4 py-2 bg-slate-100 rounded text-slate-700">Cancel</a>
+                <a wire:navigate href="{{ localized_route('sales') }}" class="px-4 py-2 bg-slate-100 rounded text-slate-700">Cancel</a>
                 <button class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 text-white rounded">Update Sale</button>
             </div>
         </form>

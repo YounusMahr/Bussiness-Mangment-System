@@ -19,7 +19,7 @@
                     <div>
                       <p class="mb-0 font-sans text-sm font-semibold leading-normal">Total Revenue</p>
                       <h5 class="mb-0 font-bold">
-                        ${{ number_format($totalRevenue, 2) }}
+                        Rs {{ number_format($totalRevenue, 2) }}
                         <span class="text-sm leading-normal font-weight-bolder {{ $revenueChangePct >= 0 ? 'text-lime-500' : 'text-red-500' }}">{{ $revenueChangePct >= 0 ? '+' : '' }}{{ $revenueChangePct }}%</span>
                       </h5>
                     </div>

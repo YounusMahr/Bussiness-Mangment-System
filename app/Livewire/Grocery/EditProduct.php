@@ -66,7 +66,7 @@ class EditProduct extends Component
             'image' => $imagePath,
         ]);
         session()->flash('message', 'Product updated successfully!');
-        $this->redirectRoute('products');
+        $this->redirectRoute('products', ['locale' => app()->getLocale()]);
     }
     public function removeImage()
     {

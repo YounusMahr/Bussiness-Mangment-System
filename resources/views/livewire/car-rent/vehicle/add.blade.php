@@ -7,7 +7,7 @@
                     <h1 class="text-2xl font-bold text-slate-900">Add New Vehicle</h1>
                     <p class="text-slate-600 mt-1">Create a vehicle for your fleet</p>
                 </div>
-                <a wire:navigate href="{{ route('vehicles.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
+                <a wire:navigate href="{{ localized_route('vehicles.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
                     <i class="fas fa-arrow-left"></i>
                     Back to Vehicles
                 </a>
@@ -110,7 +110,7 @@
 
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <a wire:navigate href="{{ route('vehicles.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Cancel</a>
+                    <a wire:navigate href="{{ localized_route('vehicles.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Cancel</a>
                     <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white rounded-lg">Save Vehicle</button>
                 </div>
             </form>

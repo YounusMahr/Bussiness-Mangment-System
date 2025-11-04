@@ -10,7 +10,7 @@
                 <div class="mt-2 sm:mt-0 flex-shrink-0">
                     <a 
                         wire:navigate
-                        href="{{ route('vehicles.add') }}" 
+                        href="{{ localized_route('vehicles.add') }}" 
                         class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-plus"></i>
@@ -146,7 +146,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900">
                                         @if($vehicle->rent_price)
-                                            ${{ number_format($vehicle->rent_price, 2) }}
+                                            Rs {{ number_format($vehicle->rent_price, 2) }}
                                         @else
                                             <span class="text-gray-400">N/A</span>
                                         @endif
@@ -167,7 +167,7 @@
                                     <div class="flex items-center gap-2 space-x-2">
                                         <a
                                             wire:navigate
-                                            href="{{ route('vehicles.edit', $vehicle) }}"
+                                            href="{{ localized_route('vehicles.edit', $vehicle) }}"
                                             class="text-indigo-600 hover:text-indigo-900 transition-colors"
                                             title="Edit Vehicle"
                                         >
@@ -190,7 +190,7 @@
                                         <i class="fas fa-car text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">No vehicles found</h3>
                                         <p class="text-gray-500 mb-4">Get started by adding your first vehicle.</p>
-                                        <a wire:navigate href="{{ route('vehicles.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                                        <a wire:navigate href="{{ localized_route('vehicles.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                                             Add Vehicle
                                         </a>
                                     </div>
@@ -237,7 +237,7 @@
                                 <span>Rent Price:</span>
                                 <span class="font-medium">
                                     @if($vehicle->rent_price)
-                                        ${{ number_format($vehicle->rent_price, 2) }}
+                                        Rs {{ number_format($vehicle->rent_price, 2) }}
                                     @else
                                         <span class="text-gray-400">N/A</span>
                                     @endif
@@ -252,7 +252,7 @@
                         <div class="flex justify-end space-x-2 mt-3">
                             <a 
                                 wire:navigate
-                                href="{{ route('vehicles.edit', $vehicle) }}"
+                                href="{{ localized_route('vehicles.edit', $vehicle) }}"
                                 class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
                             >
                                 <i class="fas fa-edit mr-1"></i>Edit
@@ -270,7 +270,7 @@
                         <i class="fas fa-car text-4xl text-gray-400 mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No vehicles found</h3>
                         <p class="text-gray-500 mb-4">Get started by adding your first vehicle.</p>
-                        <a wire:navigate href="{{ route('vehicles.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                        <a wire:navigate href="{{ localized_route('vehicles.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                             Add Vehicle
                         </a>
                     </div>

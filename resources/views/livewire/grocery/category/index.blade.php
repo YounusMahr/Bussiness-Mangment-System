@@ -4,17 +4,17 @@
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Categories</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.categories') }}</h1>
                 </div>
                 <div class="flex justify-between w-full">
-                    <p class="text-gray-600 mt-1">Manage product categories</p>
+                    <p class="text-gray-600 mt-1">{{ __('messages.manage_categories') }}</p>
                     <a 
                         wire:navigate
-                        href="{{ route('categories.add') }}" 
+                        href="{{ localized_route('categories.add') }}" 
                         class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-plus"></i>
-                        Add Category
+                        {{ __('messages.add_category') }}
                     </a>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="Search categories..."
+                            placeholder="{{ __('messages.search_categories') }}"
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-full leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
@@ -47,12 +47,12 @@
                         <tr>
                             <th wire:click="sortBy('name')" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center gap-2">
-                                    Name
+                                    {{ __('messages.name') }}
                                 </div>
                             </th>
                             <th wire:click="sortBy('slug')" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">Slug</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.status') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -68,19 +68,19 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $category->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         <i class="fas fa-circle mr-1 text-xs"></i>
-                                        {{ $category->is_active ? 'Active' : 'Inactive' }}
+                                        {{ $category->is_active ? __('messages.active') : __('messages.inactive') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <a wire:navigate href="{{ route('categories.edit', $category) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <a wire:navigate href="{{ localized_route('categories.edit', $category) }}" class="text-indigo-600 hover:text-indigo-900" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
                                         <button wire:click="confirmDelete({{ $category->id }})" class="text-red-600 hover:text-red-900" title="Delete"><i class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-gray-500">No categories found.</td>
+                                <td colspan="4" class="px-6 py-12 text-center text-gray-500">{{ __('messages.no_categories_found') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

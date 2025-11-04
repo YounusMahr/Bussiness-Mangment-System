@@ -12,11 +12,11 @@
       <div class="items-center block w-auto h-full overflow-auto h-sidenav grow basis-full" style="height: 100vh;">
         <ul class="flex flex-col pl-0 mb-0">
           <li class="mt-0.5 w-full">
-            <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('index') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ route('index') }}">
+            <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('index') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ localized_route('index') }}">
               <div class="{{ request()->routeIs('index') ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-home text-white text-xs"></i>
               </div>
-              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Dashboard</span>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.dashboard') }}</span>
             </a>
           </li>
 
@@ -33,7 +33,7 @@
                   <div class="{{ $isGroceryActive ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                     <i class="fas fa-shopping-basket text-white text-xs"></i>
                   </div>
-                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Grocery Store</span>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.grocery') }}</span>
                 </div>
                 <svg class="w-4 h-4 transition-transform duration-200 ml-auto {{ $isGroceryActive ? 'rotate-180' : '' }}" id="grocery-dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -44,51 +44,51 @@
               <ul id="grocery-dropdown" class="mt-1 ml-10 space-y-1 {{ $isGroceryActive ? '' : 'hidden' }}" style="margin-left: 20px;">
                 <!-- Categories (first) -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('categories') || request()->routeIs('categories.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('categories') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('categories') || request()->routeIs('categories.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('categories') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-tags {{ request()->routeIs('categories') || request()->routeIs('categories.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Categories</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.categories') }}</span>
                   </a>
                 </li>
 
                 <!-- Products -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('products') || request()->routeIs('products.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('products') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('products') || request()->routeIs('products.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('products') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-box {{ request()->routeIs('products') || request()->routeIs('products.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Products</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.products') }}</span>
                   </a>
                 </li>
 
                 <!-- Sales/POS -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('sales') || request()->routeIs('sales.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('sales') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('sales') || request()->routeIs('sales.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('sales') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-receipt {{ request()->routeIs('sales') || request()->routeIs('sales.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Sales / POS</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.sales') }}</span>
                   </a>
                 </li>
 
                 <!-- Udhaar -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('udaar.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('udaar.index') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('udaar.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('udaar.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-hand-holding-usd {{ request()->routeIs('udaar.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Udhaar</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.udaar') }}</span>
                   </a>
                 </li>
 
                 <!-- Stock Report -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('stock-report') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('stock-report') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('stock-report') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('stock-report') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-chart-bar {{ request()->routeIs('stock-report') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Stock Report</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.stock_report') }}</span>
                   </a>
                 </li>
               </ul>
@@ -106,7 +106,7 @@
                   <div class="{{ $isCarRentActive ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                     <i class="fas fa-car text-white text-xs"></i>
                   </div>
-                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Car Rent</span>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.car_rent') }}</span>
                 </div>
                 <svg class="w-4 h-4 transition-transform duration-200 ml-auto {{ $isCarRentActive ? 'rotate-180' : '' }}" id="car-rent-dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -117,41 +117,41 @@
               <ul id="car-rent-dropdown" class="mt-1 space-y-1 {{ $isCarRentActive ? '' : 'hidden' }}" style="margin-left: 20px;">
                 <!-- Vehicles -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('vehicles.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('vehicles.index') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('vehicles.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('vehicles.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-car-side {{ request()->routeIs('vehicles.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Vehicles</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.vehicles') }}</span>
                   </a>
                 </li>
                 
                 <!-- Bookings -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('bookings.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('bookings.index') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('bookings.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('bookings.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-calendar-check {{ request()->routeIs('bookings.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Bookings</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.bookings') }}</span>
                   </a>
                 </li>
                 
                 <!-- Car Rent Udhaar -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('car-rent.udaar.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('car-rent.udaar.index') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('car-rent.udaar.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('car-rent.udaar.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-hand-holding-usd {{ request()->routeIs('car-rent.udaar.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Car Rent Udhaar</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.car_rent') }} {{ __('messages.udaar') }}</span>
                   </a>
                 </li>
                 
                 <!-- Car Rent Report -->
                 <li class="w-full">
-                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('car-rent.report.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ route('car-rent.report.index') }}">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('car-rent.report.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('car-rent.report.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-chart-line {{ request()->routeIs('car-rent.report.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Car Rent Report</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.car_rent') }} {{ __('messages.report') }}</span>
                   </a>
                 </li>
               </ul>
@@ -159,11 +159,11 @@
           </li>
 
           <li class="mt-0.5 w-full">
-            <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ route('users.index') }}">
+            <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ localized_route('users.index') }}">
               <div class="{{ request()->routeIs('users.*') ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-user-cog text-white text-xs"></i>
               </div>
-              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Manage Users</span>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.profile') }}</span>
             </a>
           </li>
         </ul>

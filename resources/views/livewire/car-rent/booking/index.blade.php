@@ -10,7 +10,7 @@
                 <div class="mt-2 sm:mt-0 flex-shrink-0">
                     <a 
                         wire:navigate
-                        href="{{ route('bookings.add') }}" 
+                        href="{{ localized_route('bookings.add') }}" 
                         class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-plus"></i>
@@ -168,14 +168,14 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">${{ number_format($booking->total_price, 2) }}</div>
-                                    <div class="text-xs text-gray-500">${{ number_format($booking->price, 2) }}/day</div>
+                                    <div class="text-sm font-medium text-gray-900">Rs {{ number_format($booking->total_price, 2) }}</div>
+                                    <div class="text-xs text-gray-500">Rs {{ number_format($booking->price, 2) }}/day</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center gap-2 space-x-2">
                                         <a
                                             wire:navigate
-                                            href="{{ route('bookings.edit', $booking) }}"
+                                            href="{{ localized_route('bookings.edit', $booking) }}"
                                             class="text-indigo-600 hover:text-indigo-900 transition-colors"
                                             title="Edit Booking"
                                         >
@@ -198,7 +198,7 @@
                                         <i class="fas fa-calendar-check text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
                                         <p class="text-gray-500 mb-4">Get started by creating your first booking.</p>
-                                        <a wire:navigate href="{{ route('bookings.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                                        <a wire:navigate href="{{ localized_route('bookings.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                                             Add Booking
                                         </a>
                                     </div>
@@ -261,13 +261,13 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Total Price:</span>
-                                <span class="font-medium">${{ number_format($booking->total_price, 2) }}</span>
+                                <span class="font-medium">Rs {{ number_format($booking->total_price, 2) }}</span>
                             </div>
                         </div>
                         <div class="flex justify-end space-x-2 mt-3">
                             <a 
                                 wire:navigate
-                                href="{{ route('bookings.edit', $booking) }}"
+                                href="{{ localized_route('bookings.edit', $booking) }}"
                                 class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
                             >
                                 <i class="fas fa-edit mr-1"></i>Edit
@@ -285,7 +285,7 @@
                         <i class="fas fa-calendar-check text-4xl text-gray-400 mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
                         <p class="text-gray-500 mb-4">Get started by creating your first booking.</p>
-                        <a wire:navigate href="{{ route('bookings.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                        <a wire:navigate href="{{ localized_route('bookings.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                             Add Booking
                         </a>
                     </div>

@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Locale is handled by SetLocaleFromRoute middleware
+        // Language switching persists in session and is applied across all navigation
     }
 }

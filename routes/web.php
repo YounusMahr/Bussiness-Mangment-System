@@ -1,20 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-// Public Routes
+// Language switching route (without locale prefix)
+Route::get('language/{locale}', [App\Http\Controllers\LanguageController::class, 'switchLanguage'])->name('language.switch');
 
+// Public Routes - Localized
+Route::group([
+    'prefix' => '{locale?}',
+    'middleware' => ['setLocaleFromRoute', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
+], function() {
+    
+    Route::get('login', App\Livewire\Auth\Login::class)->name('login');
 
-Route::get('login', App\Livewire\Auth\Login::class)->name('login');
-
-// Protected Routes - Require Authentication
-Route::middleware('auth')->group(function () {
+    // Protected Routes - Require Authentication
+    Route::middleware('auth')->group(function () {
     // User Management Routes
-    Route::redirect('/', '/index');
+    Route::get('/', function() {
+        return redirect()->route('index');
+    });
     Route::get('users', App\Livewire\User\Manage::class)->name('users.index');
 
     // Grocery Routes
-    Route::get('/index', App\Livewire\Grocery\Index::class)->name('index');
+    Route::get('/index', App\Livewire\Finance\Index::class)->name('index');
     Route::get('grocery/products', App\Livewire\Grocery\Products::class)->name('products');
     Route::get('/products/add', App\Livewire\Grocery\AddProduct::class)->name('products.add');
     Route::get('/products/{product}/edit', App\Livewire\Grocery\EditProduct::class)->name('products.edit');
@@ -46,6 +55,7 @@ Route::middleware('auth')->group(function () {
     
     // Car Rent Report Routes (if exists)
     Route::get('car-rent/report', App\Livewire\CarRent\Report\Index::class)->name('car-rent.report.index');
+    });
 });
 
 

@@ -8,7 +8,7 @@
             <div class="mt-2 sm:mt-0 flex-shrink-0">
                 <a 
                     wire:navigate
-                    href="{{ route('car-rent.udaar.add') }}"
+                    href="{{ localized_route('car-rent.udaar.add') }}"
                     class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-soft-xl"
                 >
                     <i class="fas fa-plus"></i> Add Udhaar
@@ -141,13 +141,13 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    ${{ number_format($udaar->total_amount, 2) }}
+                                    Rs {{ number_format($udaar->total_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                                    ${{ number_format($udaar->paid_amount, 2) }}
+                                    Rs {{ number_format($udaar->paid_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                                    ${{ number_format($udaar->udaar_amount, 2) }}
+                                    Rs {{ number_format($udaar->udaar_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -170,7 +170,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
                                         <button title="View" wire:click="viewUdaar({{ $udaar->id }})" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
-                                        <a wire:navigate title="Edit" href="{{ route('car-rent.udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
+                                        <a wire:navigate title="Edit" href="{{ localized_localized_route('car-rent.udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
                                         <button title="Delete" wire:click="confirmDelete({{ $udaar->id }})" class="text-red-600 hover:text-red-800">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -184,7 +184,7 @@
                                         <i class="fas fa-file-invoice-dollar text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">No Udhaar records found</h3>
                                         <p class="text-gray-500 mb-4">Get started by creating your first Udhaar record.</p>
-                                        <a wire:navigate href="{{ route('car-rent.udaar.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                                        <a wire:navigate href="{{ localized_route('car-rent.udaar.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                                             Add Udhaar
                                         </a>
                                     </div>
@@ -220,15 +220,15 @@
                             @endif
                             <div class="flex justify-between">
                                 <span>Total Amount:</span>
-                                <span class="font-medium">${{ number_format($udaar->total_amount, 2) }}</span>
+                                <span class="font-medium">Rs {{ number_format($udaar->total_amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Paid Amount:</span>
-                                <span class="font-medium text-green-600">${{ number_format($udaar->paid_amount, 2) }}</span>
+                                <span class="font-medium text-green-600">Rs {{ number_format($udaar->paid_amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Udhaar Amount:</span>
-                                <span class="font-medium text-red-600">${{ number_format($udaar->udaar_amount, 2) }}</span>
+                                <span class="font-medium text-red-600">Rs {{ number_format($udaar->udaar_amount, 2) }}</span>
                             </div>
                             @if($udaar->due_date)
                                 <div class="flex justify-between">
@@ -243,7 +243,7 @@
                             <button wire:click="viewUdaar({{ $udaar->id }})" class="text-blue-600 hover:text-blue-900 px-3 py-1 rounded">
                                 <i class="fas fa-eye mr-1"></i>View
                             </button>
-                            <a wire:navigate href="{{ route('car-rent.udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded">
+                            <a wire:navigate href="{{ localized_route('car-rent.udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded">
                                 <i class="fas fa-edit mr-1"></i>Edit
                             </a>
                             <button wire:click="confirmDelete({{ $udaar->id }})" class="text-red-600 hover:text-red-900 px-3 py-1 rounded">
@@ -256,7 +256,7 @@
                         <i class="fas fa-file-invoice-dollar text-4xl text-gray-400 mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No Udhaar records found</h3>
                         <p class="text-gray-500 mb-4">Get started by creating your first Udhaar record.</p>
-                        <a wire:navigate href="{{ route('car-rent.udaar.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                        <a wire:navigate href="{{ localized_route('car-rent.udaar.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                             Add Udhaar
                         </a>
                     </div>
@@ -305,15 +305,15 @@
                             @endif
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Total Amount</label>
-                                <p class="text-gray-900 font-semibold">${{ number_format($this->viewingUdaar->total_amount, 2) }}</p>
+                                <p class="text-gray-900 font-semibold">Rs {{ number_format($this->viewingUdaar->total_amount, 2) }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Paid Amount</label>
-                                <p class="text-green-600 font-semibold">${{ number_format($this->viewingUdaar->paid_amount, 2) }}</p>
+                                <p class="text-green-600 font-semibold">Rs {{ number_format($this->viewingUdaar->paid_amount, 2) }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Udhaar Amount</label>
-                                <p class="text-red-600 font-semibold">${{ number_format($this->viewingUdaar->udaar_amount, 2) }}</p>
+                                <p class="text-red-600 font-semibold">Rs {{ number_format($this->viewingUdaar->udaar_amount, 2) }}</p>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-gray-500">Status</label>

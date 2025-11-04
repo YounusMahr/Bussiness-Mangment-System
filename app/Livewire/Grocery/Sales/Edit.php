@@ -180,7 +180,7 @@ class Edit extends Component
         });
 
         session()->flash('message', 'Sale updated successfully!');
-        return $this->redirectRoute('sales');
+        return $this->redirectRoute('sales', ['locale' => app()->getLocale()]);
     }
 
     public function render()

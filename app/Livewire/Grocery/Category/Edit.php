@@ -70,7 +70,7 @@ class Edit extends Component
 
         session()->flash('message', 'Category updated successfully!');
 
-        $this->redirectRoute('categories');
+        $this->redirectRoute('categories', ['locale' => app()->getLocale()]);
     }
 
     public function render()

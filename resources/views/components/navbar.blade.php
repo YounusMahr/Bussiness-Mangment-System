@@ -110,10 +110,158 @@
               </div>
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
-              <!-- online builder btn  -->
-              <!-- <li class="flex items-center">
-                <a class="inline-block px-8 py-2 mb-0 mr-4 text-xs font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro border-fuchsia-500 ease-soft-in hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:border-fuchsia-500 active:bg-fuchsia-500 active:hover:text-fuchsia-500 hover:text-fuchsia-500 tracking-tight-soft hover:bg-transparent hover:opacity-75 hover:shadow-none active:text-white active:hover:bg-transparent" target="_blank" href="https://www.creative-tim.com/builder/soft-ui?ref=navbar-dashboard&amp;_ga=2.76518741.1192788655.1647724933-1242940210.1644448053">Online Builder</a>
-              </li> -->
+              <!-- Calculator btn  -->
+              <li class="flex items-center" x-data="{ calculatorOpen: false, closeCalculator() { this.calculatorOpen = false; } }">
+                <button @click="calculatorOpen = true" class="inline-block px-8 py-2 mb-0 mr-4 text-xs font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro border-fuchsia-500 ease-soft-in hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:border-fuchsia-500 active:bg-fuchsia-500 active:hover:text-fuchsia-500 hover:text-fuchsia-500 tracking-tight-soft hover:bg-transparent hover:opacity-75 hover:shadow-none active:text-white active:hover:bg-transparent">
+                  <i class="fas fa-calculator mr-2"></i>Calculator
+                </button>
+
+                <!-- Calculator Modal -->
+                <div x-show="calculatorOpen" 
+                     x-cloak
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click.away="calculatorOpen = false"
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div @click.stop
+                       x-data="{
+                         display: '0',
+                         previousValue: null,
+                         operation: null,
+                         waitingForNewValue: false,
+                         
+                         appendNumber(number) {
+                           if (this.waitingForNewValue) {
+                             this.display = number === '.' ? '0.' : number.toString();
+                             this.waitingForNewValue = false;
+                           } else {
+                             if (number === '.') {
+                               if (!this.display.includes('.')) {
+                                 this.display = this.display + '.';
+                               }
+                             } else {
+                               this.display = this.display === '0' ? number.toString() : this.display + number;
+                             }
+                           }
+                         },
+                         
+                         setOperation(op) {
+                           const inputValue = parseFloat(this.display);
+                           
+                           if (this.previousValue === null) {
+                             this.previousValue = inputValue;
+                           } else if (this.operation) {
+                             const result = this.calculate();
+                             // Format display to remove trailing zeros
+                             this.display = result.toString().replace(/\.?0+$/, '');
+                             this.previousValue = result;
+                           }
+                           
+                           this.waitingForNewValue = true;
+                           this.operation = op;
+                         },
+                         
+                         calculate() {
+                           const inputValue = parseFloat(this.display);
+                           
+                           if (this.previousValue === null) return inputValue;
+                           
+                           let result;
+                           switch (this.operation) {
+                             case '+': result = this.previousValue + inputValue; break;
+                             case '-': result = this.previousValue - inputValue; break;
+                             case '*': result = this.previousValue * inputValue; break;
+                             case '/': result = inputValue !== 0 ? this.previousValue / inputValue : 0; break;
+                             default: result = inputValue;
+                           }
+                           
+                           // Format result to avoid long decimal strings
+                           return Math.round(result * 100000000) / 100000000;
+                         },
+                         
+                         performCalculation() {
+                           if (this.operation && this.previousValue !== null) {
+                             const result = this.calculate();
+                             // Format display to remove trailing zeros
+                             this.display = result.toString().replace(/\.?0+$/, '');
+                             this.previousValue = null;
+                             this.operation = null;
+                             this.waitingForNewValue = true;
+                           }
+                         },
+                         
+                         clear() {
+                           this.display = '0';
+                           this.previousValue = null;
+                           this.operation = null;
+                           this.waitingForNewValue = false;
+                         },
+                         
+                         clearEntry() {
+                           this.display = '0';
+                           this.waitingForNewValue = false;
+                         },
+                         
+                         deleteLast() {
+                           if (this.display.length > 1) {
+                             this.display = this.display.slice(0, -1);
+                           } else {
+                             this.display = '0';
+                           }
+                         }
+                       }"
+                       class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+                    <!-- Calculator Header -->
+                    <div class="flex justify-between items-center mb-4">
+                      <h3 class="text-xl font-bold text-slate-700">Calculator</h3>
+                      <button @click="$parent.calculatorOpen = false" class="text-slate-500 hover:text-slate-700 text-2xl font-bold">&times;</button>
+                    </div>
+                    
+                    <!-- Display -->
+                    <div class="mb-4">
+                      <input type="text" 
+                             x-model="display" 
+                             readonly 
+                             class="w-full px-4 py-4 text-right text-3xl font-bold bg-slate-100 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-800">
+                    </div>
+                    
+                    <!-- Buttons Grid -->
+                    <div class="grid grid-cols-4 gap-3">
+                      <!-- Row 1 -->
+                      <button @click="clear()" class="col-span-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-all active:scale-95">Clear</button>
+                      <button @click="deleteLast()" class="px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all active:scale-95">⌫</button>
+                      <button @click="setOperation('/')" class="px-4 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold rounded-lg transition-all active:scale-95">÷</button>
+                      
+                      <!-- Row 2 -->
+                      <button @click="appendNumber(7)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">7</button>
+                      <button @click="appendNumber(8)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">8</button>
+                      <button @click="appendNumber(9)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">9</button>
+                      <button @click="setOperation('*')" class="px-4 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold rounded-lg transition-all active:scale-95">×</button>
+                      
+                      <!-- Row 3 -->
+                      <button @click="appendNumber(4)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">4</button>
+                      <button @click="appendNumber(5)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">5</button>
+                      <button @click="appendNumber(6)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">6</button>
+                      <button @click="setOperation('-')" class="px-4 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold rounded-lg transition-all active:scale-95">−</button>
+                      
+                      <!-- Row 4 -->
+                      <button @click="appendNumber(1)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">1</button>
+                      <button @click="appendNumber(2)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">2</button>
+                      <button @click="appendNumber(3)" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">3</button>
+                      <button @click="setOperation('+')" class="px-4 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold rounded-lg transition-all active:scale-95">+</button>
+                      
+                      <!-- Row 5 -->
+                      <button @click="appendNumber(0)" class="col-span-2 px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">0</button>
+                      <button @click="appendNumber('.')" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition-all active:scale-95">.</button>
+                      <button @click="performCalculation()" class="px-4 py-3 bg-gradient-to-tl from-purple-700 to-pink-500 hover:from-purple-600 hover:to-pink-400 text-white font-bold rounded-lg transition-all active:scale-95 text-xl">=</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
               @auth
                 <!-- User Dropdown -->
                 <li class="relative flex items-center pr-2">

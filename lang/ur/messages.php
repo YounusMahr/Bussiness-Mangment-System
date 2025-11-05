@@ -88,5 +88,10 @@ return [
     'total_products' => 'کل مصنوعات',
     'total_customers' => 'کل گاہک',
     'rented_cars' => 'کرایہ پر دی گئی گاڑیاں',
+    'udhaar_customers' => 'ادھار گاہک',
+    'products_quantity' => 'مصنوعات کی مقدار',
+    'overdue_udhaar' => 'واجب الادا ادھار',
+    'total_bookings' => 'کل بکنگز',
+    'active_vehicles' => 'فعال گاڑیاں',
 ];
 

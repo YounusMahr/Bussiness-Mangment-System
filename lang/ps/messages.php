@@ -88,5 +88,10 @@ return [
     'total_products' => 'ټول توکي',
     'total_customers' => 'ټول پیرودونکي',
     'rented_cars' => 'کرایه شوي موټرونه',
+    'udhaar_customers' => 'پور پېرېدونکي',
+    'products_quantity' => 'د محصولاتو مقدار',
+    'overdue_udhaar' => 'ځنډېدلی پور',
+    'total_bookings' => 'ټولې بکنګونه',
+    'active_vehicles' => 'فعال موټرونه',
 ];
 

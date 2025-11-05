@@ -88,5 +88,10 @@ return [
     'total_products' => 'Total Products',
     'total_customers' => 'Total Customers',
     'rented_cars' => 'Rented Cars',
+    'udhaar_customers' => 'Udhaar Customers',
+    'products_quantity' => 'Products Quantity',
+    'overdue_udhaar' => 'Overdue Udhaar',
+    'total_bookings' => 'Total Bookings',
+    'active_vehicles' => 'Active Vehicles',
 ];
 

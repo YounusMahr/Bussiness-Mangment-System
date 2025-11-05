@@ -27,7 +27,7 @@ $translations = [
              </li>
               
             </ol>
-            <h6 class="mb-0 font-bold capitalize" x-text="currentTitle"></h6>
+            
           </nav>
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">

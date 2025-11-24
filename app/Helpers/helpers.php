@@ -53,16 +53,27 @@ if (!function_exists('localized_route')) {
             
             // Special cases - handle nested routes like car-rent.udaar
             $fullRoute = implode('.', array_slice($routeParts, 0, -1));
-            $paramName = match($fullRoute) {
-                'udaar' => 'udaar',
-                'car-rent.udaar' => 'udaar',
-                'products' => 'product',
-                'sales' => 'sale',
-                'vehicles' => 'vehicle',
-                'bookings' => 'booking',
-                'categories' => 'category',
-                default => $prefix
-            };
+            
+            // Handle sales routes specially
+            if ($fullRoute === 'sales' && $name === 'sales.add-sale') {
+                $paramName = 'customer';
+            } elseif ($fullRoute === 'grocery.cash' && ($name === 'grocery.cash.history' || $name === 'grocery.cash.cash-in' || $name === 'grocery.cash.cash-out')) {
+                $paramName = 'customer';
+            } else {
+                $paramName = match($fullRoute) {
+                    'udaar' => 'udaar',
+                    'car-rent.udaar' => 'udaar',
+                    'products' => 'product',
+                    'sales' => 'sale',
+                    'vehicles' => 'vehicle',
+                    'bookings' => 'booking',
+                    'categories' => 'category',
+                    'property.purchase' => 'purchase',
+                    'property.sale' => 'sale',
+                    'purchases' => 'purchase',
+                    default => $prefix
+                };
+            }
             
             $params = ['locale' => $locale, $paramName => $parameters];
             return route($name, $params, $absolute);

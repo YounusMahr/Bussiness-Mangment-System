@@ -85,12 +85,12 @@
                                     @error("items.$i.unit_price") <span class="block text-xs text-red-500">{{ $message }}</span> @enderror
                                 </td>
                                 <td class="px-3 py-2 text-right">
-                                    <input wire:model="items.{{$i}}.quantity" type="number" min="1" class="w-14 rounded border-slate-300 py-1 px-2 text-right">
+                                    <input wire:model.live="items.{{$i}}.quantity" type="number" min="1" class="w-14 rounded border-slate-300 py-1 px-2 text-right">
                                     @error("items.$i.quantity") <span class="block text-xs text-red-500">{{ $message }}</span> @enderror
                                     @if(isset($stockErrors[$i])) <span class="block text-xs text-red-600 italic">{{ $stockErrors[$i] }}</span> @endif
                                 </td>
                                 <td class="px-3 py-2 text-right">
-                                    <input wire:model="items.{{$i}}.discount" type="number" min="0" step="0.01" class="w-16 rounded border-slate-300 py-1 px-2 text-right">
+                                    <input wire:model.live="items.{{$i}}.discount" type="number" min="0" step="0.01" class="w-16 rounded border-slate-300 py-1 px-2 text-right">
                                     @error("items.$i.discount") <span class="block text-xs text-red-500">{{ $message }}</span> @enderror
                                 </td>
                                 <td class="px-3 py-2 text-right">
@@ -113,11 +113,11 @@
             <div class="my-3 flex flex-row gap-6 items-end justify-end">
                 <div>
                     <label class="block text-sm font-medium">Subtotal</label>
-                    <div class="text-base font-semibold">Rs {{ number_format(collect($items)->sum('total') + ($overall_discount ?: 0), 2) }}</div>
+                    <div class="text-base font-semibold">Rs {{ number_format(collect($items)->sum('total'), 2) }}</div>
                 </div>
                 <div class="flex items-center gap-2">
                     <label class="block text-sm font-medium mr-1">Overall Discount</label>
-                    <input wire:model="overall_discount" type="number" min="0" step="0.01" class="text-right rounded border border-slate-300 bg-white w-28" />
+                    <input wire:model.live="overall_discount" type="number" min="0" step="0.01" class="text-right rounded border border-slate-300 bg-white w-28" />
                     @error('overall_discount') <span class="block text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div>
@@ -127,12 +127,47 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block">Customer</label>
+                        <a
+                            wire:navigate
+                            href="{{ localized_route('customers.add') }}"
+                            class="text-xs text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                        >
+                            <i class="fas fa-plus text-xs"></i>
+                            Add New Customer
+                        </a>
+                    </div>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
+                        <select wire:model.live="customer_id" class="w-full pl-12 pr-3 py-2 rounded border border-slate-300 bg-white mt-1">
+                            <option value="">Select Customer</option>
+                            @foreach($customers as $customer)
+                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @error('customer_id') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block">Customer Number</label>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-phone"></i></span>
+                        <input type="text" wire:model="customer_number" readonly class="w-full pl-12 pr-3 py-2 rounded border border-slate-300 bg-slate-50 mt-1">
+                    </div>
+                    <span class="text-xs text-gray-400">Auto-filled from customer</span>
+                </div>
+                <div>
                     <label class="block">Customer Name</label>
-                    <input type="text" wire:model="customer_name" class="w-full rounded border border-slate-300 bg-white mt-1">
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
+                        <input type="text" wire:model="customer_name" readonly class="w-full pl-12 pr-3 py-2 rounded border border-slate-300 bg-slate-50 mt-1">
+                    </div>
+                    <span class="text-xs text-gray-400">Auto-filled from customer</span>
                 </div>
                 <div>
                     <label class="block">Paid Amount *</label>
-                    <input type="number" wire:model="total_amount" value="{{ $this->total_amount }}" readonly class="w-full rounded border border-slate-300 bg-white mt-1 required">
+                    <input type="number" wire:model="paid_amount" value="{{ $this->total_amount }}" readonly class="w-full rounded border border-slate-300 bg-white mt-1 required">
                     <span class="text-xs text-gray-400">Paid amount auto-filled from Grand Total.</span>
                     @error('paid_amount') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -140,6 +175,7 @@
                     <label class="block">Payment Method</label>
                     <select wire:model="payment_method" class="w-full rounded border border-slate-300 bg-white mt-1">
                         <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
                     </select>
                 </div>
                 <div>

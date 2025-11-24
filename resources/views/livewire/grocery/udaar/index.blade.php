@@ -38,195 +38,142 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
-            <div class="hidden lg:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
-                        <tr>
-                            <th wire:click="sortBy('id')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th wire:click="sortBy('buy_date')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th wire:click="sortBy('customer_name')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest</th>
-                            <th wire:click="sortBy('due_date')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($udaars as $udaar)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 font-semibold">
-                                    {{ $udaars->firstItem() + $loop->index }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $udaar->buy_date ? $udaar->buy_date->format('Y-m-d') : '--' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $udaar->customer_name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $udaar->customer_number ?: '--' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                    Rs {{ number_format($udaar->paid_amount, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                                    Rs {{ number_format($udaar->remaining_amount, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-600">
-                                    Rs {{ number_format($udaar->interest_amount, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    @if($udaar->due_date)
-                                        <span class="@if($udaar->due_date < now()) text-red-600 font-semibold @elseif($udaar->due_date->diffInDays(now()) <= 7) text-yellow-600 @endif">
-                                            {{ $udaar->due_date->format('Y-m-d') }}
-                                    </span>
-                                    @else
-                                        <span class="text-gray-400">--</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center space-x-3">
-                                        <button title="{{ __('messages.view') }}" wire:click="viewUdaar({{ $udaar->id }})" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></button>
-                                        <a wire:navigate title="{{ __('messages.edit') }}" href="{{ localized_route('udaar.edit', $udaar) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
-                                        <button title="{{ __('messages.delete') }}" class="text-red-600 hover:text-red-800" onclick="if(!confirm('{{ __('messages.delete_udaar_record') }}')) return false;" wire:click="deleteUdaar({{ $udaar->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($udaars as $udaar)
+                @php
+                    $customer = $udaar->customer_name ? ($customers[$udaar->customer_name] ?? null) : null;
+                    $totalAmount = $udaar->paid_amount + $udaar->remaining_amount - $udaar->interest_amount;
+                @endphp
+                <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <!-- Card Header with Gradient -->
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
+                    
+                    <!-- Card Content -->
+                    <div class="p-6">
+                        <!-- Customer Info -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <!-- Customer Image/Avatar -->
+                            <div class="flex-shrink-0">
+                                @if($customer && $customer->image)
+                                    <img src="{{ asset('storage/'.$customer->image) }}" alt="{{ $udaar->customer_name }}" class="w-16 h-16 rounded-full object-cover border-2 border-purple-200">
+                                @else
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center border-2 border-purple-200">
+                                        <i class="fas fa-user text-white text-2xl"></i>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="9" class="px-6 py-12 text-center text-gray-500">{{ __('messages.no_udaar_records_found') }}</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if($udaars->hasPages())
-                <div class="flex justify-center py-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-b-2xl shadow-inner mt-2">
-                    {{ $udaars->links() }}
-                </div>
-            @endif
-        </div>
-    </div>
-
-    <!-- View Modal -->
-    @if($this->viewingUdaar)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <!-- Background overlay (no darkening, only blur) -->
-            <div class="fixed inset-0 bg-transparent backdrop-blur-sm" wire:click="closeView"></div>
-
-            <!-- Modal panel -->
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                    <!-- Header -->
-                    <div class="bg-gradient-to-r from-purple-700 to-pink-500 px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-bold text-white">Udhaar Details</h3>
-                            <button wire:click="closeView" class="text-white hover:text-gray-200 transition-colors">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
+                                @endif
+                            </div>
+                            
+                            <!-- Customer Details -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg font-semibold text-gray-900 truncate">
+                                    {{ $udaar->customer_name ?: 'Unknown Customer' }}
+                                </h3>
+                                @if($udaar->customer_number)
+                                    <p class="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                                        <i class="fas fa-phone text-xs"></i>
+                                        {{ $udaar->customer_number }}
+                                    </p>
+                                @else
+                                    <p class="text-sm text-gray-400 italic mt-1">No phone number</p>
+                                @endif
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Body -->
-                    <div class="px-6 py-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Customer Information -->
-                            <div class="md:col-span-2">
-                                <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4 flex items-center">
-                                    <i class="fas fa-user-circle mr-2 text-purple-600"></i>
-                                    Customer Information
-                                </h4>
-                                <div class="space-y-3">
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Name:</span>
-                                        <span class="text-sm text-gray-900 font-medium">{{ $this->viewingUdaar->customer_name }}</span>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Number:</span>
-                                        <span class="text-sm text-gray-900">{{ $this->viewingUdaar->customer_number ?: '--' }}</span>
-                                    </div>
-                                </div>
+                        <!-- Udaar Details -->
+                        <div class="border-t border-gray-200 pt-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Total Amount:</span>
+                                <span class="text-lg font-bold text-gray-900">Rs {{ number_format($totalAmount, 2) }}</span>
                             </div>
-
-                            <!-- Transaction Dates -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4 flex items-center">
-                                    <i class="fas fa-calendar-alt mr-2 text-purple-600"></i>
-                                    Dates
-                                </h4>
-                                <div class="space-y-3">
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Buy Date:</span>
-                                        <span class="text-sm text-gray-900">{{ $this->viewingUdaar->buy_date->format('M d, Y') }}</span>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">Due Date:</span>
-                                        @if($this->viewingUdaar->due_date)
-                                            <span class="text-sm font-medium @if($this->viewingUdaar->due_date < now()) text-red-600 @elseif($this->viewingUdaar->due_date->diffInDays(now()) <= 7) text-yellow-600 @else text-gray-900 @endif">
-                                                {{ $this->viewingUdaar->due_date->format('M d, Y') }}
-                                            </span>
-                                        @else
-                                            <span class="text-sm text-gray-400">Not set</span>
-                                        @endif
-                                    </div>
-                                </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Paid Amount:</span>
+                                <span class="text-sm font-medium text-blue-600">Rs {{ number_format($udaar->paid_amount, 2) }}</span>
                             </div>
-
-                            <!-- Amount Details -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4 flex items-center">
-                                    <i class="fas fa-dollar-sign mr-2 text-purple-600"></i>
-                                    {{ __('messages.amounts') }}
-                                </h4>
-                                <div class="space-y-3">
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.total') }}:</span>
-                                        <span class="text-sm font-bold text-gray-900">Rs {{ number_format($this->viewingUdaar->paid_amount + $this->viewingUdaar->remaining_amount - $this->viewingUdaar->interest_amount, 2) }}</span>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.paid') }}:</span>
-                                        <span class="text-sm font-bold text-blue-600">Rs {{ number_format($this->viewingUdaar->paid_amount, 2) }}</span>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.remaining') }}:</span>
-                                        <span class="text-sm font-bold text-red-600">Rs {{ number_format($this->viewingUdaar->remaining_amount, 2) }}</span>
-                                    </div>
-                                    <div class="flex items-start">
-                                        <span class="text-sm font-medium text-gray-500 w-32">{{ __('messages.interest') }}:</span>
-                                        <span class="text-sm font-bold text-orange-600">Rs {{ number_format($this->viewingUdaar->interest_amount, 2) }}</span>
-                                    </div>
-                                </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Remaining:</span>
+                                <span class="text-sm font-medium text-red-600">Rs {{ number_format($udaar->remaining_amount, 2) }}</span>
                             </div>
-
-                            <!-- Notes -->
-                            @if($this->viewingUdaar->notes)
-                                <div class="md:col-span-2">
-                                    <h4 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4 flex items-center">
-                                        <i class="fas fa-sticky-note mr-2 text-purple-600"></i>
-                                        Notes
-                                    </h4>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $this->viewingUdaar->notes }}</p>
-                                    </div>
+                            @if($udaar->buy_date)
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Buy Date:</span>
+                                    <span class="text-sm text-gray-700">{{ $udaar->buy_date->format('M d, Y') }}</span>
+                                </div>
+                            @endif
+                            @if($udaar->due_date)
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Due Date:</span>
+                                    <span class="text-sm text-gray-700">{{ $udaar->due_date->format('M d, Y') }}</span>
                                 </div>
                             @endif
                         </div>
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
-                        <button wire:click="closeView" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors">
-                            {{ __('messages.close') }}
-                        </button>
-                        <a wire:navigate href="{{ localized_route('udaar.edit', $this->viewingUdaar) }}" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg transition-all">
-                            <i class="fas fa-edit mr-2"></i> {{ __('messages.edit') }}
-                        </a>
+                        <!-- Action Buttons -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                            <!-- Udaar In/Out Buttons -->
+                            <div class="flex gap-2">
+                                <a 
+                                    wire:navigate
+                                    href="{{ localized_route('udaar.udaar-in', $udaar) }}"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    title="Udaar In"
+                                >
+                                    <i class="fas fa-arrow-down mr-1"></i> Udaar In
+                                </a>
+                                <a 
+                                    wire:navigate
+                                    href="{{ localized_route('udaar.udaar-out', $udaar) }}"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    title="Udaar Out"
+                                >
+                                    <i class="fas fa-arrow-up mr-1"></i> Udaar Out
+                                </a>
+                            </div>
+                            
+                            <!-- Other Actions -->
+                            <div class="flex items-center justify-between gap-2">
+                                <a 
+                                    wire:navigate 
+                                    href="{{ localized_route('udaar.history', $udaar) }}" 
+                                    class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="History"
+                                >
+                                    <i class="fas fa-history mr-1"></i> History
+                                </a>
+                                <a 
+                                    wire:navigate 
+                                    href="{{ localized_route('udaar.edit', $udaar) }}" 
+                                    class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="Edit"
+                                >
+                                    <i class="fas fa-edit mr-1"></i> Edit
+                                </a>
+                                <button 
+                                    onclick="if(!confirm('{{ __('messages.delete_udaar_record') }}')) return false;" 
+                                    wire:click="deleteUdaar({{ $udaar->id }})"
+                                    class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="Delete"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-span-full">
+                    <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
+                        <i class="fas fa-hand-holding-usd text-gray-300 text-6xl mb-4"></i>
+                        <p class="text-gray-500 text-lg">{{ __('messages.no_udaar_records_found') }}</p>
+                        <p class="text-gray-400 text-sm mt-2">Start by creating your first udaar record.</p>
+                    </div>
+                </div>
+            @endforelse
         </div>
-    @endif
+
+        @if($udaars->hasPages())
+            <div class="flex justify-center py-6 mt-6">
+                {{ $udaars->links() }}
+            </div>
+        @endif
+    </div>
 </div>

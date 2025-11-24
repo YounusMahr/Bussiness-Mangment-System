@@ -3,6 +3,7 @@
 namespace App\Livewire\Grocery\Sales;
 
 use App\Models\Sale;
+use App\Models\Customer;
 use Livewire\WithPagination;
 use Livewire\Component;
 
@@ -43,6 +44,14 @@ class Index extends Component
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
-        return view('livewire.grocery.sales.index', compact('sales'));
+
+        // Load customers to match with sales
+        $customerNames = $sales->pluck('customer_name')->filter()->unique();
+        $customers = Customer::whereIn('name', $customerNames)
+            ->where('type', 'Grocery')
+            ->get()
+            ->keyBy('name');
+
+        return view('livewire.grocery.sales.index', compact('sales', 'customers'));
     }
 }

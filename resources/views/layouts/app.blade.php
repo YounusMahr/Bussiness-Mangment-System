@@ -2,8 +2,37 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <!-- PWA Meta Tags -->
+        <meta name="application-name" content="Business MS">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Business MS">
+        <meta name="description" content="Complete business management system for grocery and car installment tracking">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="msapplication-TileColor" content="#9333ea">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="theme-color" content="#9333ea">
+
+        <!-- Apple Touch Icons -->
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/icon-72x72.png') }}">
+        <link rel="apple-touch-icon" sizes="96x96" href="{{ asset('assets/img/icon-96x96.png') }}">
+        <link rel="apple-touch-icon" sizes="128x128" href="{{ asset('assets/img/icon-128x128.png') }}">
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('assets/img/icon-144x144.png') }}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('assets/img/icon-152x152.png') }}">
+        <link rel="apple-touch-icon" sizes="192x192" href="{{ asset('assets/img/icon-192x192.png') }}">
+        <link rel="apple-touch-icon" sizes="384x384" href="{{ asset('assets/img/icon-384x384.png') }}">
+        <link rel="apple-touch-icon" sizes="512x512" href="{{ asset('assets/img/icon-512x512.png') }}">
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicon.png') }}">
+        <link rel="shortcut icon" href="{{ asset('assets/img/favicon.png') }}">
+
+        <!-- Web App Manifest -->
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -35,6 +64,12 @@
          <!-- javascript -->
             <x-javascript />
          <!-- end javascript -->
+         
+         <!-- PWA Install Button -->
+         <x-pwa-install-button />
+         
+         <!-- PWA Registration Script -->
+         <script src="{{ asset('pwa.js') }}"></script>
     </body>
 </html>
 

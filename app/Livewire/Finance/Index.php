@@ -6,8 +6,7 @@ use Livewire\Component;
 use App\Models\Sale;
 use App\Models\Udaar;
 use App\Models\Product;
-use App\Models\VehicleBooking;
-use App\Models\CarRentUdaar;
+use App\Models\Installment;
 use Illuminate\Support\Facades\DB;
 
 class Index extends Component
@@ -17,7 +16,14 @@ class Index extends Component
     public $totalUdhaar;
     public $totalProducts;
     public $totalCustomers;
-    public $rentedCars;
+    
+    // System breakdowns
+    public $groceryRevenue;
+    public $grocerySales;
+    public $groceryUdhaar;
+    public $carInstallmentRevenue;
+    public $carInstallmentSales;
+    public $carInstallmentRemaining;
 
     public function mount()
     {
@@ -26,65 +32,60 @@ class Index extends Component
 
     public function calculateStats()
     {
-        // Total Revenue: Sum of paid_amount from Sale (grocery) + total_price from VehicleBooking (car-rent)
-        $groceryRevenue = Sale::sum('paid_amount') ?? 0;
-        $carRentRevenue = VehicleBooking::sum('total_price') ?? 0;
-        $this->totalRevenue = $groceryRevenue + $carRentRevenue;
+        // ========== GROCERY SYSTEM ==========
+        // Grocery Revenue: Sum of paid_amount from Sale
+        $this->groceryRevenue = Sale::sum('paid_amount') ?? 0;
+        
+        // Grocery Sales: Count of all Sale records
+        $this->grocerySales = Sale::count();
+        
+        // Grocery Udhaar: Sum of remaining_amount from Udaar
+        $this->groceryUdhaar = Udaar::sum('remaining_amount') ?? 0;
+        
+        // ========== CAR-INSTALLMENT SYSTEM ==========
+        // Car Installment Revenue: Sum of paid from Installments
+        $this->carInstallmentRevenue = Installment::sum('paid') ?? 0;
+        
+        // Car Installment Sales: Count of all Installment records
+        $this->carInstallmentSales = Installment::count();
+        
+        // Car Installment Remaining: Sum of remaining from Installments
+        $this->carInstallmentRemaining = Installment::sum('remaining') ?? 0;
+        
+        // ========== COMBINED TOTALS ==========
+        // Total Revenue: Grocery + Car Installment
+        $this->totalRevenue = $this->groceryRevenue + $this->carInstallmentRevenue;
 
-        // Total Sales: Count of all Sale records
-        $this->totalSales = Sale::count();
+        // Total Sales: Grocery Sales + Car Installment Sales
+        $this->totalSales = $this->grocerySales + $this->carInstallmentSales;
 
-        // Total Udhaar: Sum of remaining_amount from Udaar (grocery) + udaar_amount from CarRentUdaar (car-rent)
-        $groceryUdhaar = Udaar::sum('remaining_amount') ?? 0;
-        $carRentUdhaar = CarRentUdaar::sum('udaar_amount') ?? 0;
-        $this->totalUdhaar = $groceryUdhaar + $carRentUdhaar;
+        // Total Udhaar: Grocery Udhaar + Car Installment Remaining
+        $this->totalUdhaar = $this->groceryUdhaar + $this->carInstallmentRemaining;
 
-        // Total Products: Count of Product records
+        // Total Products: Count of Product records (Grocery only)
         $this->totalProducts = Product::count();
 
         // Total Customers: Count of unique customers from both systems
-        $groceryCustomers = Sale::whereNotNull('customer_name')
-            ->distinct('customer_name')
-            ->count('customer_name');
-        
-        $groceryUdhaarCustomers = Udaar::whereNotNull('customer_name')
-            ->distinct('customer_name')
-            ->count('customer_name');
-        
-        $carRentCustomers = VehicleBooking::whereNotNull('customer_name')
-            ->distinct('customer_name')
-            ->count('customer_name');
-        
-        $carRentUdhaarCustomers = CarRentUdaar::whereNotNull('customer')
-            ->distinct('customer')
-            ->count('customer');
-        
-        // Get unique customers across all systems
         $allCustomers = collect();
         
+        // Grocery customers from Sales
         Sale::whereNotNull('customer_name')->pluck('customer_name')->each(function($name) use ($allCustomers) {
             $allCustomers->push($name);
         });
         
+        // Grocery customers from Udaar
         Udaar::whereNotNull('customer_name')->pluck('customer_name')->each(function($name) use ($allCustomers) {
             $allCustomers->push($name);
         });
         
-        VehicleBooking::whereNotNull('customer_name')->pluck('customer_name')->each(function($name) use ($allCustomers) {
-            $allCustomers->push($name);
-        });
-        
-        CarRentUdaar::whereNotNull('customer')->pluck('customer')->each(function($name) use ($allCustomers) {
-            $allCustomers->push($name);
+        // Car Installment customers
+        Installment::whereHas('customer')->with('customer')->get()->each(function($installment) use ($allCustomers) {
+            if ($installment->customer && $installment->customer->name) {
+                $allCustomers->push($installment->customer->name);
+            }
         });
         
         $this->totalCustomers = $allCustomers->unique()->count();
-
-        // Rented Cars: Count of VehicleBooking records where return_date is null or in the future
-        $this->rentedCars = VehicleBooking::where(function($query) {
-            $query->whereNull('return_date')
-                  ->orWhere('return_date', '>=', now());
-        })->count();
     }
 
     public function render()

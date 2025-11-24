@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Grocery\Udaar;
 
+use App\Models\Customer;
+use App\Models\Product;
 use App\Models\Udaar;
 use Livewire\Component;
 
@@ -10,8 +12,11 @@ class Add extends Component
     protected $layout = 'layouts.app';
 
     public $buy_date;
+    public $customer_id = '';
     public $customer_name = '';
     public $customer_number = '';
+    public $product_id = '';
+    public $time_period = '';
     public $paid_amount = 0;
     public $total_amount = 0;
     public $remaining_amount = 0;
@@ -21,8 +26,9 @@ class Add extends Component
 
     protected $rules = [
         'buy_date' => 'required|date',
-        'customer_name' => 'required|string|max:255',
-        'customer_number' => 'nullable|string|max:255',
+        'customer_id' => 'required|exists:customers,id',
+        'product_id' => 'nullable|exists:products,id',
+        'time_period' => 'nullable|string|max:255',
         'paid_amount' => 'required|numeric|min:0',
         'total_amount' => 'required|numeric|min:0',
         'interest_amount' => 'nullable|numeric|min:0',
@@ -33,6 +39,20 @@ class Add extends Component
     public function mount()
     {
         $this->buy_date = now()->format('Y-m-d');
+    }
+
+    public function updatedCustomerId()
+    {
+        if ($this->customer_id) {
+            $customer = Customer::find($this->customer_id);
+            if ($customer) {
+                $this->customer_name = $customer->name;
+                $this->customer_number = $customer->number;
+            }
+        } else {
+            $this->customer_name = '';
+            $this->customer_number = '';
+        }
     }
 
     public function updatedTotalAmount()
@@ -52,9 +72,9 @@ class Add extends Component
 
     public function calculateRemaining()
     {
-        $total = $this->total_amount ?? 0;
-        $paid = $this->paid_amount ?? 0;
-        $interest = $this->interest_amount ?? 0;
+        $total = (float)($this->total_amount ?? 0);
+        $paid = (float)($this->paid_amount ?? 0);
+        $interest = (float)($this->interest_amount ?? 0);
         $this->remaining_amount = max(($total + $interest) - $paid, 0);
     }
 
@@ -67,6 +87,8 @@ class Add extends Component
             'buy_date' => $this->buy_date,
             'customer_name' => $this->customer_name,
             'customer_number' => $this->customer_number,
+            'product_id' => $this->product_id ?: null,
+            'time_period' => $this->time_period,
             'paid_amount' => $this->paid_amount,
             'remaining_amount' => $this->remaining_amount,
             'interest_amount' => $this->interest_amount,
@@ -75,12 +97,20 @@ class Add extends Component
         ]);
 
         session()->flash('message', 'Udhaar record created successfully!');
-        return $this->redirectRoute('udaar.index');
+        return $this->redirectRoute('udaar.index', ['locale' => app()->getLocale()]);
     }
 
     public function render()
     {
-        return view('livewire.grocery.udaar.add')
+        $customers = Customer::where('type', 'Grocery')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $products = Product::where('is_active', true)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return view('livewire.grocery.udaar.add', compact('customers', 'products'))
             ->title('Add Udhaar');
     }
 }

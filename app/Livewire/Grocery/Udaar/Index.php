@@ -5,6 +5,7 @@ namespace App\Livewire\Grocery\Udaar;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Udaar;
+use App\Models\Customer;
 
 class Index extends Component
 {
@@ -14,7 +15,6 @@ class Index extends Component
     public $sortField = 'buy_date';
     public $sortDirection = 'desc';
     public $perPage = 10;
-    public $viewingUdaarId = null;
 
     public function updatingSearch()
     {
@@ -31,21 +31,6 @@ class Index extends Component
         }
     }
 
-    public function viewUdaar($id)
-    {
-        $this->viewingUdaarId = $id;
-    }
-
-    public function closeView()
-    {
-        $this->viewingUdaarId = null;
-    }
-
-    public function getViewingUdaarProperty()
-    {
-        return $this->viewingUdaarId ? Udaar::find($this->viewingUdaarId) : null;
-    }
-
     public function deleteUdaar($id)
     {
         $udaar = Udaar::find($id);
@@ -58,7 +43,8 @@ class Index extends Component
 
     public function render()
     {
-        $udaars = Udaar::when($this->search, function ($query) {
+        $udaars = Udaar::with('product')
+            ->when($this->search, function ($query) {
                 $query->where('customer_name', 'like', "%{$this->search}%")
                       ->orWhere('customer_number', 'like', "%{$this->search}%")
                       ->orWhere('notes', 'like', "%{$this->search}%");
@@ -66,6 +52,13 @@ class Index extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
-        return view('livewire.grocery.udaar.index', compact('udaars'));
+        // Load customers to match with udaars
+        $customerNames = $udaars->pluck('customer_name')->filter()->unique();
+        $customers = Customer::whereIn('name', $customerNames)
+            ->where('type', 'Grocery')
+            ->get()
+            ->keyBy('name');
+
+        return view('livewire.grocery.udaar.index', compact('udaars', 'customers'));
     }
 }

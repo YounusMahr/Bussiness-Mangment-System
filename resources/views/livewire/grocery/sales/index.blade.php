@@ -11,7 +11,7 @@
                     href="{{ localized_route('sales.add') }}"
                     class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-soft-xl"
                 >
-                    <i class="fas fa-plus"></i> New Sale
+                    <i class="fas fa-plus"></i>Sale Account
                 </a>
             </div>
         </div>
@@ -32,66 +32,138 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
-            <div class="hidden lg:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Products</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($sales as $sale)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 font-semibold">
-                                    {{ $sales->firstItem() + $loop->index }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    @php
-                                        $firstItem = $sale->saleItems->first();
-                                        $firstName = $firstItem?->product?->name ?? '--';
-                                        $more = max($sale->saleItems->count() - 1, 0);
-                                    @endphp
-                                    {{ $firstName }} @if($more > 0)<span class="text-gray-500 text-xs">+{{ $more }} more</span>@endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $sale->saleItems->sum('quantity') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">Rs {{ number_format($sale->paid_amount, 2) }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($sale->status === 'paid') bg-green-100 text-green-800
-                                        @elseif($sale->status === 'unpaid') bg-red-100 text-red-800
-                                        @else bg-yellow-100 text-yellow-800 @endif">
-                                        <i class="fas fa-circle mr-1 text-xs"></i>
-                                        {{ Str::ucfirst($sale->status ?: 'pending') }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center space-x-3">
-                                        <a wire:navigate title="Edit" href="{{ localized_route('sales.edit', $sale) }}" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i></a>
-                                        <button title="Delete" class="text-red-600 hover:text-red-800" onclick="if(!confirm('Delete this sale?')) return false;" wire:click="deleteSale({{ $sale->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($sales as $sale)
+                @php
+                    $customer = $sale->customer_name ? ($customers[$sale->customer_name] ?? null) : null;
+                @endphp
+                <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <!-- Card Header with Gradient -->
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
+                    
+                    <!-- Card Content -->
+                    <div class="p-6">
+                        <!-- Customer Info -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <!-- Customer Image/Avatar -->
+                            <div class="flex-shrink-0">
+                                @if($customer && $customer->image)
+                                    <img src="{{ asset('storage/'.$customer->image) }}" alt="{{ $customer->name }}" class="w-16 h-16 rounded-full object-cover border-2 border-purple-200">
+                                @else
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center border-2 border-purple-200">
+                                        <i class="fas fa-user text-white text-2xl"></i>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="px-6 py-12 text-center text-gray-500">No sales found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if($sales->hasPages())
-                <div class="flex justify-center py-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-b-2xl shadow-inner mt-2">
-                    {{ $sales->links() }}
+                                @endif
+                            </div>
+                            
+                            <!-- Customer Details -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg font-semibold text-gray-900 truncate">
+                                    {{ $sale->customer_name ?: 'Walk-in Customer' }}
+                                </h3>
+                                @if($customer && $customer->number)
+                                    <p class="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                                        <i class="fas fa-phone text-xs"></i>
+                                        {{ $customer->number }}
+                                    </p>
+                                @elseif($sale->customer_name)
+                                    <p class="text-sm text-gray-400 italic mt-1">No phone number</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Sale Details -->
+                        <div class="border-t border-gray-200 pt-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Paid Amount:</span>
+                                <span class="text-lg font-bold text-green-600">Rs {{ number_format($sale->paid_amount, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Total Items:</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $sale->saleItems->sum('quantity') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Date:</span>
+                                <span class="text-sm text-gray-700">{{ $sale->date->format('M d, Y') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    @if($sale->status === 'paid') bg-green-100 text-green-800
+                                    @elseif($sale->status === 'unpaid') bg-red-100 text-red-800
+                                    @else bg-yellow-100 text-yellow-800 @endif">
+                                    <i class="fas fa-circle mr-1 text-xs"></i>
+                                    {{ Str::ucfirst($sale->status ?: 'pending') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between gap-2">
+                            <a 
+                                wire:navigate 
+                                href="{{ localized_route('sales.details', $sale) }}" 
+                                class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
+                                title="Details"
+                            >
+                                <i class="fas fa-eye mr-1"></i> Details
+                            </a>
+                            <a 
+                                wire:navigate 
+                                href="{{ localized_route('sales.edit', $sale) }}" 
+                                class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                                title="Edit"
+                            >
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </a>
+                            @php
+                                $customer = $sale->customer_name ? ($customers[$sale->customer_name] ?? null) : null;
+                            @endphp
+                            @if($customer)
+                                <a 
+                                    wire:navigate 
+                                    href="{{ localized_route('sales.add-sale', ['customer' => $customer->id]) }}" 
+                                    class="flex-1 text-center px-3 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="Add Sale"
+                                >
+                                    <i class="fas fa-plus mr-1"></i>Sale Entery
+                                </a>
+                            @else
+                                <a 
+                                    wire:navigate 
+                                    href="{{ localized_route('sales.add') }}" 
+                                    class="flex-1 text-center px-3 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="Add Sale"
+                                >
+                                    <i class="fas fa-plus mr-1"></i> Add Sale
+                                </a>
+                            @endif
+                            <button 
+                                onclick="if(!confirm('Are you sure you want to delete this sale?')) return false;" 
+                                wire:click="deleteSale({{ $sale->id }})"
+                                class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+                                title="Delete"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            @endif
+            @empty
+                <div class="col-span-full">
+                    <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
+                        <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
+                        <p class="text-gray-500 text-lg">No sales found.</p>
+                        <p class="text-gray-400 text-sm mt-2">Start by creating your first sale.</p>
+                    </div>
+                </div>
+            @endforelse
         </div>
+
+        @if($sales->hasPages())
+            <div class="flex justify-center py-6 mt-6">
+                {{ $sales->links() }}
+            </div>
+        @endif
     </div>
 </div>

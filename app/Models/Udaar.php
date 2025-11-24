@@ -14,8 +14,20 @@ class Udaar extends Model
         'remaining_amount',
         'interest_amount',
         'due_date',
+        'time_period',
+        'product_id',
         'notes',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(UdaarTransaction::class)->orderBy('date', 'desc')->orderBy('created_at', 'desc');
+    }
 
     protected $casts = [
         'buy_date' => 'date',

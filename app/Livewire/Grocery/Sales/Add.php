@@ -6,17 +6,23 @@ use Livewire\Component;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\Customer;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\DB;
 
 class Add extends Component
 {
+    protected $layout = 'layouts.app';
+
     public $items = [];
+    public $customer_id = '';
     public $customer_name = '';
+    public $customer_number = '';
     public $paid_amount = 0;
     public $payment_method = '';
     public $notes = '';
     public $products = [];
+    public $customers = [];
     public $overall_discount = 0;
     public $stockErrors = [];
     public $status = 'paid';
@@ -29,7 +35,9 @@ class Add extends Component
         'items.*.total' => 'required|numeric|min:0',
         'items.*.discount' => 'nullable|numeric|min:0',
         'overall_discount' => 'nullable|numeric|min:0',
+        'customer_id' => 'nullable|exists:customers,id',
         'customer_name' => 'nullable|string|max:255',
+        'customer_number' => 'nullable|string|max:255',
         'payment_method' => 'nullable|string|max:80',
         'notes' => 'nullable|string',
         'status' => 'required|in:paid,unpaid,pending',
@@ -37,8 +45,23 @@ class Add extends Component
 
     public function mount() {
         $this->products = Product::where('is_active', 1)->get();
+        $this->customers = Customer::where('type', 'Grocery')->orderBy('name', 'asc')->get();
         $this->addItem();
         $this->payment_method = 'Cash';
+    }
+
+    public function updatedCustomerId()
+    {
+        if ($this->customer_id) {
+            $customer = Customer::find($this->customer_id);
+            if ($customer) {
+                $this->customer_name = $customer->name;
+                $this->customer_number = $customer->number;
+            }
+        } else {
+            $this->customer_name = '';
+            $this->customer_number = '';
+        }
     }
 
     public function addItem() {
@@ -64,10 +87,10 @@ class Add extends Component
                 $this->items[$index]['total'] = $product->price;
             }
         } elseif ($field === 'quantity' || $field === 'unit_price' || $field === 'discount') {
-            $qty = $this->items[$index]['quantity'] ?? 1;
-            $price = $this->items[$index]['unit_price'] ?? 0;
-            $discount = $this->items[$index]['discount'] ?? 0;
-            $raw = $qty * $price - $discount;
+            $qty = (float)($this->items[$index]['quantity'] ?? 1);
+            $price = (float)($this->items[$index]['unit_price'] ?? 0);
+            $discount = (float)($this->items[$index]['discount'] ?? 0);
+            $raw = ($qty * $price) - $discount;
             $this->items[$index]['total'] = max($raw, 0);
             if (isset($this->items[$index]['product_id']) && $this->items[$index]['product_id']) {
                 $product = $this->products->where('id', $this->items[$index]['product_id'])->first();
@@ -76,10 +99,19 @@ class Add extends Component
                 }
             }
         }
+        // Update paid_amount when items change
+        $this->paid_amount = $this->total_amount;
+    }
+
+    public function updatedOverallDiscount()
+    {
+        // Update paid_amount when overall_discount changes
+        $this->paid_amount = $this->total_amount;
     }
     public function getTotalAmountProperty() {
         $sum = collect($this->items)->sum('total');
-        return max($sum - ($this->overall_discount ?: 0), 0);
+        $overallDiscount = (float)($this->overall_discount ?? 0);
+        return max($sum - $overallDiscount, 0);
     }
     public function getPaidAmountProperty() {
         return $this->total_amount;
@@ -146,7 +178,9 @@ class Add extends Component
     }
     public function resetForm() {
         $this->items = [];
+        $this->customer_id = '';
         $this->customer_name = '';
+        $this->customer_number = '';
         $this->paid_amount = 0;
         $this->payment_method = '';
         $this->notes = '';
@@ -156,6 +190,9 @@ class Add extends Component
     }
     public function render() {
         $this->paid_amount = $this->total_amount;
-        return view('livewire.grocery.sales.add');
+        
+        // Always use add view for Sale Account (new sale without specific customer)
+        return view('livewire.grocery.sales.add')
+            ->title('Add Sale');
     }
 }

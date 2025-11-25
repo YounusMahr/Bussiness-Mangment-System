@@ -118,8 +118,12 @@ $translations = [
                   <p class="hidden transform-dropdown-show"></p>
                   <a href="javascript:;" class="block p-0 text-sm transition-all ease-nav-brand text-slate-500" dropdown-trigger aria-expanded="false">
                     <div class="flex items-center">
-                      <div class="w-8 h-8 bg-gradient-to-tl from-purple-700 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                        {{ substr(auth()->user()->name, 0, 1) }}
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold overflow-hidden {{ auth()->user()->image ? '' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }}">
+                        @if(auth()->user()->image)
+                          <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" />
+                        @else
+                          {{ substr(auth()->user()->name, 0, 1) }}
+                        @endif
                       </div>
                       <span class="ml-2 text-sm font-semibold text-slate-700">{{ auth()->user()->name }}</span>
                       <i class="fa fa-chevron-down ml-1 text-xs"></i>

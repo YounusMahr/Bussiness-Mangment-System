@@ -30,11 +30,77 @@
                 <div class="p-8">
                     <form wire:submit.prevent="save">
                         <div class="space-y-6">
+                            <!-- User Image -->
+                            <div x-data="{ preview: null }">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-image text-purple-600 mr-2"></i>
+                                    Profile Image
+                                    <span class="text-xs font-normal text-gray-500 ml-1">(optional)</span>
+                                </label>
+                                <div class="flex flex-col md:items-start">
+                                    <label class="w-32 h-32 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 cursor-pointer bg-gray-50 hover:bg-gray-100 relative overflow-hidden">
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <template x-if="preview">
+                                                <img :src="preview" class="w-full h-full object-cover rounded-lg" alt="Preview" />
+                                            </template>
+                                            <template x-if="!preview">
+                                                @if ($image)
+                                                    @if ($image instanceof \Livewire\TemporaryUploadedFile)
+                                                        <img src="{{ $image->temporaryUrl() }}" class="w-full h-full object-cover rounded-lg" alt="Preview" />
+                                                    @elseif(is_string($image))
+                                                        <img src="{{ asset('storage/'.$image) }}" class="w-full h-full object-cover rounded-lg" alt="Preview" />
+                                                    @else
+                                                        <span class="text-gray-400 text-4xl"><i class="fas fa-user-circle"></i></span>
+                                                    @endif
+                                                @elseif($oldImage)
+                                                    <img src="{{ asset('storage/'.$oldImage) }}" class="w-full h-full object-cover rounded-lg" alt="Current Image" />
+                                                @else
+                                                    <span class="text-gray-400 text-4xl"><i class="fas fa-user-circle"></i></span>
+                                                @endif
+                                            </template>
+                                        </div>
+                                        <input 
+                                            type="file" 
+                                            wire:model="image" 
+                                            accept="image/*" 
+                                            class="hidden" 
+                                            x-on:change="
+                                                if ($event.target.files && $event.target.files[0]) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => { preview = e.target.result; };
+                                                    reader.readAsDataURL($event.target.files[0]);
+                                                }
+                                            "
+                                        />
+                                        @if (($image && $image instanceof \Livewire\TemporaryUploadedFile) || $oldImage)
+                                            <button 
+                                                type="button" 
+                                                wire:click="removeImage" 
+                                                x-on:click="preview = null"
+                                                class="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1.5 text-xs text-gray-600 hover:text-red-600 shadow-sm z-10"
+                                            >
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        @endif
+                                    </label>
+                                    <span class="text-xs text-slate-500 mt-2">Click to upload profile image (Max: 2MB)</span>
+                                    @error('image') 
+                                        <span class="text-red-500 text-xs mt-1 block flex items-center gap-1">
+                                            <i class="fas fa-exclamation-circle"></i>{{ $message }}
+                                        </span> 
+                                    @enderror
+                                    <div wire:loading wire:target="image" class="text-xs text-blue-500 mt-1">
+                                        <i class="fas fa-spinner fa-spin"></i> Uploading...
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Name Field -->
                             <div>
                                 <label for="edit_name" class="block text-sm font-semibold text-gray-700 mb-2">
                                     <i class="fas fa-user text-purple-600 mr-2"></i>
-                                    Full Name <span class="text-red-500">*</span>
+                                    Full Name
+                                    <span class="text-xs font-normal text-gray-500 ml-1">(optional)</span>
                                 </label>
                                 <input 
                                     type="text" 
@@ -54,7 +120,8 @@
                             <div>
                                 <label for="edit_email" class="block text-sm font-semibold text-gray-700 mb-2">
                                     <i class="fas fa-envelope text-purple-600 mr-2"></i>
-                                    Email Address <span class="text-red-500">*</span>
+                                    Email Address
+                                    <span class="text-xs font-normal text-gray-500 ml-1">(optional)</span>
                                 </label>
                                 <input 
                                     type="email" 
@@ -102,7 +169,8 @@
                                     <div>
                                         <label for="edit_password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">
                                             <i class="fas fa-lock text-purple-600 mr-2"></i>
-                                            Confirm Password <span class="text-red-500">*</span>
+                                            Confirm Password
+                                            <span class="text-xs font-normal text-gray-500 ml-1">(required if password is set)</span>
                                         </label>
                                         <input 
                                             type="password" 

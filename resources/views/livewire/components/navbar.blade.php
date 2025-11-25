@@ -40,6 +40,10 @@ $translations = [
               </div>
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+              <!-- Database Sync Button -->
+              <li class="flex items-center mr-2">
+                @livewire('components.database-sync')
+              </li>
               <!-- Calculator btn  -->
               <li class="flex items-center">
                 <button type="button"

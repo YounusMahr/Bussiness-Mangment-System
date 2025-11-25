@@ -63,6 +63,27 @@ return [
             ]) : [],
         ],
 
+        'mysql_remote' => [
+            'driver' => 'mysql',
+            'host' => env('DB_REMOTE_HOST', '127.0.0.1'),
+            'port' => env('DB_REMOTE_PORT', '3306'),
+            'database' => env('DB_REMOTE_DATABASE', ''),
+            'username' => env('DB_REMOTE_USERNAME', ''),
+            'password' => env('DB_REMOTE_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_TIMEOUT => 10,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ]) : [],
+            'timeout' => 10,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

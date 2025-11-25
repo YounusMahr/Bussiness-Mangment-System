@@ -16,19 +16,6 @@ Route::get('/sw.js', function () {
     ]);
 })->name('service-worker');
 
-Route::get('/clear-cache', function() {
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    return redirect()->back()->with('success', 'Cache cleared successfully');
-});
-
-Route::get('/migrate', function() {
-    Artisan::call('migrate');
-    return redirect()->back()->with('success', 'Database migrated successfully');
-});
-
 // Language switching route (without locale prefix)
 Route::get('language/{locale}', [App\Http\Controllers\LanguageController::class, 'switchLanguage'])->name('language.switch');
 

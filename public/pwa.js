@@ -8,7 +8,12 @@
   // Check if browser supports service workers
   if ('serviceWorker' in navigator && !swDisabled) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      // First check if server is available before registering SW
+      fetch('/')
+        .then(() => {
+          // Server is available, register service worker
+          return navigator.serviceWorker.register('/sw.js');
+        })
         .then((registration) => {
           console.log('ServiceWorker registration successful:', registration.scope);
 
@@ -29,7 +34,11 @@
           });
         })
         .catch((error) => {
-          console.log('ServiceWorker registration failed:', error);
+          console.log('ServiceWorker registration failed or server unavailable:', error);
+          // If server is not available, don't register SW to avoid blocking
+          if (error.message && error.message.includes('Failed to fetch')) {
+            console.log('Server appears to be down. Service worker not registered.');
+          }
         });
     });
   }

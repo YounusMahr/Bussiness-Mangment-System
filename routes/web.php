@@ -23,9 +23,9 @@ Route::get('language/{locale}', [App\Http\Controllers\LanguageController::class,
 Route::get('/', function () {
     $locale = session('locale', config('app.locale', 'en'));
     if (auth()->check()) {
-        return redirect()->route('index', ['locale' => $locale]);
+        return redirect("/{$locale}/index");
     }
-    return redirect()->route('login', ['locale' => $locale]);
+    return redirect("/{$locale}/login");
 });
 
 // Locale root redirect: '/en' -> '/en/index' (auth) or '/en/login' (guest)
@@ -34,9 +34,9 @@ Route::get('{locale}', function (string $locale) {
         $locale = config('app.locale', 'en');
     }
     if (auth()->check()) {
-        return redirect()->route('index', ['locale' => $locale]);
+        return redirect("/{$locale}/index");
     }
-    return redirect()->route('login', ['locale' => $locale]);
+    return redirect("/{$locale}/login");
 })->where('locale', 'en|ur|ps');
 
 // Public Routes - Localized
@@ -51,7 +51,8 @@ Route::group([
     Route::middleware('auth')->group(function () {
     // User Management Routes
     Route::get('/', function() {
-        return redirect()->route('index', ['locale' => app()->getLocale()]);
+        $locale = app()->getLocale();
+        return redirect("/{$locale}/index");
     });
     Route::get('users', App\Livewire\User\Manage::class)->name('users.index');
 

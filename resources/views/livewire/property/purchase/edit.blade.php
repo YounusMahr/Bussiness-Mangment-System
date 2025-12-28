@@ -27,6 +27,36 @@
             <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
 
             <form wire:submit.prevent="update" class="p-6 md:p-8">
+                <!-- Customer Information -->
+                <div class="mb-8">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">{{ __('messages.customer_information') }}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="customer_id" class="block text-sm font-medium text-slate-700">{{ __('messages.customer') }} ({{ __('messages.optional') }})</label>
+                                <a
+                                    wire:navigate
+                                    href="{{ localized_route('property.customer.add') }}"
+                                    class="text-xs text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                                >
+                                    <i class="fas fa-plus text-xs"></i>
+                                    {{ __('messages.add_customer') }}
+                                </a>
+                            </div>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
+                                <select wire:model="customer_id" id="customer_id" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
+                                    <option value="">{{ __('messages.select_customer') }}</option>
+                                    @foreach($customers as $customer)
+                                        <option value="{{ $customer->id }}">{{ $customer->name }} @if($customer->number) - {{ $customer->number }} @endif</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @error('customer_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Plot Details -->
                 <div class="mb-8">
                     <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">{{ __('messages.plot_details') }}</h2>

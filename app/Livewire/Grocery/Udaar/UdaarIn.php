@@ -16,6 +16,7 @@ class UdaarIn extends Component
     public $date;
     public $current_paid = 0;
     public $current_remaining = 0;
+    public $credit_balance = 0;
     public $new_udaar_amount = 0;
     public $product_id = '';
     public $interest_amount = 0;
@@ -41,6 +42,8 @@ class UdaarIn extends Component
         $this->date = now()->format('Y-m-d');
         $this->current_paid = $udaar->paid_amount;
         $this->current_remaining = $udaar->remaining_amount;
+        // Calculate credit balance (negative remaining means customer has credit)
+        $this->credit_balance = $udaar->remaining_amount < 0 ? abs($udaar->remaining_amount) : 0;
         $this->calculateNewRemaining();
     }
 
@@ -59,6 +62,9 @@ class UdaarIn extends Component
         $newAmount = $this->new_udaar_amount ?? 0;
         $interest = $this->interest_amount ?? 0;
         $totalNewAmount = $newAmount + $interest;
+        
+        // If customer has credit balance (negative remaining), apply it to new purchase
+        // Credit balance reduces the new remaining amount
         $this->new_remaining = $this->current_remaining + $totalNewAmount;
     }
 

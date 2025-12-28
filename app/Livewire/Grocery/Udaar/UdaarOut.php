@@ -18,13 +18,14 @@ class UdaarOut extends Component
     public $return_amount = 0;
     public $new_paid = 0;
     public $new_remaining = 0;
+    public $credit_balance = 0;
     public $notes = '';
 
     protected function rules()
     {
         return [
             'date' => 'required|date',
-            'return_amount' => ['required', 'numeric', 'min:0', 'max:' . $this->current_remaining],
+            'return_amount' => 'required|numeric|min:0',
             'notes' => 'nullable|string',
         ];
     }
@@ -47,10 +48,17 @@ class UdaarOut extends Component
     public function calculateNewAmounts()
     {
         $payment = $this->return_amount ?? 0;
-        // Can't pay more than remaining amount
-        $maxPayment = min($payment, $this->current_remaining);
-        $this->new_paid = $this->current_paid + $maxPayment;
-        $this->new_remaining = max($this->current_remaining - $maxPayment, 0);
+        // Allow overpayment - customer can pay more than remaining amount
+        // This creates a credit balance for future purchases
+        $this->new_paid = $this->current_paid + $payment;
+        $this->new_remaining = $this->current_remaining - $payment;
+        
+        // Calculate credit balance (negative remaining means customer has credit)
+        if ($this->new_remaining < 0) {
+            $this->credit_balance = abs($this->new_remaining);
+        } else {
+            $this->credit_balance = 0;
+        }
     }
 
     public function save()

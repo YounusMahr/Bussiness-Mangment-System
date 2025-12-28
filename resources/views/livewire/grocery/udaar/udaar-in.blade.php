@@ -60,10 +60,21 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Current Remaining Amount</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                @if($current_remaining < 0)
+                                    Credit Balance
+                                @else
+                                    Current Remaining Amount
+                                @endif
+                            </label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
+                                @if($current_remaining < 0)
+                                    <input type="text" value="{{ number_format(abs($current_remaining), 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-blue-50 text-blue-700 font-semibold" readonly>
+                                    <p class="mt-1 text-xs text-blue-600">This credit will be applied to new purchases</p>
+                                @else
                                 <input type="text" value="{{ number_format($current_remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                @endif
                             </div>
                         </div>
                     </div>

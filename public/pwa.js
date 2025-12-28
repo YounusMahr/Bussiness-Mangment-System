@@ -258,7 +258,7 @@
       notification.style.animation = 'slideOut 0.3s ease-out';
       setTimeout(() => {
         if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
+        document.body.removeChild(notification);
         }
       }, 300);
     }, duration);

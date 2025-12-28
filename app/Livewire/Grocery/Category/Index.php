@@ -28,20 +28,33 @@ class Index extends Component
         }
     }
 
-    public function confirmDelete($id) {
+    public function confirmDelete($id) 
+    {
         $this->confirmingDeleteId = $id;
     }
 
-    public function cancelDelete() {
+    public function cancelDelete() 
+    {
         $this->confirmingDeleteId = null;
     }
 
-    public function delete(CategoryModel $category)
+    public function delete($id)
     {
-        if ($this->confirmingDeleteId != $category->id) return;
+        if ($this->confirmingDeleteId != $id) {
+            return;
+        }
+        
+        try {
+            $category = CategoryModel::findOrFail($id);
         $category->delete();
+            
         session()->flash('message', 'Category deleted successfully!');
         $this->confirmingDeleteId = null;
+            $this->resetPage();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to delete category: ' . $e->getMessage());
+            $this->confirmingDeleteId = null;
+        }
     }
 
     public function render()

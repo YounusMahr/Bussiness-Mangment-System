@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PlotPurchase extends Model
 {
     protected $fillable = [
+        'customer_id',
         'date',
         'plot_area',
         'plot_price',
@@ -18,6 +19,11 @@ class PlotPurchase extends Model
         'date' => 'date',
         'plot_price' => 'decimal:2',
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     public function plotSales()
     {

@@ -20,6 +20,14 @@
             </div>
         </div>
 
+        <!-- Flash Messages -->
+        @if (session()->has('message'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+                <i class="fas fa-check-circle"></i>
+                {{ session('message') }}
+            </div>
+        @endif
+
         <!-- Search -->
         <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
             <div class="flex gap-4 items-center md:justify-between">
@@ -57,7 +65,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($categories as $category)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 transition-colors" wire:key="category-{{ $category->id }}">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">{{ $category->name }}</div>
                                     @if($category->description)
@@ -73,8 +81,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <a wire:navigate href="{{ localized_route('categories.edit', $category) }}" class="text-indigo-600 hover:text-indigo-900" title="{{ __('messages.edit') }}"><i class="fas fa-edit"></i></a>
-                                        <button wire:click="confirmDelete({{ $category->id }})" class="text-red-600 hover:text-red-900" title="Delete"><i class="fas fa-trash"></i></button>
+                                        <a wire:navigate href="{{ localized_route('categories.edit', $category) }}" class="text-indigo-600 hover:text-indigo-900 transition-colors px-2 py-1" title="{{ __('messages.edit') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button 
+                                            type="button"
+                                            wire:click="confirmDelete({{ $category->id }})" 
+                                            wire:loading.attr="disabled"
+                                            class="text-red-600 hover:text-red-900 transition-colors px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed" 
+                                            title="Delete"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -109,8 +127,24 @@
                 <p class="text-slate-600 text-sm">Are you sure you want to delete this category? This action cannot be undone.</p>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row justify-center items-center mt-6">
-                <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">Yes, Delete</button>
-                <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">Cancel</button>
+                <button 
+                    type="button"
+                    wire:click="delete({{ $confirmingDeleteId }})" 
+                    wire:loading.attr="disabled"
+                    wire:target="delete"
+                    class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span wire:loading.remove wire:target="delete">Yes, Delete</span>
+                    <span wire:loading wire:target="delete">Deleting...</span>
+                </button>
+                <button 
+                    type="button"
+                    wire:click="cancelDelete" 
+                    wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition disabled:opacity-50"
+                >
+                    Cancel
+                </button>
             </div>
         </div>
     </div>

@@ -3,6 +3,34 @@
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
+// Storage Files Route (for shared hosting where symlinks don't work)
+Route::get('/storage/{path}', function ($path) {
+    // Security: Prevent directory traversal
+    $path = str_replace('..', '', $path);
+    $filePath = storage_path('app/public/' . $path);
+    
+    // Ensure the file is within the storage/app/public directory
+    $realPath = realpath($filePath);
+    $publicPath = realpath(storage_path('app/public'));
+    
+    if (!$realPath || strpos($realPath, $publicPath) !== 0 || !file_exists($filePath)) {
+        abort(404);
+    }
+    
+    // Check if it's a file (not a directory)
+    if (!is_file($filePath)) {
+        abort(404);
+    }
+    
+    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    $file = file_get_contents($filePath);
+    
+    return response($file, 200)
+        ->header('Content-Type', $mimeType)
+        ->header('Cache-Control', 'public, max-age=31536000')
+        ->header('Content-Length', filesize($filePath));
+})->where('path', '.*')->name('storage.serve');
+
 // PWA Routes (must be before locale routes)
 Route::get('/manifest.json', function () {
     $manifestPath = public_path('manifest.json');
@@ -158,6 +186,9 @@ Route::group([
     Route::get('property/purchases', App\Livewire\Property\Purchase\Index::class)->name('property.purchase.index');
     Route::get('property/purchases/add', App\Livewire\Property\Purchase\Add::class)->name('property.purchase.add');
     Route::get('property/purchases/{purchase}/edit', App\Livewire\Property\Purchase\Edit::class)->name('property.purchase.edit');
+    Route::get('property/purchases/{purchase}/in', App\Livewire\Property\Purchase\In::class)->name('property.purchase.in');
+    Route::get('property/purchases/{purchase}/out', App\Livewire\Property\Purchase\Out::class)->name('property.purchase.out');
+    Route::get('property/purchases/{purchase}/history', App\Livewire\Property\Purchase\History::class)->name('property.purchase.history');
 
     // Property Plot Sale Routes
     Route::get('property/sales', App\Livewire\Property\Sale\Index::class)->name('property.sale.index');

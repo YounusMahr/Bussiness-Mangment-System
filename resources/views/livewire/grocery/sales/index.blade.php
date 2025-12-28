@@ -2,8 +2,8 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center">
 <div>
-                <h1 class="text-2xl font-bold text-gray-900">Sales</h1>
-                <p class="text-gray-600 mt-1">All recent POS transactions</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.sales_management') }}</h1>
+                <p class="text-gray-600 mt-1">{{ __('messages.all_recent_pos_transactions') }}</p>
             </div>
             <div class="mt-2 sm:mt-0 flex-shrink-0">
                 <a 
@@ -11,7 +11,7 @@
                     href="{{ localized_route('sales.add') }}"
                     class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-soft-xl"
                 >
-                    <i class="fas fa-plus"></i>Sale Account
+                    <i class="fas fa-plus"></i>{{ __('messages.sale_account') }}
                 </a>
             </div>
         </div>
@@ -24,7 +24,7 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="Search sales by customer or notes..."
+                            placeholder="{{ __('messages.search_sales_by_customer_or_notes') }}"
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 text-gray-700 placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
@@ -59,7 +59,7 @@
                             <!-- Customer Details -->
                             <div class="flex-1 min-w-0">
                                 <h3 class="text-lg font-semibold text-gray-900 truncate">
-                                    {{ $sale->customer_name ?: 'Walk-in Customer' }}
+                                    {{ $sale->customer_name ?: __('messages.walk_in_customer') }}
                                 </h3>
                                 @if($customer && $customer->number)
                                     <p class="text-sm text-gray-600 flex items-center gap-1 mt-1">
@@ -67,27 +67,47 @@
                                         {{ $customer->number }}
                                     </p>
                                 @elseif($sale->customer_name)
-                                    <p class="text-sm text-gray-400 italic mt-1">No phone number</p>
+                                    <p class="text-sm text-gray-400 italic mt-1">{{ __('messages.no_phone_number') }}</p>
                                 @endif
                             </div>
                         </div>
 
+                        <!-- Top Action Buttons -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center gap-2">
+                            <a 
+                                wire:navigate 
+                                href="{{ localized_route('sales.details', $sale) }}" 
+                                class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
+                                title="Details"
+                            >
+                                <i class="fas fa-eye mr-1"></i> {{ __('messages.details') }}
+                            </a>
+                            <a 
+                                wire:navigate 
+                                href="{{ localized_route('sales.edit', $sale) }}" 
+                                class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                                title="{{ __('messages.edit') }}"
+                            >
+                                <i class="fas fa-edit mr-1"></i> {{ __('messages.edit') }}
+                            </a>
+                        </div>
+
                         <!-- Sale Details -->
-                        <div class="border-t border-gray-200 pt-4 space-y-2">
+                        <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Paid Amount:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.paid_amount') }}:</span>
                                 <span class="text-lg font-bold text-green-600">Rs {{ number_format($sale->paid_amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Total Items:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.total_items') }}:</span>
                                 <span class="text-sm font-medium text-gray-900">{{ $sale->saleItems->sum('quantity') }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Date:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.date') }}:</span>
                                 <span class="text-sm text-gray-700">{{ $sale->date->format('M d, Y') }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Status:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.status') }}:</span>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                     @if($sale->status === 'paid') bg-green-100 text-green-800
                                     @elseif($sale->status === 'unpaid') bg-red-100 text-red-800
@@ -98,24 +118,8 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between gap-2">
-                            <a 
-                                wire:navigate 
-                                href="{{ localized_route('sales.details', $sale) }}" 
-                                class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
-                                title="Details"
-                            >
-                                <i class="fas fa-eye mr-1"></i> Details
-                            </a>
-                            <a 
-                                wire:navigate 
-                                href="{{ localized_route('sales.edit', $sale) }}" 
-                                class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
-                                title="Edit"
-                            >
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </a>
+                        <!-- Bottom Action Buttons -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center gap-2">
                             @php
                                 $customer = $sale->customer_name ? ($customers[$sale->customer_name] ?? null) : null;
                             @endphp
@@ -126,25 +130,25 @@
                                     class="flex-1 text-center px-3 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
                                     title="Add Sale"
                                 >
-                                    <i class="fas fa-plus mr-1"></i>Sale Entery
+                                    <i class="fas fa-plus mr-1"></i> {{ __('messages.sale_entry') }}
                                 </a>
                             @else
                                 <a 
                                     wire:navigate 
                                     href="{{ localized_route('sales.add') }}" 
                                     class="flex-1 text-center px-3 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
-                                    title="Add Sale"
+                                    title="{{ __('messages.add_sale') }}"
                                 >
-                                    <i class="fas fa-plus mr-1"></i> Add Sale
+                                    <i class="fas fa-plus mr-1"></i> {{ __('messages.add_sale') }}
                                 </a>
                             @endif
                             <button 
-                                onclick="if(!confirm('Are you sure you want to delete this sale?')) return false;" 
+                                onclick="if(!confirm('{{ __('messages.are_you_sure_delete_sale') }}')) return false;" 
                                 wire:click="deleteSale({{ $sale->id }})"
-                                class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
-                                title="Delete"
+                                class="flex-1 text-center px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+                                title="{{ __('messages.delete') }}"
                             >
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash mr-1"></i> {{ __('messages.delete') }}
                             </button>
                         </div>
                     </div>
@@ -153,8 +157,8 @@
                 <div class="col-span-full">
                     <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
                         <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
-                        <p class="text-gray-500 text-lg">No sales found.</p>
-                        <p class="text-gray-400 text-sm mt-2">Start by creating your first sale.</p>
+                        <p class="text-gray-500 text-lg">{{ __('messages.no_sales_found') }}</p>
+                        <p class="text-gray-400 text-sm mt-2">{{ __('messages.start_by_creating_first_sale') }}</p>
                     </div>
                 </div>
             @endforelse

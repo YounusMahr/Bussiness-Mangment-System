@@ -120,7 +120,7 @@
                         <span class="text-xs text-slate-500 mt-2">{{ __('messages.customer_image_optional') }}</span>
                         @error('image') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         <div wire:loading wire:target="image" class="text-xs text-blue-500 mt-1">
-                            <i class="fas fa-spinner fa-spin"></i> Uploading...
+                            <i class="fas fa-spinner fa-spin"></i> {{ __('messages.uploading') }}
                         </div>
                     </div>
                 </div>

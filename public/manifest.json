@@ -3,6 +3,7 @@
   "short_name": "Business MS",
   "description": "Complete business management system for grocery and car installment tracking",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#9333ea",

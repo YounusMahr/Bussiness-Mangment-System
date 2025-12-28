@@ -4,10 +4,10 @@
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.add_customer') }}</h1>
-                    <p class="text-slate-600 mt-1">{{ __('messages.create_new_customer') }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.edit_customer') }}</h1>
+                    <p class="text-slate-600 mt-1">{{ __('messages.update_customer_information') }}</p>
                 </div>
-                <a wire:navigate href="{{ localized_route('vehicle.customer.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
+                <a wire:navigate href="{{ localized_route('property.customer.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
                     <i class="fas fa-arrow-left"></i>
                     {{ __('messages.back_to_customers') }}
                 </a>
@@ -26,7 +26,7 @@
             <!-- Card header bar -->
             <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
 
-            <form wire:submit.prevent="save" class="p-6 md:p-8">
+            <form wire:submit.prevent="update" class="p-6 md:p-8">
                 <!-- Customer Information -->
                 <div class="mb-8">
                     <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">{{ __('messages.customer_information') }}</h2>
@@ -59,67 +59,34 @@
                             <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.type') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-tag"></i></span>
-                                <input type="text" value="Car-installment" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                <input type="text" value="Plot" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
-                            <input type="hidden" wire:model="type" value="Car-installment">
-                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.customer_type_car_installment') }}</p>
+                            <input type="hidden" wire:model="type" value="Plot">
+                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.customer_type_plot') }}</p>
                             @error('type') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Customer Image -->
-                <div class="mb-8" x-data="{ preview: null }">
+                <div class="mb-8">
                     <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">{{ __('messages.customer_image') }}</h2>
                     <div class="flex flex-col md:items-start">
-                        <label class="w-32 h-32 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 cursor-pointer bg-gray-50 hover:bg-gray-100 relative overflow-hidden">
-                            <div class="w-full h-full flex items-center justify-center">
-                                <template x-if="preview">
-                                    <img :src="preview" class="w-full h-full object-cover rounded-lg" alt="Preview" />
-                                </template>
-                                <template x-if="!preview">
-                                    @if ($image)
-                                        @if ($image instanceof \Livewire\TemporaryUploadedFile)
-                                            <img src="{{ $image->temporaryUrl() }}" class="w-full h-full object-cover rounded-lg" alt="Preview" />
-                                        @elseif(is_string($image))
-                                            <img src="{{ asset('storage/'.$image) }}" class="w-full h-full object-cover rounded-lg" alt="Preview" />
-                                        @else
-                                            <span class="text-gray-400 text-4xl"><i class="fas fa-user-circle"></i></span>
-                                        @endif
-                                    @else
-                                        <span class="text-gray-400 text-4xl"><i class="fas fa-user-circle"></i></span>
-                                    @endif
-                                </template>
-                            </div>
-                            <input 
-                                type="file" 
-                                wire:model="image" 
-                                accept="image/*" 
-                                class="hidden" 
-                                x-on:change="
-                                    if ($event.target.files && $event.target.files[0]) {
-                                        const reader = new FileReader();
-                                        reader.onload = (e) => { preview = e.target.result; };
-                                        reader.readAsDataURL($event.target.files[0]);
-                                    }
-                                "
-                            />
+                        <label class="w-32 h-32 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 cursor-pointer bg-gray-50 hover:bg-gray-100 relative">
                             @if ($image)
-                                <button 
-                                    type="button" 
-                                    wire:click="removeImage" 
-                                    x-on:click="preview = null"
-                                    class="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1.5 text-xs text-gray-600 hover:text-red-600 shadow-sm z-10"
-                                >
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                <img src="{{ $image instanceof \Livewire\TemporaryUploadedFile ? $image->temporaryUrl() : asset('storage/'.$image) }}" class="w-full h-full object-cover rounded-lg" />
+                            @elseif($oldImage)
+                                <img src="{{ asset('storage/'.$oldImage) }}" class="w-full h-full object-cover rounded-lg" />
+                            @else
+                                <span class="text-gray-400 text-4xl"><i class="fas fa-user-circle"></i></span>
+                            @endif
+                            <input type="file" wire:model="image" accept="image/*" class="hidden" />
+                            @if (($image && $image instanceof \Livewire\TemporaryUploadedFile) || $oldImage)
+                                <button type="button" wire:click="removeImage" class="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1.5 text-xs text-gray-600 hover:text-red-600 shadow-sm"><i class="fas fa-times"></i></button>
                             @endif
                         </label>
                         <span class="text-xs text-slate-500 mt-2">{{ __('messages.customer_image_optional') }}</span>
                         @error('image') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        <div wire:loading wire:target="image" class="text-xs text-blue-500 mt-1">
-                            <i class="fas fa-spinner fa-spin"></i> {{ __('messages.uploading') }}
-                        </div>
                     </div>
                 </div>
 
@@ -135,8 +102,8 @@
 
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <a wire:navigate href="{{ localized_route('vehicle.customer.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('messages.cancel') }}</a>
-                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white rounded-lg">{{ __('messages.save_customer') }}</button>
+                    <a wire:navigate href="{{ localized_route('property.customer.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('messages.cancel') }}</a>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white rounded-lg">{{ __('messages.update_customer') }}</button>
                 </div>
             </form>
         </div>

@@ -4,10 +4,10 @@
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Stock Purchases Management</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.stock_purchases_management') }}</h1>
                 </div>
                 <div class="flex justify-between w-full">
-                    <p class="text-gray-600 mt-1">Manage your stock purchases</p>
+                    <p class="text-gray-600 mt-1">{{ __('messages.manage_your_stock_purchases') }}</p>
                     <div class="flex gap-2">
                         <a 
                             wire:navigate
@@ -15,7 +15,7 @@
                             class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                         >
                             <i class="fas fa-plus"></i>
-                            Add Purchase
+                            {{ __('messages.add_purchase') }}
                         </a>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="Search by goods name, seller, contact..."
+                            placeholder="{{ __('messages.search_by_goods_name_seller_contact') }}"
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-full leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
@@ -52,7 +52,7 @@
                         class="bg-green-200 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-print"></i>
-                        Print
+                        {{ __('messages.print') }}
                     </button>
                 </div>
             </div>
@@ -85,26 +85,26 @@
                             </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $purchase->status === 'complete' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 <i class="fas fa-circle mr-1 text-xs"></i>
-                                {{ ucfirst($purchase->status) }}
+                                {{ $purchase->status === 'complete' ? __('messages.complete') : __('messages.incomplete') }}
                             </span>
                         </div>
 
                         <!-- Stock Details -->
                         <div class="border-t border-gray-200 pt-4 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Date:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.date') }}:</span>
                                 <span class="text-sm font-medium text-gray-900">{{ $purchase->date->format('Y-m-d') }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Total Stock:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.total_stock') }}:</span>
                                 <span class="text-sm font-bold text-blue-600">{{ number_format($purchase->total_stock, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Given Stock:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.given_stock') }}:</span>
                                 <span class="text-sm font-bold text-green-600">{{ number_format($purchase->given_stock, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">Remaining:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.remaining_stock') }}:</span>
                                 <span class="text-sm font-bold text-red-600">{{ number_format($purchase->remaining_stock, 2) }}</span>
                             </div>
                         </div>
@@ -115,44 +115,44 @@
                             <div class="flex gap-2">
                                 <a 
                                     wire:navigate
-                                    href="{{ localized_route('purchases.stock-in', $purchase) }}"
+                                    href="{{ localized_route('purchases.stock-out', $purchase) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
                                     title="Add Stock"
                                 >
-                                    <i class="fas fa-arrow-down mr-1"></i> Stock In
+                                    <i class="fas fa-arrow-down mr-1"></i> {{ __('messages.stock_in') }}
                                 </a>
                                 <a 
                                     wire:navigate
-                                    href="{{ localized_route('purchases.stock-out', $purchase) }}"
+                                     href="{{ localized_route('purchases.stock-in', $purchase) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Return Stock"
+                                    title="{{ __('messages.return_stock') }}"
                                 >
-                                    <i class="fas fa-arrow-up mr-1"></i> Stock Out
+                                    <i class="fas fa-arrow-up mr-1"></i> {{ __('messages.stock_out') }}
                                 </a>
                             </div>
                             
                             <!-- Other Actions -->
                             <div class="flex items-center justify-between gap-2">
                                 <a 
-                                    wire:navigate
-                                    href="{{ localized_route('purchases.history', $purchase) }}"
+                                    wire:navigate 
+                                    href="{{ localized_route('purchases.history', $purchase) }}" 
                                     class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
-                                    title="View History"
+                                    title="{{ __('messages.view_history') }}"
                                 >
-                                    <i class="fas fa-history mr-1"></i> History
+                                    <i class="fas fa-history mr-1"></i> {{ __('messages.history') }}
                                 </a>
                                 <a 
-                                    wire:navigate
-                                    href="{{ localized_route('purchases.edit', $purchase) }}"
+                                    wire:navigate 
+                                    href="{{ localized_route('purchases.edit', $purchase) }}" 
                                     class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
-                                    title="Edit Purchase"
+                                    title="{{ __('messages.edit_purchase') }}"
                                 >
-                                    <i class="fas fa-edit mr-1"></i> Edit
+                                    <i class="fas fa-edit mr-1"></i> {{ __('messages.edit') }}
                                 </a>
                                 <button 
                                     wire:click="confirmDelete({{ $purchase->id }})"
                                     class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
-                                    title="Delete Purchase"
+                                    title="{{ __('messages.delete_purchase') }}"
                                 >
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -164,10 +164,10 @@
                 <div class="col-span-full">
                     <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
                         <i class="fas fa-box-open text-gray-300 text-6xl mb-4"></i>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No stock purchases found</h3>
-                        <p class="text-gray-500 mb-4">Get started by creating your first stock purchase.</p>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_stock_purchases_found') }}</h3>
+                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_stock_purchase') }}</p>
                         <a wire:navigate href="{{ localized_route('purchases.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                            Add Purchase
+                            {{ __('messages.add_purchase') }}
                         </a>
                     </div>
                 </div>

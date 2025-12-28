@@ -7,7 +7,7 @@
                     <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.add_customer') }}</h1>
                     <p class="text-slate-600 mt-1">{{ __('messages.create_new_customer') }}</p>
                 </div>
-                <a wire:navigate href="{{ localized_route('vehicle.customer.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
+                <a wire:navigate href="{{ localized_route('property.customer.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
                     <i class="fas fa-arrow-left"></i>
                     {{ __('messages.back_to_customers') }}
                 </a>
@@ -59,10 +59,10 @@
                             <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.type') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-tag"></i></span>
-                                <input type="text" value="Car-installment" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                <input type="text" value="Plot" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
-                            <input type="hidden" wire:model="type" value="Car-installment">
-                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.customer_type_car_installment') }}</p>
+                            <input type="hidden" wire:model="type" value="Plot">
+                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.customer_type_plot') }}</p>
                             @error('type') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                         <span class="text-xs text-slate-500 mt-2">{{ __('messages.customer_image_optional') }}</span>
                         @error('image') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         <div wire:loading wire:target="image" class="text-xs text-blue-500 mt-1">
-                            <i class="fas fa-spinner fa-spin"></i> {{ __('messages.uploading') }}
+                            <i class="fas fa-spinner fa-spin"></i> Uploading...
                         </div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
 
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <a wire:navigate href="{{ localized_route('vehicle.customer.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('messages.cancel') }}</a>
+                    <a wire:navigate href="{{ localized_route('property.customer.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('messages.cancel') }}</a>
                     <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white rounded-lg">{{ __('messages.save_customer') }}</button>
                 </div>
             </form>

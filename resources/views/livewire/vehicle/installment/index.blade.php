@@ -2,8 +2,8 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('installments') }}</h1>
-                <p class="text-gray-600 mt-1">{{ __('manage_installment_records') }}</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.installments') }}</h1>
+                <p class="text-gray-600 mt-1">{{ __('messages.manage_installment_records') }}</p>
             </div>
             <div>
                 <a 
@@ -12,7 +12,7 @@
                     class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg shadow-md transition-colors"
                 >
                     <i class="fas fa-plus"></i>
-                    {{ __('add_installment') }}
+                    {{ __('messages.add_installment') }}
                 </a>
             </div>
         </div>
@@ -31,7 +31,7 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="{{ __('search_installments') }}"
+                            placeholder="{{ __('messages.search_installments') }}"
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 text-gray-700 placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
@@ -76,7 +76,7 @@
                         <!-- Installment Details -->
                         <div class="border-t border-gray-200 pt-4 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('vehicle') }}:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.vehicle') }}:</span>
                                 <span class="text-sm font-medium text-gray-900">
                                     {{ $installment->vehicle ?? '--' }} 
                                     @if($installment->model)
@@ -85,15 +85,15 @@
                                 </span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('total_price') }}:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.total_price') }}:</span>
                                 <span class="text-sm font-semibold text-indigo-600">Rs {{ number_format($installment->total_price, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('remaining') }}:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.remaining') }}:</span>
                                 <span class="text-sm font-semibold text-red-600">Rs {{ number_format($installment->remaining, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('date') }}:</span>
+                                <span class="text-sm text-gray-600">{{ __('messages.date') }}:</span>
                                 <span class="text-sm text-gray-700">{{ $installment->date->format('Y-m-d') }}</span>
                             </div>
                         </div>
@@ -104,45 +104,45 @@
                                 wire:navigate
                                 href="{{ localized_route('vehicle.installment.install-add', $installment) }}"
                                 class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-sm"
-                                title="{{ __('add') }}"
+                                title="{{ __('messages.add') }}"
                             >
                                 <i class="fas fa-plus mr-1"></i>
-                                {{ __('add') }}
+                                {{ __('messages.add') }}
                             </a>
                             <a
                                 wire:navigate
                                 href="{{ localized_route('vehicle.installment.return', $installment) }}"
                                 class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors shadow-sm"
-                                title="{{ __('return') }}"
+                                title="{{ __('messages.return') }}"
                             >
                                 <i class="fas fa-arrow-down mr-1"></i>
-                                {{ __('return') }}
+                                {{ __('messages.return') }}
                             </a>
                             <a
                                 wire:navigate
                                 href="{{ localized_route('vehicle.installment.history', $installment) }}"
                                 class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
-                                title="{{ __('history') }}"
+                                title="{{ __('messages.history') }}"
                             >
                                 <i class="fas fa-history mr-1"></i>
-                                {{ __('history') }}
+                                {{ __('messages.history') }}
                             </a>
                             <a
                                 wire:navigate
                                 href="{{ localized_route('vehicle.installment.edit', $installment) }}"
                                 class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
-                                title="{{ __('edit') }}"
+                                title="{{ __('messages.edit') }}"
                             >
                                 <i class="fas fa-edit mr-1"></i>
-                                {{ __('edit') }}
+                                {{ __('messages.edit') }}
                             </a>
                             <button 
                                 wire:click="confirmDelete({{ $installment->id }})"
-                                class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
-                                title="{{ __('delete') }}"
+                                class="flex-1 min-w-[80px] text-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-lg transition-colors shadow-md border border-red-400"
+                                title="{{ __('messages.delete') }}"
                             >
                                 <i class="fas fa-trash mr-1"></i>
-                                {{ __('delete') }}
+                                {{ __('messages.delete') }}
                             </button>
                         </div>
                     </div>
@@ -151,11 +151,11 @@
                 <div class="col-span-full">
                     <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
                         <i class="fas fa-car text-6xl text-gray-400 mb-4"></i>
-                        <h3 class="text-xl font-medium text-gray-900 mb-2">{{ __('no_installments_found') }}</h3>
-                        <p class="text-gray-500 mb-6">{{ __('get_started_by_creating_first_installment') }}</p>
+                        <h3 class="text-xl font-medium text-gray-900 mb-2">{{ __('messages.no_installments_found') }}</h3>
+                        <p class="text-gray-500 mb-6">{{ __('messages.get_started_by_creating_first_installment') }}</p>
                         <a wire:navigate href="{{ localized_route('vehicle.installment.add') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transition-colors">
                             <i class="fas fa-plus"></i>
-                            {{ __('add_installment') }}
+                            {{ __('messages.add_installment') }}
                         </a>
                     </div>
                 </div>
@@ -177,12 +177,12 @@
                     <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
                         <i class="fas fa-exclamation-triangle fa-2x"></i>
                     </span>
-                    <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ __('delete_installment') }}?</h3>
-                    <p class="text-slate-600 text-sm">{{ __('are_you_sure_delete_installment') }}</p>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ __('messages.delete_installment') }}?</h3>
+                    <p class="text-slate-600 text-sm">{{ __('messages.are_you_sure_delete_installment') }}</p>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row justify-center items-center mt-6">
-                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('yes_delete') }}</button>
-                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('cancel') }}</button>
+                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('messages.yes_delete') }}</button>
+                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('messages.cancel') }}</button>
                 </div>
             </div>
         </div>

@@ -16,8 +16,8 @@
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('total_profit') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('total_profit_description') }}</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_profit') }}</h3>
+                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_profit_description') }}</p>
                 <div class="text-2xl font-bold {{ $totalProfit >= 0 ? 'text-green-600' : 'text-red-600' }}">
                   Rs {{ number_format($totalProfit, 2) }}
                 </div>
@@ -29,7 +29,7 @@
               </div>
             </div>
             <a wire:navigate href="{{ localized_route('vehicle.report.details') }}" class="block w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 text-white text-center font-semibold rounded-lg transition-colors">
-              {{ __('view_details') }}
+              {{ __('messages.view_details') }}
             </a>
           </div>
         </div>
@@ -41,8 +41,8 @@
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('total_sales') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('total_sales_description') }}</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_sales') }}</h3>
+                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_sales_description') }}</p>
                 <div class="text-2xl font-bold text-blue-600">
                   Rs {{ number_format($totalSales, 2) }}
                 </div>
@@ -54,7 +54,7 @@
               </div>
             </div>
             <a wire:navigate href="{{ localized_route('vehicle.report.details') }}" class="block w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 text-white text-center font-semibold rounded-lg transition-colors">
-              {{ __('view_details') }}
+              {{ __('messages.view_details') }}
             </a>
           </div>
         </div>
@@ -66,10 +66,10 @@
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('total_installments') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('total_installments_description') }}</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_installments') }}</h3>
+                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_installments_description') }}</p>
                 <div class="text-2xl font-bold text-blue-600">
-                  {{ number_format($totalInstallments) }} {{ __('installments') }}
+                  {{ number_format($totalInstallments) }} {{ __('messages.installments') }}
                 </div>
               </div>
               <div class="ml-4">
@@ -79,7 +79,7 @@
               </div>
             </div>
             <a wire:navigate href="{{ localized_route('vehicle.installment.index') }}" class="block w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 text-white text-center font-semibold rounded-lg transition-colors">
-              {{ __('view_details') }}
+              {{ __('messages.view_details') }}
             </a>
           </div>
         </div>
@@ -91,8 +91,8 @@
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('total_remaining') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('total_remaining_description') }}</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_remaining') }}</h3>
+                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_remaining_description') }}</p>
                 <div class="text-2xl font-bold text-red-600">
                   Rs {{ number_format($totalRemaining, 2) }}
                 </div>
@@ -104,7 +104,7 @@
               </div>
             </div>
             <a wire:navigate href="{{ localized_route('vehicle.report.details') }}" class="block w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 text-white text-center font-semibold rounded-lg transition-colors">
-              {{ __('view_details') }}
+              {{ __('messages.view_details') }}
             </a>
           </div>
         </div>

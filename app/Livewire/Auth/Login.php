@@ -11,7 +11,6 @@ class Login extends Component
 {
     public string $email = '';
     public string $password = '';
-    public bool $remember = false;
 
     protected function rules(): array
     {
@@ -25,7 +24,8 @@ class Login extends Component
     {
         $credentials = $this->validate();
 
-        if (! Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $this->remember)) {
+        // Always use false for remember to prevent persistent sessions
+        if (! Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], false)) {
             throw ValidationException::withMessages([
                 'email' => __('These credentials do not match our records.'),
             ]);

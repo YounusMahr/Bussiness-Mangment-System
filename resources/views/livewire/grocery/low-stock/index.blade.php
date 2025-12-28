@@ -4,10 +4,10 @@
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.products_management') }}</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.low_stock_products') }}</h1>
                 </div>
                 <div class="flex justify-between w-full">
-                <p class="text-gray-600 mt-1">{{ __('messages.manage_your_product_inventory') }}</p>
+                    <p class="text-gray-600 mt-1">{{ __('messages.products_with_low_or_empty_stock') }}</p>
                     <a 
                         wire:navigate
                         href="{{ localized_route('products.add') }}" 
@@ -30,7 +30,7 @@
 
         <!-- Search and Filters -->
         <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
-            <div class="flex  gap-4 items-center md:justify-between">
+            <div class="flex gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
                         <span class="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
@@ -76,7 +76,7 @@
                             </th>
                             <th wire:click="sortBy('sku')" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center gap-2">
-                                    SKU
+                                    {{ __('messages.sku') }}
                                     @if($sortField === 'sku')
                                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} text-purple-600"></i>
                                     @else
@@ -163,9 +163,6 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">Rs {{ number_format($product->price, 2) }}</div>
-                                    @if($product->cost)
-                                        <div class="text-sm text-gray-500">Cost: Rs {{ number_format($product->cost, 2) }}</div>
-                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -174,35 +171,25 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center gap-2 space-x-2 ">
+                                    <div class="flex items-center gap-2">
                                         <a
                                             wire:navigate
                                             href="{{ localized_route('products.edit', $product) }}"
                                             class="text-indigo-600 hover:text-indigo-900 transition-colors"
-                                            title="Edit Product"
+                                            title="{{ __('messages.edit_product') }}"
                                         >
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button 
-                                            wire:click="confirmDelete({{ $product->id }})"
-                                            class="text-red-600 hover:text-red-900 transition-colors"
-                                            title="Delete Product"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
+                                <td colspan="7" class="px-6 py-12 text-center">
                                     <div class="flex flex-col items-center">
-                                        <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
-                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_products_found') }}</h3>
-                                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_product') }}</p>
-                                        <a wire:navigate href="{{ localized_route('products.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                                            {{ __('messages.add_product') }}
-                                        </a>
+                                        <i class="fas fa-check-circle text-4xl text-green-400 mb-4"></i>
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_low_stock_products') }}</h3>
+                                        <p class="text-gray-500">{{ __('messages.all_products_have_sufficient_stock') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -217,8 +204,8 @@
                     <div class="p-4 border-b border-gray-200 last:border-b-0">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-medium text-gray-900">{{ $product->name }}</h3>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $product->is_active ? __('messages.active') : __('messages.inactive') }}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->quantity > 10 ? 'bg-green-100 text-green-800' : ($product->quantity > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                {{ $product->quantity }}
                             </span>
                         </div>
                         <div class="space-y-2 text-sm text-gray-600">
@@ -244,11 +231,6 @@
                                 <span>{{ __('messages.price') }}:</span>
                                 <span class="font-medium">Rs {{ number_format($product->price, 2) }}</span>
                             </div>
-                            @if($product->description)
-                                <div class="mt-2">
-                                    <span class="text-gray-500">{{ Str::limit($product->description, 100) }}</span>
-                                </div>
-                            @endif
                         </div>
                         <div class="flex justify-end space-x-2 mt-3">
                             <a 
@@ -256,24 +238,15 @@
                                 href="{{ localized_route('products.edit', $product) }}"
                                 class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
                             >
-                                <i class="fas fa-edit mr-1"></i>Edit
+                                <i class="fas fa-edit mr-1"></i>{{ __('messages.edit') }}
                             </a>
-                            <button 
-                                wire:click="confirmDelete({{ $product->id }})"
-                                class="text-red-600 hover:text-red-900 px-3 py-1 rounded"
-                            >
-                                <i class="fas fa-trash mr-1"></i>Delete
-                            </button>
                         </div>
                     </div>
                 @empty
                     <div class="p-8 text-center">
-                        <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_products_found') }}</h3>
-                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_product') }}</p>
-                        <a wire:navigate href="{{ localized_route('products.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                            {{ __('messages.add_product') }}
-                        </a>
+                        <i class="fas fa-check-circle text-4xl text-green-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_low_stock_products') }}</h3>
+                        <p class="text-gray-500">{{ __('messages.all_products_have_sufficient_stock') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -287,185 +260,36 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    @if($showModal)
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div class="relative top-4 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-2xl bg-white">
-                <div class="mt-3">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-900">
-                            {{ $editingProduct ? 'Edit Product' : 'Create New Product' }}
-                        </h3>
-                        <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <form wire:submit.prevent="save">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
-                                <input 
-                                    type="text" 
-                                    wire:model="name"
-                                    id="name"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    placeholder="Enter product name"
-                                >
-                                @error('name') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div>
-                                <label for="sku" class="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
-                                <input 
-                                    type="text" 
-                                    wire:model="sku"
-                                    id="sku"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    placeholder="e.g., PRD-001"
-                                >
-                                @error('sku') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div>
-                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">Quantity *</label>
-                                <input 
-                                    type="number" 
-                                    wire:model="quantity"
-                                    id="quantity"
-                                    min="0"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                >
-                                @error('quantity') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div>
-                                <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price *</label>
-                                <input 
-                                    type="number" 
-                                    wire:model="price"
-                                    id="price"
-                                    step="0.01"
-                                    min="0"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                >
-                                @error('price') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-<div>
-                                <label for="cost" class="block text-sm font-medium text-gray-700 mb-2">Cost</label>
-                                <input 
-                                    type="number" 
-                                    wire:model="cost"
-                                    id="cost"
-                                    step="0.01"
-                                    min="0"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                >
-                                @error('cost') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea 
-                                    wire:model="description"
-                                    id="description"
-                                    rows="3"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    placeholder="Enter product description"
-                                ></textarea>
-                                @error('description') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label class="flex items-center">
-                                    <input 
-                                        type="checkbox" 
-                                        wire:model="is_active"
-                                        class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
-                                    >
-                                    <span class="ml-2 text-sm text-gray-700">Product is active</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end space-x-3 mt-6">
-                            <button 
-                                type="button" 
-                                wire:click="closeModal"
-                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
-                                type="submit"
-                                class="px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white rounded-lg transition-colors"
-                            >
-                                {{ $editingProduct ? 'Update Product' : 'Create Product' }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- Confirmation Modal --}}
-    @if($confirmingDeleteId)
-        <div class="fixed inset-0 flex items-center justify-center z-50 bg-white/30 backdrop-blur-sm transition-opacity duration-300">
-            <div class="bg-white rounded-2xl shadow-lg max-w-sm w-full p-8 text-center animate-fade-in">
-                <div class="mb-5">
-                    <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
-                        <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    </span>
-                    <h3 class="text-lg font-semibold text-slate-900 mb-2">Delete Product?</h3>
-                    <p class="text-slate-600 text-sm">Are you sure you want to delete this product? This action cannot be undone.</p>
-                </div>
-                <div class="flex flex-col gap-3 sm:flex-row justify-center items-center mt-6">
-                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">Yes, Delete</button>
-                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">Cancel</button>
-                </div>
-            </div>
-        </div>
-    @endif
-
     <!-- Print Styles -->
-<style>
-@media print {
-    .no-print {
-        display: none !important;
+    <style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        
+        body {
+            font-size: 12px;
+        }
+        
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 8px !important;
+        }
     }
-    
-    body {
-        font-size: 12px;
-    }
-    
-    table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-    }
-    
-    th, td {
-        border: 1px solid #000 !important;
-        padding: 8px !important;
-    }
-    
-    .bg-gradient-to-r {
-        background:rgb(5, 241, 80) !important;
-    }
-}
-</style>
+    </style>
 
-<!-- Print JavaScript -->
-<script>
-document.addEventListener('livewire:init', () => {
-    Livewire.on('print-table', () => {
-        window.print();
+    <!-- Print JavaScript -->
+    <script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('print-table', () => {
+            window.print();
+        });
     });
-});
-</script>
-
-
+    </script>
 </div>
-
 

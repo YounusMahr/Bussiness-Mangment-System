@@ -2,8 +2,8 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('plot_sales') }}</h1>
-                <p class="text-gray-600 mt-1">{{ __('manage_plot_sale_records') }}</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.plot_sales') }}</h1>
+                <p class="text-gray-600 mt-1">{{ __('messages.manage_plot_sale_records') }}</p>
             </div>
             <div>
                 <a 
@@ -12,7 +12,7 @@
                     class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-medium rounded-lg shadow-md transition-colors"
                 >
                     <i class="fas fa-plus"></i>
-                    {{ __('add_plot_sale') }}
+                    {{ __('messages.add_plot_sale') }}
                 </a>
             </div>
         </div>
@@ -31,7 +31,7 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="{{ __('search_plot_sales') }}"
+                            placeholder="{{ __('messages.search_plot_sales') }}"
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 text-gray-700 placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
@@ -46,7 +46,7 @@
                         <tr>
                             <th wire:click="sortBy('date')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    {{ __('date') }}
+                                    {{ __('messages.date') }}
                                     @if($sortField === 'date')
                                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} text-purple-600"></i>
                                     @else
@@ -54,14 +54,14 @@
                                     @endif
                                 </div>
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('plot') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('customer_name') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('customer_number') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('total_sale_price') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('paid') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('remaining') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('status') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('actions') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.plot') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.customer_name') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.customer_number') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.total_sale_price') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.paid') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.remaining') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.status') }}</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -101,14 +101,14 @@
                                             wire:navigate
                                             href="{{ localized_route('property.sale.edit', $sale) }}"
                                             class="text-indigo-600 hover:text-indigo-900 transition-colors"
-                                            title="{{ __('edit') }}"
+                                            title="{{ __('messages.edit') }}"
                                         >
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button 
                                             wire:click="confirmDelete({{ $sale->id }})"
                                             class="text-red-600 hover:text-red-900 transition-colors"
-                                            title="{{ __('delete') }}"
+                                            title="{{ __('messages.delete') }}"
                                         >
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -120,10 +120,10 @@
                                 <td colspan="9" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-handshake text-4xl text-gray-400 mb-4"></i>
-                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('no_plot_sales_found') }}</h3>
-                                        <p class="text-gray-500 mb-4">{{ __('get_started_by_creating_first_plot_sale') }}</p>
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_plot_sales_found') }}</h3>
+                                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_plot_sale') }}</p>
                                         <a wire:navigate href="{{ localized_route('property.sale.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                                            {{ __('add_plot_sale') }}
+                                            {{ __('messages.add_plot_sale') }}
                                         </a>
                                     </div>
                                 </td>
@@ -148,23 +148,23 @@
                         </div>
                         <div class="space-y-2 text-sm text-gray-600 mb-3">
                             <div class="flex justify-between">
-                                <span>{{ __('date') }}:</span>
+                                <span>{{ __('messages.date') }}:</span>
                                 <span class="font-medium">{{ $sale->date->format('Y-m-d') }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>{{ __('plot') }}:</span>
+                                <span>{{ __('messages.plot') }}:</span>
                                 <span class="font-medium">{{ $sale->plotPurchase->plot_area ?? 'N/A' }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>{{ __('total_sale_price') }}:</span>
+                                <span>{{ __('messages.total_sale_price') }}:</span>
                                 <span class="font-medium text-blue-600">Rs {{ number_format($sale->total_sale_price, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>{{ __('paid') }}:</span>
+                                <span>{{ __('messages.paid') }}:</span>
                                 <span class="font-medium text-green-600">Rs {{ number_format($sale->paid, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>{{ __('remaining') }}:</span>
+                                <span>{{ __('messages.remaining') }}:</span>
                                 <span class="font-medium text-red-600">Rs {{ number_format($sale->remaining, 2) }}</span>
                             </div>
                         </div>
@@ -174,23 +174,23 @@
                                 href="{{ localized_route('property.sale.edit', $sale) }}"
                                 class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
                             >
-                                <i class="fas fa-edit mr-1"></i>{{ __('edit') }}
+                                <i class="fas fa-edit mr-1"></i>{{ __('messages.edit') }}
                             </a>
                             <button 
                                 wire:click="confirmDelete({{ $sale->id }})"
                                 class="text-red-600 hover:text-red-900 px-3 py-1 rounded"
                             >
-                                <i class="fas fa-trash mr-1"></i>{{ __('delete') }}
+                                <i class="fas fa-trash mr-1"></i>{{ __('messages.delete') }}
                             </button>
                         </div>
                     </div>
                 @empty
                     <div class="p-8 text-center">
                         <i class="fas fa-handshake text-4xl text-gray-400 mb-4"></i>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('no_plot_sales_found') }}</h3>
-                        <p class="text-gray-500 mb-4">{{ __('get_started_by_creating_first_plot_sale') }}</p>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_plot_sales_found') }}</h3>
+                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_plot_sale') }}</p>
                         <a wire:navigate href="{{ localized_route('property.sale.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                            {{ __('add_plot_sale') }}
+                            {{ __('messages.add_plot_sale') }}
                         </a>
                     </div>
                 @endforelse
@@ -212,12 +212,12 @@
                     <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
                         <i class="fas fa-exclamation-triangle fa-2x"></i>
                     </span>
-                    <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ __('delete_plot_sale') }}?</h3>
-                    <p class="text-slate-600 text-sm">{{ __('are_you_sure_delete_plot_sale') }}</p>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-2">{{ __('messages.delete_plot_sale') }}?</h3>
+                    <p class="text-slate-600 text-sm">{{ __('messages.are_you_sure_delete_plot_sale') }}</p>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row justify-center items-center mt-6">
-                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('yes_delete') }}</button>
-                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('cancel') }}</button>
+                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('messages.yes_delete') }}</button>
+                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('messages.cancel') }}</button>
                 </div>
             </div>
         </div>

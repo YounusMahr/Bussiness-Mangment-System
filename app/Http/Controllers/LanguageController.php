@@ -24,22 +24,48 @@ class LanguageController extends Controller
         }
         if (!$referer) {
             // Default to index page if no referer
-            $referer = url('/index');
+            return redirect("/{$locale}/index");
         }
 
-        // Get the current URL without locale prefix
-        $urlWithoutLocale = LaravelLocalization::getNonLocalizedURL($referer);
+        // Parse the referer URL
+        $refererPath = parse_url($referer, PHP_URL_PATH);
+        
+        // List of paths that should NOT be localized (static assets, PWA files, etc.)
+        $excludedPaths = [
+            '/sw.js',
+            '/manifest.json',
+            '/favicon.ico',
+            '/robots.txt',
+        ];
+        
+        // Check if the referer is an excluded path
+        foreach ($excludedPaths as $excludedPath) {
+            if (strpos($refererPath, $excludedPath) !== false) {
+                // If referer is a static asset, redirect to index page
+                return redirect("/{$locale}/index");
+            }
+        }
+        
+        // Check if referer contains a locale prefix
+        $refererLocale = null;
+        if (preg_match('#^/(en|ur|ps)(/|$)#', $refererPath, $matches)) {
+            $refererLocale = $matches[1];
+            // Remove locale from path
+            $refererPath = preg_replace('#^/(en|ur|ps)(/|$)#', '/', $refererPath);
+        }
         
         // If URL is just '/' or empty, use '/index' instead
-        if ($urlWithoutLocale === '/' || empty(trim($urlWithoutLocale, '/'))) {
-            $urlWithoutLocale = '/index';
+        if ($refererPath === '/' || empty(trim($refererPath, '/'))) {
+            $refererPath = '/index';
         }
         
-        // Get the localized URL for the new locale
-        $localizedUrl = LaravelLocalization::getLocalizedURL($locale, $urlWithoutLocale);
-
+        // Ensure path starts with /
+        if (!str_starts_with($refererPath, '/')) {
+            $refererPath = '/' . $refererPath;
+        }
+        
         // Redirect to the localized URL
-        return redirect($localizedUrl);
+        return redirect("/{$locale}{$refererPath}");
     }
 }
 

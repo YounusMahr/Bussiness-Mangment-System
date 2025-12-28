@@ -4,12 +4,12 @@
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Add Stock Purchase</h1>
-                    <p class="text-slate-600 mt-1">Create a new stock purchase record</p>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.add_stock_purchase') }}</h1>
+                    <p class="text-slate-600 mt-1">{{ __('messages.create_new_stock_purchase_record') }}</p>
                 </div>
                 <a wire:navigate href="{{ localized_route('purchases.bulk') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
                     <i class="fas fa-arrow-left"></i>
-                    Back to Purchases
+                    {{ __('messages.back_to_purchases') }}
                 </a>
             </div>
         </div>
@@ -29,10 +29,10 @@
             <form wire:submit.prevent="save" class="p-6 md:p-8">
                 <!-- Purchase Details -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Purchase Information</h2>
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">{{ __('messages.purchase_information') }}</h2>
                     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="date" class="block text-sm font-medium text-slate-700 mb-2">Date *</label>
+                            <label for="date" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.date') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar"></i></span>
                                 <input type="date" wire:model="date" id="date" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
@@ -40,23 +40,23 @@
                             @error('date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="goods_name" class="block text-sm font-medium text-slate-700 mb-2">Goods Name *</label>
+                            <label for="goods_name" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.goods_name') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-box"></i></span>
-                                <input type="text" wire:model="goods_name" id="goods_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Enter goods name">
+                                <input type="text" wire:model="goods_name" id="goods_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="{{ __('messages.goods_name') }}">
                             </div>
                             @error('goods_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="seller_name" class="block text-sm font-medium text-slate-700 mb-2">Seller Name *</label>
+                            <label for="seller_name" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.seller_name') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
-                                <input type="text" wire:model="seller_name" id="seller_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Enter seller name">
+                                <input type="text" wire:model="seller_name" id="seller_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="{{ __('messages.seller_name') }}">
                             </div>
                             @error('seller_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="contact" class="block text-sm font-medium text-slate-700 mb-2">Contact</label>
+                            <label for="contact" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.contact') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-phone"></i></span>
                                 <input type="text" wire:model="contact" id="contact" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Enter contact number">
@@ -68,10 +68,10 @@
 
                 <!-- Financial Details -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Financial Details</h2>
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">{{ __('messages.financial_details') }}</h2>
                     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="goods_total_price" class="block text-sm font-medium text-slate-700 mb-2">Goods Total Price *</label>
+                            <label for="goods_total_price" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.goods_total_price') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="number" wire:model.live="goods_total_price" id="goods_total_price" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
@@ -79,7 +79,7 @@
                             @error('goods_total_price') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="paid" class="block text-sm font-medium text-slate-700 mb-2">Paid *</label>
+                            <label for="paid" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.paid') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="number" wire:model.live="paid" id="paid" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
@@ -87,16 +87,16 @@
                             @error('paid') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="remaining" class="block text-sm font-medium text-slate-700 mb-2">Remaining</label>
+                            <label for="remaining" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.remaining') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="number" wire:model="remaining" id="remaining" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Auto-calculated (Total Price - Paid)</p>
+                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.auto_calculated') }}</p>
                             @error('remaining') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="interest" class="block text-sm font-medium text-slate-700 mb-2">Interest (Optional)</label>
+                            <label for="interest" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.interest') }} ({{ __('messages.optional') }})</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="number" wire:model.live="interest" id="interest" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">

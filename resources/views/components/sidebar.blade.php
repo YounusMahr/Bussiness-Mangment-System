@@ -51,7 +51,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-users {{ request()->routeIs('customers.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('customers') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.customers') }}</span>
                   </a>
                 </li>
     
@@ -61,7 +61,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-tags {{ request()->routeIs('categories') || request()->routeIs('categories.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('categories') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.categories') }}</span>
                   </a>
                 </li>
 
@@ -91,7 +91,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-hand-holding-usd {{ request()->routeIs('udaar.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Khata') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.khata') }}</span>
                   </a>
                 </li>
 
@@ -101,7 +101,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-list {{ request()->routeIs('grocery.cash.index') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Cash manage') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.cash_manage') }}</span>
                   </a>
                 </li>
 
@@ -111,7 +111,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-shopping-basket {{ request()->routeIs('purchases.bulk') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Stock Purchases') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.stock_purchases') }}</span>
                   </a>
                 </li>
                 <!-- Low Stock -->
@@ -149,7 +149,7 @@
                   <div class="{{ $isCarInstallmentActive ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                     <i class="fas fa-car text-white text-xs"></i>
                   </div>
-                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Car-Installment') }}</span>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.car_installment') }}</span>
                 </div>
                 <svg class="w-4 h-4 transition-transform duration-200 ml-auto {{ $isCarInstallmentActive ? 'rotate-180' : '' }}" id="car-installment-dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -165,7 +165,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-chart-pie {{ request()->routeIs('vehicle.report.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('dashboard') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.dashboard') }}</span>
                   </a>
                 </li>
               
@@ -175,7 +175,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-users {{ request()->routeIs('vehicle.customer.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Customer') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.customer') }}</span>
                   </a>
                 </li>
               
@@ -185,7 +185,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-file-invoice-dollar {{ request()->routeIs('vehicle.installment.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Installment') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.installment') }}</span>
                   </a>
                 </li>
               </ul>
@@ -193,7 +193,7 @@
           </li>
 
           @php
-            $isPropertyActive = request()->routeIs('property.purchase.*') || request()->routeIs('property.sale.*') || request()->routeIs('property.dashboard.*');
+            $isPropertyActive = request()->routeIs('property.purchase.*') || request()->routeIs('property.sale.*') || request()->routeIs('property.dashboard.*') || request()->routeIs('property.customer.*');
           @endphp
           
           <li class="mt-0.5 w-full {{ $isPropertyActive ? 'active' : '' }}">
@@ -203,7 +203,7 @@
                   <div class="{{ $isPropertyActive ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                     <i class="fas fa-map-marked-alt text-white text-xs"></i>
                   </div>
-                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('property') }}</span>
+                  <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.property') }}</span>
                 </div>
                 <svg class="w-4 h-4 transition-transform duration-200 ml-auto {{ $isPropertyActive ? 'rotate-180' : '' }}" id="property-dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -219,7 +219,17 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-chart-pie {{ request()->routeIs('property.dashboard.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('dashboard') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.dashboard') }}</span>
+                  </a>
+                </li>
+
+                  <!-- Property Customers -->
+                  <li class="w-full">
+                  <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('property.customer.*') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('property.customer.index') }}">
+                    <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
+                      <i class="fas fa-users {{ request()->routeIs('property.customer.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.customers') }}</span>
                   </a>
                 </li>
               
@@ -229,7 +239,7 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-shopping-cart {{ request()->routeIs('property.purchase.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('plot_purchases') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.plot_purchases') }}</span>
                   </a>
                 </li>
                 
@@ -239,9 +249,11 @@
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
                       <i class="fas fa-handshake {{ request()->routeIs('property.sale.*') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('plot_sales') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.plot_sales') }}</span>
                   </a>
                 </li>
+                
+              
               </ul>
             </div>
           </li>

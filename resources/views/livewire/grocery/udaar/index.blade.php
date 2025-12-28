@@ -113,7 +113,7 @@
                             <div class="flex gap-2">
                                 <a 
                                     wire:navigate
-                                    href="{{ localized_route('udaar.udaar-in', $udaar) }}"
+                                    href="{{ localized_route('udaar.udaar-out', $udaar) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
                                     title="Udaar In"
                                 >
@@ -121,7 +121,7 @@
                                 </a>
                                 <a 
                                     wire:navigate
-                                    href="{{ localized_route('udaar.udaar-out', $udaar) }}"
+                                    href="{{ localized_route('udaar.udaar-in', $udaar) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
                                     title="Udaar Out"
                                 >

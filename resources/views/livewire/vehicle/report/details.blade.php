@@ -4,20 +4,20 @@
         <div class="mb-6 no-print">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">{{ __('vehicle_installment_report') }}</h1>
-                    <p class="text-slate-600 mt-1">{{ __('detailed_vehicle_installment_information') }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.vehicle_installment_report') }}</h1>
+                    <p class="text-slate-600 mt-1">{{ __('messages.detailed_vehicle_installment_information') }}</p>
                 </div>
                 <div class="flex gap-2">
                     <a wire:navigate href="{{ localized_route('vehicle.report.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 px-4 py-2 bg-slate-100 rounded-lg">
                         <i class="fas fa-arrow-left"></i>
-                        {{ __('back_to_dashboard') }}
+                        {{ __('messages.back_to_dashboard') }}
                     </a>
                     <button 
                         wire:click="printReport"
                         class="inline-flex items-center gap-2 text-sm text-slate-700 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg"
                     >
                         <i class="fas fa-print"></i>
-                        {{ __('print') }}
+                        {{ __('messages.print') }}
                     </button>
                 </div>
             </div>
@@ -29,22 +29,22 @@
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('filter_by') }}</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.filter_by') }}</label>
                         <select wire:model.live="filter" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="all">{{ __('all_records') }}</option>
-                            <option value="daily">{{ __('daily') }}</option>
-                            <option value="monthly">{{ __('monthly') }}</option>
+                            <option value="all">{{ __('messages.all_records') }}</option>
+                            <option value="daily">{{ __('messages.daily') }}</option>
+                            <option value="monthly">{{ __('messages.monthly') }}</option>
                         </select>
                     </div>
                     @if($filter === 'daily')
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('select_date') }}</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.select_date') }}</label>
                             <input type="date" wire:model.live="selectedDate" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     @endif
                     @if($filter === 'monthly')
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('select_month') }}</label>
+<div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.select_month') }}</label>
                             <input type="month" wire:model.live="selectedMonth" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     @endif
@@ -57,35 +57,35 @@
             <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-500 h-2"></div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('total_car_price') }}</p>
+                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('messages.total_car_price') }}</p>
                     <p class="text-2xl font-bold text-blue-600">Rs {{ number_format($totalCarPrice, 2) }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-500 h-2"></div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('total_sales') }}</p>
+                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('messages.total_sales') }}</p>
                     <p class="text-2xl font-bold text-indigo-600">Rs {{ number_format($totalSales, 2) }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-500 h-2"></div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('total_paid') }}</p>
+                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('messages.total_paid') }}</p>
                     <p class="text-2xl font-bold text-green-600">Rs {{ number_format($totalPaid, 2) }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-500 h-2"></div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('total_remaining') }}</p>
+                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('messages.total_remaining') }}</p>
                     <p class="text-2xl font-bold text-red-600">Rs {{ number_format($totalRemaining, 2) }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-indigo-500 h-2"></div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('total_interest') }}</p>
+                    <p class="text-sm font-medium text-slate-500 mb-1">{{ __('messages.total_interest') }}</p>
                     <p class="text-2xl font-bold text-orange-600">Rs {{ number_format($totalInterest, 2) }}</p>
                 </div>
             </div>
@@ -94,26 +94,26 @@
         <!-- Installments Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200 no-print">
-                <h2 class="text-lg font-semibold text-slate-900">{{ __('installment_details') }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.installment_details') }}</h2>
             </div>
             <div class="print-table-header" style="display: none;">
-                <h2 class="text-lg font-semibold text-slate-900">{{ __('installment_details') }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.installment_details') }}</h2>
             </div>
             <div class="overflow-x-auto print-table-container">
                 <table class="min-w-full divide-y divide-gray-200" id="installments-table">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('date') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('customer_name') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('phone_number') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('vehicle') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('model') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('car_price') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('interest') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('total_price') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('paid') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('remaining') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.date') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.customer_name') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.phone_number') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.vehicle') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.model') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.car_price') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.interest') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.total_price') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.paid') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.remaining') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -158,7 +158,7 @@
                                 <td colspan="11" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-car text-4xl text-gray-400 mb-4"></i>
-                                        <p>{{ __('no_installments_found') }}</p>
+                                        <p>{{ __('messages.no_installments_found') }}</p>
                                     </div>
                                 </td>
                             </tr>

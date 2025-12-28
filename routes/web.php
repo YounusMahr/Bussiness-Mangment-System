@@ -5,8 +5,39 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 // PWA Routes (must be before locale routes)
 Route::get('/manifest.json', function () {
-    return response()->file(public_path('manifest.json'), [
-        'Content-Type' => 'application/json',
+    $manifestPath = public_path('manifest.json');
+    $manifestContent = json_decode(file_get_contents($manifestPath), true);
+    
+    // Get the current origin (scheme + host + port if not default)
+    $scheme = request()->getScheme();
+    $host = request()->getHost();
+    $port = request()->getPort();
+    $origin = $scheme . '://' . $host . ($port && !in_array($port, [80, 443]) ? ':' . $port : '');
+    
+    // Update start_url and scope to use current origin
+    $manifestContent['start_url'] = $origin . '/';
+    $manifestContent['scope'] = $origin . '/';
+    
+    // Update shortcut URLs to use current origin
+    if (isset($manifestContent['shortcuts'])) {
+        foreach ($manifestContent['shortcuts'] as &$shortcut) {
+            if (isset($shortcut['url'])) {
+                // If it's already an absolute URL, extract the path
+                if (strpos($shortcut['url'], 'http://') === 0 || strpos($shortcut['url'], 'https://') === 0) {
+                    $path = parse_url($shortcut['url'], PHP_URL_PATH);
+                    $shortcut['url'] = $origin . $path;
+                } else {
+                    // If it's a relative URL, prepend the origin
+                    // Ensure it starts with / for proper path handling
+                    $path = (strpos($shortcut['url'], '/') === 0 ? '' : '/') . $shortcut['url'];
+                    $shortcut['url'] = $origin . $path;
+                }
+            }
+        }
+    }
+    
+    return response()->json($manifestContent, 200, [
+        'Content-Type' => 'application/manifest+json',
     ]);
 })->name('manifest');
 
@@ -136,6 +167,11 @@ Route::group([
     // Property Dashboard Routes
     Route::get('property/dashboard', App\Livewire\Property\Dashboard\Report::class)->name('property.dashboard.index');
     Route::get('property/dashboard/details', App\Livewire\Property\Dashboard\Details::class)->name('property.dashboard.details');
+
+    // Property Customer Routes
+    Route::get('property/customers', App\Livewire\Property\Customer\Index::class)->name('property.customer.index');
+    Route::get('property/customers/add', App\Livewire\Property\Customer\Add::class)->name('property.customer.add');
+    Route::get('property/customers/{customer}/edit', App\Livewire\Property\Customer\Edit::class)->name('property.customer.edit');
 
     });
 });

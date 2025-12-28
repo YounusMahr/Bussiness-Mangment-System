@@ -1,7 +1,7 @@
 <div class="p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
-        <div class="mb-6">
+        <div class="mb-6 no-print">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.customers_management') }}</h1>
@@ -10,7 +10,7 @@
                 <p class="text-gray-600 mt-1">{{ __('messages.manage_your_customers') }}</p>
                     <a 
                         wire:navigate
-                        href="{{ localized_route('vehicle.customer.add') }}" 
+                        href="{{ localized_route('property.customer.add') }}" 
                         class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white md:font-bold font-normal py-1 px-2 md:py-2 md:px-2 rounded-lg flex items-center gap-2"
                     >
                         <i class="fas fa-plus"></i>
@@ -22,14 +22,14 @@
 
         <!-- Flash Messages -->
         @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 no-print">
                 <i class="fas fa-check-circle"></i>
                 {{ session('message') }}
             </div>
         @endif
 
         <!-- Search and Filters -->
-        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
+        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6 no-print">
             <div class="flex  gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
@@ -57,8 +57,41 @@
             </div>
         </div>
 
+        <!-- Print Table (Hidden on screen, shown when printing) -->
+        <div class="hidden print-only">
+            <div class="print-header">
+                <h1>{{ __('messages.customers_management') }}</h1>
+                <p>{{ __('messages.manage_your_customers') }}</p>
+                <p style="font-size: 10px; margin-top: 5px;">{{ __('messages.date') }}: {{ now()->format('Y-m-d H:i:s') }}</p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ __('messages.name') }}</th>
+                        <th>{{ __('messages.customer_number') }}</th>
+                        <th>{{ __('messages.email') }}</th>
+                        <th>{{ __('messages.type') }}</th>
+                        <th>{{ __('messages.address') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($customers as $index => $customer)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $customer->name }}</td>
+                            <td>{{ $customer->number }}</td>
+                            <td>{{ $customer->email ?? '-' }}</td>
+                            <td>{{ $customer->type }}</td>
+                            <td>{{ $customer->address ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
         <!-- Customers Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 no-print">
             @forelse($customers as $customer)
                 <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
                     <!-- Card Header with Gradient -->
@@ -119,10 +152,10 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between gap-2">
+                        <div class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-end gap-2">
                             <a 
                                 wire:navigate 
-                                href="{{ localized_route('vehicle.customer.edit', $customer) }}" 
+                                href="{{ localized_route('property.customer.edit', $customer) }}" 
                                 class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
                                 title="{{ __('messages.edit') }}"
                             >
@@ -130,7 +163,7 @@
                             </a>
                             <button 
                                 wire:click="confirmDelete({{ $customer->id }})"
-                                class="flex-1 px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+                                class="flex-1 text-center px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
                                 title="{{ __('messages.delete') }}"
                             >
                                 <i class="fas fa-trash mr-1"></i> {{ __('messages.delete') }}
@@ -144,7 +177,7 @@
                         <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_customers_found') }}</h3>
                         <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_customer') }}</p>
-                        <a wire:navigate href="{{ localized_route('vehicle.customer.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
+                        <a wire:navigate href="{{ localized_route('property.customer.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                             {{ __('messages.add_customer') }}
                         </a>
                     </div>
@@ -153,7 +186,7 @@
         </div>
 
         @if($customers->hasPages())
-            <div class="flex justify-center py-6 mt-6">
+            <div class="flex justify-center py-6 mt-6 no-print">
                 {{ $customers->links() }}
             </div>
         @endif
@@ -162,7 +195,7 @@
 
     {{-- Confirmation Modal --}}
     @if($confirmingDeleteId)
-        <div class="fixed inset-0 flex items-center justify-center z-50 bg-white/30 backdrop-blur-sm transition-opacity duration-300">
+        <div class="fixed inset-0 flex items-center justify-center z-50 bg-white/30 backdrop-blur-sm transition-opacity duration-300 no-print">
             <div class="bg-white rounded-2xl shadow-lg max-w-sm w-full p-8 text-center animate-fade-in">
                 <div class="mb-5">
                     <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
@@ -172,8 +205,8 @@
                     <p class="text-slate-600 text-sm">{{ __('messages.are_you_sure_delete_customer') }}</p>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row justify-center items-center mt-6">
-                    <button wire:click="delete({{ $confirmingDeleteId }})" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('messages.yes_delete') }}</button>
-                    <button wire:click="cancelDelete" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('messages.cancel') }}</button>
+                    <button wire:click="delete({{ $confirmingDeleteId }})" style="padding: 10px 20px;" class="px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-300 transition">{{ __('messages.yes_delete') }}</button>
+                    <button wire:click="cancelDelete" style="padding: 10px 20px;" class="px-5 py-2 rounded-lg border border-gray-300 bg-white text-slate-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-300 transition">{{ __('messages.cancel') }}</button>
                 </div>
             </div>
         </div>
@@ -182,26 +215,131 @@
     <!-- Print Styles -->
 <style>
 @media print {
+    @page {
+        size: A4 portrait;
+        margin: 1cm;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body {
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
     .no-print {
         display: none !important;
     }
     
-    body {
+    .print-only {
+        display: block !important;
+    }
+    
+    .hidden {
+        display: none !important;
+    }
+    
+    .print-only.hidden {
+        display: block !important;
+    }
+    
+    /* Print Header */
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    
+    .print-header h1 {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .print-header p {
         font-size: 12px;
+        margin: 5px 0 0 0;
     }
     
-    table {
-        width: 100% !important;
-        border-collapse: collapse !important;
+    /* Print Table */
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        page-break-inside: auto;
     }
     
-    th, td {
-        border: 1px solid #000 !important;
-        padding: 8px !important;
+    .print-table thead {
+        display: table-header-group;
     }
     
-    .bg-gradient-to-r {
-        background:rgb(5, 241, 80) !important;
+    .print-table tbody {
+        display: table-row-group;
+    }
+    
+    .print-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    .print-table th,
+    .print-table td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        text-align: left;
+        font-size: 10px;
+    }
+    
+    .print-table th {
+        background-color: #e5e7eb !important;
+        font-weight: bold;
+    }
+    
+    .print-table td {
+        background-color: #fff !important;
+    }
+    
+    /* Ensure table fits on page */
+    .print-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    .print-table th:nth-child(1),
+    .print-table td:nth-child(1) {
+        width: 5%;
+    }
+    
+    .print-table th:nth-child(2),
+    .print-table td:nth-child(2) {
+        width: 20%;
+    }
+    
+    .print-table th:nth-child(3),
+    .print-table td:nth-child(3) {
+        width: 15%;
+    }
+    
+    .print-table th:nth-child(4),
+    .print-table td:nth-child(4) {
+        width: 20%;
+    }
+    
+    .print-table th:nth-child(5),
+    .print-table td:nth-child(5) {
+        width: 15%;
+    }
+    
+    .print-table th:nth-child(6),
+    .print-table td:nth-child(6) {
+        width: 25%;
     }
 }
 </style>

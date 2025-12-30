@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Property\Sale;
 
+use App\Models\Customer;
 use App\Models\PlotPurchase;
 use App\Models\PlotSale;
 use Livewire\Component;
@@ -12,8 +13,12 @@ class Add extends Component
 
     public $date;
     public $plot_purchase_id = '';
+    public $customer_id = '';
     public $customer_name = '';
     public $customer_number = '';
+    public $installment_no = '';
+    public $installment_amount = 0;
+    public $paid_amount = 0;
     public $installments = '';
     public $interest = 0;
     public $total_sale_price = 0;
@@ -22,12 +27,21 @@ class Add extends Component
     public $time_period = '';
     public $status = 'remaining';
     public $plotPurchases = [];
+    public $customers = [];
+
+    // Calculated values
+    public $remaining_calc = 0;
+    public $total_calc = 0;
 
     protected $rules = [
         'date' => 'required|date',
         'plot_purchase_id' => 'required|exists:plot_purchases,id',
+        'customer_id' => 'nullable|exists:customers,id',
         'customer_name' => 'required|string|max:255',
         'customer_number' => 'required|string|max:255',
+        'installment_no' => 'nullable|string|max:255',
+        'installment_amount' => 'nullable|numeric|min:0',
+        'paid_amount' => 'nullable|numeric|min:0',
         'installments' => 'nullable|string',
         'interest' => 'nullable|numeric|min:0',
         'total_sale_price' => 'required|numeric|min:0',
@@ -41,6 +55,40 @@ class Add extends Component
     {
         $this->date = now()->format('Y-m-d');
         $this->plotPurchases = PlotPurchase::orderBy('plot_area', 'asc')->get();
+        $this->customers = Customer::where('type', 'Plot')->orderBy('name', 'asc')->get();
+    }
+
+    public function updatedCustomerId()
+    {
+        if ($this->customer_id) {
+            $customer = Customer::find($this->customer_id);
+            if ($customer) {
+                $this->customer_name = $customer->name;
+                $this->customer_number = $customer->number;
+            }
+        }
+    }
+
+    public function updatedInstallmentAmount()
+    {
+        $this->calculateAmounts();
+    }
+
+    public function updatedPaidAmount()
+    {
+        $this->calculateAmounts();
+    }
+
+    public function calculateAmounts()
+    {
+        $installmentAmount = (float)($this->installment_amount ?? 0);
+        $paidAmount = (float)($this->paid_amount ?? 0);
+        
+        // Remaining = Installment Amount - Paid Amount
+        $this->remaining_calc = max($installmentAmount - $paidAmount, 0);
+        
+        // Total = Installment Amount
+        $this->total_calc = $installmentAmount;
     }
 
     public function updatedTotalSalePrice()

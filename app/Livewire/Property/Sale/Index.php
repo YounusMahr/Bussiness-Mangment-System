@@ -55,7 +55,7 @@ class Index extends Component
 
     public function render()
     {
-        $sales = PlotSale::with('plotPurchase')
+        $sales = PlotSale::with(['plotPurchase', 'plotPurchase.customer'])
             ->when($this->search, function ($query) {
                 $query->where('customer_name', 'like', "%{$this->search}%")
                       ->orWhere('customer_number', 'like', "%{$this->search}%")

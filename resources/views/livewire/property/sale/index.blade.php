@@ -39,169 +39,139 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
-            <div class="hidden lg:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
-                        <tr>
-                            <th wire:click="sortBy('date')" class="px-6 py-4 cursor-pointer text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center gap-2">
-                                    {{ __('messages.date') }}
-                                    @if($sortField === 'date')
-                                        <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} text-purple-600"></i>
-                                    @else
-                                        <i class="fas fa-sort text-gray-400"></i>
-                                    @endif
+        <!-- Plot Sales Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($sales as $sale)
+                <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <!-- Card Header with Gradient -->
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
+                    
+                    <!-- Card Content -->
+                    <div class="p-6">
+                        <!-- Customer Info -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-xl"></i>
                                 </div>
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.plot') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.customer_name') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.customer_number') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.total_sale_price') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.paid') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.remaining') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.status') }}</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.actions') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($sales as $sale)
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $sale->date->format('Y-m-d') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $sale->plotPurchase->plot_area ?? 'N/A' }}</div>
-                                    <div class="text-xs text-gray-500">{{ Str::limit($sale->plotPurchase->location ?? '--', 30) }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $sale->customer_name }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $sale->customer_number }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                    Rs {{ number_format($sale->total_sale_price, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                                    Rs {{ number_format($sale->paid, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                                    Rs {{ number_format($sale->remaining, 2) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sale->status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        <i class="fas fa-circle mr-1 text-xs"></i>
-                                        {{ ucfirst($sale->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center space-x-3">
-                                        <a
-                                            wire:navigate
-                                            href="{{ localized_route('property.sale.edit', $sale) }}"
-                                            class="text-indigo-600 hover:text-indigo-900 transition-colors"
-                                            title="{{ __('messages.edit') }}"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button 
-                                            wire:click="confirmDelete({{ $sale->id }})"
-                                            class="text-red-600 hover:text-red-900 transition-colors"
-                                            title="{{ __('messages.delete') }}"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                                    <div class="flex flex-col items-center">
-                                        <i class="fas fa-handshake text-4xl text-gray-400 mb-4"></i>
-                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_plot_sales_found') }}</h3>
-                                        <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_plot_sale') }}</p>
-                                        <a wire:navigate href="{{ localized_route('property.sale.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
-                                            {{ __('messages.add_plot_sale') }}
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $sale->customer_name }}</h3>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <i class="fas fa-phone text-xs"></i>
+                                        {{ $sale->customer_number }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Mobile Cards -->
-            <div class="lg:hidden">
-                @forelse($sales as $sale)
-                    <div class="p-4 border-b border-gray-200 last:border-b-0">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h3 class="text-lg font-medium text-gray-900">{{ $sale->customer_name }}</h3>
-                                <p class="text-sm text-gray-500">{{ $sale->customer_number }}</p>
+                        <!-- Sale Details -->
+                        <div class="border-t border-gray-200 pt-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.date') }}:</span>
+                                <span class="text-sm font-medium text-gray-900">{{ $sale->date->format('Y-m-d') }}</span>
                             </div>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sale->status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                {{ ucfirst($sale->status) }}
-                            </span>
+                            @if($sale->plotPurchase)
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">{{ __('messages.plot') }}:</span>
+                                    <span class="text-sm font-medium text-gray-900">{{ $sale->plotPurchase->plot_area ?? 'N/A' }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">{{ __('messages.location') }}:</span>
+                                    <span class="text-sm font-medium text-gray-900 max-w-[150px] truncate" title="{{ $sale->plotPurchase->location ?? 'N/A' }}">{{ Str::limit($sale->plotPurchase->location ?? 'N/A', 20) }}</span>
+                                </div>
+                            @endif
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.total_sale_price') }}:</span>
+                                <span class="text-sm font-bold text-blue-600">Rs {{ number_format($sale->total_sale_price, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.paid') }}:</span>
+                                <span class="text-sm font-bold text-green-600">Rs {{ number_format($sale->paid, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.remaining') }}:</span>
+                                <span class="text-sm font-bold text-red-600">Rs {{ number_format($sale->remaining, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.status') }}:</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sale->status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                    {{ ucfirst($sale->status) }}
+                                </span>
+                            </div>
                         </div>
-                        <div class="space-y-2 text-sm text-gray-600 mb-3">
-                            <div class="flex justify-between">
-                                <span>{{ __('messages.date') }}:</span>
-                                <span class="font-medium">{{ $sale->date->format('Y-m-d') }}</span>
+
+                        <!-- Action Buttons -->
+                        <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                            <!-- Credit/Debit Buttons (Khata) -->
+                            <div class="flex gap-2">
+                                <a 
+                                    wire:navigate
+                                    href="{{ localized_route('property.sale.in', $sale) }}"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    title="Credit (Payment In)"
+                                >
+                                    <i class="fas fa-arrow-down mr-1"></i> Credit
+                                </a>
+                                <a 
+                                    wire:navigate
+                                    href="{{ localized_route('property.sale.out', $sale) }}"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    title="Debit (Payment Out)"
+                                >
+                                    <i class="fas fa-arrow-up mr-1"></i> Debit
+                                </a>
                             </div>
-                            <div class="flex justify-between">
-                                <span>{{ __('messages.plot') }}:</span>
-                                <span class="font-medium">{{ $sale->plotPurchase->plot_area ?? 'N/A' }}</span>
+                            
+                            <!-- Other Actions -->
+                            <div class="flex items-center justify-between gap-2">
+                                <a 
+                                    wire:navigate 
+                                    href="{{ localized_route('property.sale.history', $sale) }}" 
+                                    class="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="{{ __('messages.view_history') }}"
+                                >
+                                    <i class="fas fa-history mr-1"></i> {{ __('messages.history') }}
+                                </a>
+                                <a 
+                                    wire:navigate
+                                    href="{{ localized_route('property.sale.edit', $sale) }}"
+                                    class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="{{ __('messages.edit') }}"
+                                >
+                                    <i class="fas fa-edit mr-1"></i> {{ __('messages.edit') }}
+                                </a>
+                                <button 
+                                    wire:click="confirmDelete({{ $sale->id }})"
+                                    type="button"
+                                    class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
+                                    title="{{ __('messages.delete') }}"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
-                            <div class="flex justify-between">
-                                <span>{{ __('messages.total_sale_price') }}:</span>
-                                <span class="font-medium text-blue-600">Rs {{ number_format($sale->total_sale_price, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>{{ __('messages.paid') }}:</span>
-                                <span class="font-medium text-green-600">Rs {{ number_format($sale->paid, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>{{ __('messages.remaining') }}:</span>
-                                <span class="font-medium text-red-600">Rs {{ number_format($sale->remaining, 2) }}</span>
-                            </div>
-                        </div>
-                        <div class="flex justify-end space-x-3">
-                            <a 
-                                wire:navigate
-                                href="{{ localized_route('property.sale.edit', $sale) }}"
-                                class="text-indigo-600 hover:text-indigo-900 px-3 py-1 rounded"
-                            >
-                                <i class="fas fa-edit mr-1"></i>{{ __('messages.edit') }}
-                            </a>
-                            <button 
-                                wire:click="confirmDelete({{ $sale->id }})"
-                                class="text-red-600 hover:text-red-900 px-3 py-1 rounded"
-                            >
-                                <i class="fas fa-trash mr-1"></i>{{ __('messages.delete') }}
-                            </button>
                         </div>
                     </div>
-                @empty
-                    <div class="p-8 text-center">
-                        <i class="fas fa-handshake text-4xl text-gray-400 mb-4"></i>
+                </div>
+            @empty
+                <div class="col-span-full">
+                    <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
+                        <i class="fas fa-handshake text-gray-300 text-6xl mb-4"></i>
                         <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_plot_sales_found') }}</h3>
                         <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_plot_sale') }}</p>
                         <a wire:navigate href="{{ localized_route('property.sale.add') }}" class="bg-gradient-to-r from-purple-700 to-pink-500 hover:from-purple-800 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg">
                             {{ __('messages.add_plot_sale') }}
                         </a>
                     </div>
-                @endforelse
-            </div>
-
-            @if($sales->hasPages())
-                <div class="flex justify-center py-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-b-2xl shadow-inner mt-2">
-                    {{ $sales->links() }}
                 </div>
-            @endif
+            @endforelse
         </div>
+
+        <!-- Pagination -->
+        @if($sales->hasPages())
+            <div class="flex justify-center py-6 mt-6">
+                {{ $sales->links() }}
+            </div>
+        @endif
     </div>
 
     <!-- Delete Confirmation Modal -->

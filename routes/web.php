@@ -194,6 +194,9 @@ Route::group([
     Route::get('property/sales', App\Livewire\Property\Sale\Index::class)->name('property.sale.index');
     Route::get('property/sales/add', App\Livewire\Property\Sale\Add::class)->name('property.sale.add');
     Route::get('property/sales/{sale}/edit', App\Livewire\Property\Sale\Edit::class)->name('property.sale.edit');
+    Route::get('property/sales/{sale}/in', App\Livewire\Property\Sale\In::class)->name('property.sale.in');
+    Route::get('property/sales/{sale}/out', App\Livewire\Property\Sale\Out::class)->name('property.sale.out');
+    Route::get('property/sales/{sale}/history', App\Livewire\Property\Sale\History::class)->name('property.sale.history');
 
     // Property Dashboard Routes
     Route::get('property/dashboard', App\Livewire\Property\Dashboard\Report::class)->name('property.dashboard.index');

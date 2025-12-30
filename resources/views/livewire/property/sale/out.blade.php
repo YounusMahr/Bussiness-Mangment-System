@@ -4,12 +4,12 @@
         <div class="mb-6">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Process Stock Out</h1>
-                    <p class="text-slate-600 mt-1">Return stock and process payment</p>
+                    <h1 class="text-2xl font-bold text-slate-900">Record Debit</h1>
+                    <p class="text-slate-600 mt-1">Record payment made for plot sale</p>
                 </div>
-                <a wire:navigate href="{{ localized_route('purchases.bulk') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
+                <a wire:navigate href="{{ localized_route('property.sale.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800">
                     <i class="fas fa-arrow-left"></i>
-                    Back to Purchases
+                    Back to Sales
                 </a>
             </div>
         </div>
@@ -27,56 +27,70 @@
             <div class="bg-gradient-to-r from-red-600 to-pink-500 h-2"></div>
 
             <form wire:submit.prevent="save" class="p-6 md:p-8">
-                <!-- Seller Information (Read-only) -->
+                <!-- Sale Information (Read-only) -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Seller Information</h2>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Plot Sale Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Seller Name</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Customer</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
-                                <input type="text" value="{{ $purchase->seller_name }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                <input type="text" value="{{ $sale->customer_name }} ({{ $sale->customer_number }})" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Contact</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Sale Date</label>
                             <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-phone"></i></span>
-                                <input type="text" value="{{ $purchase->contact ?: '--' }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar"></i></span>
+                                <input type="text" value="{{ $sale->date->format('Y-m-d') }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Current Status -->
-                <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Current Status</h2>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Current Remaining Stock</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-layer-group"></i></span>
-                                <input type="text" value="{{ number_format($current_remaining_stock, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                        @if($sale->plotPurchase)
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Plot Area</label>
+                                <div class="relative">
+                                    <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-ruler"></i></span>
+                                    <input type="text" value="{{ $sale->plotPurchase->plot_area ? number_format((float)$sale->plotPurchase->plot_area, 2) . ' sq ft' : 'N/A' }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                </div>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Maximum returnable: {{ number_format($current_remaining_stock, 2) }}</p>
-                        </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Location</label>
+                                <div class="relative">
+                                    <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" value="{{ $sale->plotPurchase->location ?: 'N/A' }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                </div>
+                            </div>
+                        @endif
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Current Total Remaining Payment</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Total Sale Price</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="text" value="{{ number_format($current_total_remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                                <input type="text" value="{{ number_format($sale->total_sale_price, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Maximum payable: Rs {{ number_format($current_total_remaining, 2) }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Paid</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
+                                <input type="text" value="{{ number_format($sale->paid, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Remaining</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
+                                <input type="text" value="{{ number_format($sale->remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Return Details -->
+                <!-- Installment Details -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Return Details</h2>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Installment Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="date" class="block text-sm font-medium text-slate-700 mb-2">Return Date *</label>
+                            <label for="date" class="block text-sm font-medium text-slate-700 mb-2">Payment Date *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar"></i></span>
                                 <input type="date" wire:model="date" id="date" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
@@ -84,68 +98,71 @@
                             @error('date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="return_stock" class="block text-sm font-medium text-slate-700 mb-2">Return Stock Amount *</label>
+                            <label for="installment_no" class="block text-sm font-medium text-slate-700 mb-2">Installment Number *</label>
                             <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-box"></i></span>
-                                <input type="number" wire:model.live="return_stock" id="return_stock" step="0.01" min="0" max="{{ $current_remaining_stock }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-hashtag"></i></span>
+                                <input type="text" wire:model="installment_no" id="installment_no" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="e.g., 1, 2, 3 or First, Second">
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Cannot exceed remaining stock</p>
-                            @error('return_stock') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @error('installment_no') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="return_payment" class="block text-sm font-medium text-slate-700 mb-2">Return Payment Amount *</label>
+                            <label for="installment_amount" class="block text-sm font-medium text-slate-700 mb-2">Installment Amount *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model.live="return_payment" id="return_payment" step="0.01" min="0" max="{{ $current_total_remaining }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                                <input type="number" wire:model.live="installment_amount" id="installment_amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Cannot exceed remaining payment</p>
-                            @error('return_payment') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            <p class="mt-1 text-xs text-slate-500">Total installment amount</p>
+                            @error('installment_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label for="paid_amount" class="block text-sm font-medium text-slate-700 mb-2">Paid Amount *</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
+                                <input type="number" wire:model.live="paid_amount" id="paid_amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                            </div>
+                            <p class="mt-1 text-xs text-slate-500">Amount paid in this installment</p>
+                            @error('paid_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- New Status After Return -->
+                <!-- Calculated Values -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">New Status (After Return)</h2>
-                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Calculated Values</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">New Remaining Stock</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-layer-group"></i></span>
-                                <input type="text" value="{{ number_format($new_remaining_stock, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-green-50 text-green-700 font-semibold" readonly>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">New Total Remaining Payment</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Remaining Amount</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="text" value="{{ number_format($new_total_remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-red-50 text-red-700 font-semibold" readonly>
+                                <input type="text" value="{{ number_format($remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600 font-semibold" readonly>
                             </div>
+                            <p class="mt-1 text-xs text-slate-500">Auto-calculated: Installment Amount - Paid Amount</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">New Paid Amount</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Total Amount</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="text" value="{{ number_format($new_paid, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-blue-50 text-blue-700 font-semibold" readonly>
+                                <input type="text" value="{{ number_format($total, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-blue-50 text-blue-700 font-semibold" readonly>
                             </div>
+                            <p class="mt-1 text-xs text-slate-500">Auto-calculated: Total installment amount</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Notes -->
                 <div class="mb-8">
-                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">Notes</h2>
-                    <div class="mt-4">
+                    <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wider mb-4">Notes</h2>
+                    <div>
                         <label for="notes" class="block text-sm font-medium text-slate-700 mb-2">Additional Notes</label>
-                        <textarea wire:model="notes" id="notes" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Add any additional notes..."></textarea>
+                        <textarea wire:model="notes" id="notes" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="Add any additional notes about this debit transaction..."></textarea>
                         @error('notes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <a wire:navigate href="{{ localized_route('purchases.bulk') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Cancel</a>
-                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white rounded-lg">Process Stock Out</button>
+                    <a wire:navigate href="{{ localized_route('property.sale.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">Cancel</a>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white rounded-lg">Record Debit</button>
                 </div>
             </form>
         </div>

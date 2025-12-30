@@ -109,23 +109,23 @@
 
                         <!-- Action Buttons -->
                         <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
-                            <!-- Udaar In/Out Buttons -->
+                            <!-- Credit/Debit Buttons -->
                             <div class="flex gap-2">
                                 <a 
                                     wire:navigate
                                     href="{{ localized_route('udaar.udaar-out', $udaar) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Udaar In"
+                                    title="Credit (Payment In)"
                                 >
-                                    <i class="fas fa-arrow-down mr-1"></i> Udaar In
+                                    <i class="fas fa-arrow-down mr-1"></i> Credit
                                 </a>
                                 <a 
                                     wire:navigate
                                     href="{{ localized_route('udaar.udaar-in', $udaar) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Udaar Out"
+                                    title="Debit (Payment Out)"
                                 >
-                                    <i class="fas fa-arrow-up mr-1"></i> Udaar Out
+                                    <i class="fas fa-arrow-up mr-1"></i> Debit
                                 </a>
                             </div>
                             

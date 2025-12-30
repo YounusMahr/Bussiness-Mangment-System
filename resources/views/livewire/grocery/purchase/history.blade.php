@@ -161,11 +161,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($transaction->type === 'stock-in')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-arrow-down mr-1"></i>Stock In
+                                            <i class="fas fa-arrow-down mr-1"></i>Credit
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            <i class="fas fa-arrow-up mr-1"></i>Stock Out
+                                            <i class="fas fa-arrow-up mr-1"></i>Debit
                                         </span>
                                     @endif
                                 </td>

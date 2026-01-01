@@ -30,4 +30,31 @@
   <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
   <!-- main script file  -->
   <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js?v=1.0.5') }}" async></script>
+  
+  <!-- Unregister Service Worker on Auth Pages -->
+  <script>
+    (function() {
+      if ('serviceWorker' in navigator) {
+        // Unregister any existing service workers on auth pages
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (let registration of registrations) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('Service worker unregistered on auth page');
+              }
+            });
+          }
+        });
+        
+        // Clear all caches
+        if ('caches' in window) {
+          caches.keys().then(function(cacheNames) {
+            cacheNames.forEach(function(cacheName) {
+              caches.delete(cacheName);
+            });
+          });
+        }
+      }
+    })();
+  </script>
 </html>

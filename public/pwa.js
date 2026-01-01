@@ -7,8 +7,37 @@
   // Check if service worker is disabled (for troubleshooting)
   const swDisabled = localStorage.getItem('sw-disabled') === 'true';
   
+  // Check if we're on an authentication page - don't register SW on auth pages
+  const isAuthPage = window.location.pathname.includes('/login') || 
+                     window.location.pathname.includes('/logout') ||
+                     window.location.pathname.includes('/register') ||
+                     window.location.pathname.includes('/password/') ||
+                     window.location.pathname.includes('/email/verify') ||
+                     window.location.pathname.includes('/auth/');
+
+  // If on auth page and service worker is already registered, unregister it
+  if (isAuthPage && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister().then((success) => {
+          if (success) {
+            console.log('Service worker unregistered on auth page');
+            // Clear all caches
+            if ('caches' in window) {
+              caches.keys().then((cacheNames) => {
+                cacheNames.forEach((cacheName) => {
+                  caches.delete(cacheName);
+                });
+              });
+            }
+          }
+        });
+      });
+    });
+  }
+
   // Check if browser supports service workers
-  if ('serviceWorker' in navigator && !swDisabled) {
+  if ('serviceWorker' in navigator && !swDisabled && !isAuthPage) {
     window.addEventListener('load', () => {
       // First check if server is available before registering SW
       fetch('/')

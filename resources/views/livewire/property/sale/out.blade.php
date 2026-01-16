@@ -66,8 +66,8 @@
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="text" value="{{ number_format($sale->total_sale_price, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600" readonly>
-                            </div>
-                        </div>
+                    </div>
+                </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Paid</label>
                             <div class="relative">

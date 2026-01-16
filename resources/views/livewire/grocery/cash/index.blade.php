@@ -23,6 +23,40 @@
             </div>
         @endif
 
+        <!-- Total Credit and Debit Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-green-600 to-emerald-500 h-2"></div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_credit') }}</p>
+                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalCredit, 2) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_in_transactions') }}</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 flex items-center justify-center">
+                            <i class="fas fa-arrow-down text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-red-600 to-pink-500 h-2"></div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_debit') }}</p>
+                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalDebit, 2) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_out_transactions') }}</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-pink-400 flex items-center justify-center">
+                            <i class="fas fa-arrow-up text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
             <div class="flex gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">

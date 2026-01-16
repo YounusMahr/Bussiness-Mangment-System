@@ -87,7 +87,13 @@ class DatabaseSync extends Component
                 $totalPushed = $results['total'];
                 $totalSkipped = $results['totalSkipped'] ?? 0;
                 $syncedTables = count($results['synced']);
+                $migrationsSynced = $results['migrations_synced'] ?? false;
+                
                 $this->syncMessage = "Successfully pushed {$totalPushed} new records from {$syncedTables} tables to remote database.";
+                
+                if ($migrationsSynced) {
+                    $this->syncMessage .= " Migrations table synced successfully.";
+                }
                 
                 if ($totalSkipped > 0) {
                     $this->syncMessage .= " {$totalSkipped} existing records skipped (no duplicates).";

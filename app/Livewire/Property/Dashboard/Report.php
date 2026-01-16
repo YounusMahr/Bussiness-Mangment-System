@@ -21,7 +21,7 @@ class Report extends Component
     public function calculateStats()
     {
         // Total Sales: Sum of all plot sales total_sale_price
-        $this->totalSales = PlotSale::sum('total_sale_price') ?? 0;
+        $this->totalSales = (float)(PlotSale::sum('total_sale_price') ?? 0);
 
         // Sales Plots: Count of plot sales
         $this->salesPlots = PlotSale::count();
@@ -30,11 +30,20 @@ class Report extends Component
         $totalPlotsPurchased = PlotPurchase::count();
 
         // Remaining Plots: Total purchased - sold
-        $this->remainingPlots = $totalPlotsPurchased - $this->salesPlots;
+        $this->remainingPlots = max($totalPlotsPurchased - $this->salesPlots, 0);
 
-        // Total Profit: Total sales - Total purchase cost
-        $totalPurchaseCost = PlotPurchase::sum('plot_price') ?? 0;
-        $this->totalProfit = $this->totalSales - $totalPurchaseCost;
+        // Total Profit: Total sales - Purchase cost of SOLD plots only
+        // Get the purchase cost only for plots that were actually sold
+        $totalPurchaseCostOfSoldPlots = 0;
+        
+        $sales = PlotSale::with('plotPurchase')->get();
+        foreach ($sales as $sale) {
+            if ($sale->plotPurchase && $sale->plotPurchase->plot_price) {
+                $totalPurchaseCostOfSoldPlots += (float)$sale->plotPurchase->plot_price;
+            }
+        }
+        
+        $this->totalProfit = $this->totalSales - $totalPurchaseCostOfSoldPlots;
     }
 
     public function render()

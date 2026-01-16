@@ -19,7 +19,7 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_profit') }}</h3>
                 <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_profit_description') }}</p>
                 <div class="text-2xl font-bold {{ $totalProfit >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                  Rs {{ number_format($totalProfit, 2) }}
+                  Rs {{ number_format((float)$totalProfit, 2) }}
                 </div>
               </div>
               <div class="ml-4">
@@ -44,7 +44,7 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_sales') }}</h3>
                 <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_sales_description') }}</p>
                 <div class="text-2xl font-bold text-purple-600">
-                  Rs {{ number_format($totalSales, 2) }}
+                  Rs {{ number_format((float)$totalSales, 2) }}
                 </div>
               </div>
               <div class="ml-4">
@@ -69,7 +69,7 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.sales_plots') }}</h3>
                 <p class="text-sm text-gray-600 mb-3">{{ __('messages.sales_plots_description') }}</p>
                 <div class="text-2xl font-bold text-purple-600">
-                  {{ number_format($salesPlots) }} {{ __('messages.plots') }}
+                  {{ number_format((int)$salesPlots) }} {{ __('messages.plots') }}
                 </div>
               </div>
               <div class="ml-4">
@@ -94,7 +94,7 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.remaining_plots') }}</h3>
                 <p class="text-sm text-gray-600 mb-3">{{ __('messages.remaining_plots_description') }}</p>
                 <div class="text-2xl font-bold text-purple-600">
-                  {{ number_format($remainingPlots) }} {{ __('messages.plots') }}
+                  {{ number_format((int)$remainingPlots) }} {{ __('messages.plots') }}
                 </div>
               </div>
               <div class="ml-4">

@@ -7,6 +7,7 @@ use App\Models\Sale;
 use App\Models\Udaar;
 use App\Models\Product;
 use App\Models\Installment;
+use App\Models\GroceryCashTransaction;
 use Illuminate\Support\Facades\DB;
 
 class Index extends Component
@@ -24,6 +25,10 @@ class Index extends Component
     public $carInstallmentRevenue;
     public $carInstallmentSales;
     public $carInstallmentRemaining;
+    
+    // Cash Management
+    public $totalCashCredit;
+    public $totalCashDebit;
 
     public function mount()
     {
@@ -86,6 +91,13 @@ class Index extends Component
         });
         
         $this->totalCustomers = $allCustomers->unique()->count();
+        
+        // ========== CASH MANAGEMENT ==========
+        // Total Cash Credit (Cash-In)
+        $this->totalCashCredit = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
+        
+        // Total Cash Debit (Cash-Out)
+        $this->totalCashDebit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
     }
 
     public function render()

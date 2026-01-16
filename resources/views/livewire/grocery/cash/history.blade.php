@@ -4,20 +4,20 @@
         <div class="mb-6 no-print">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">{{ __('cash_history') }}</h1>
-                    <p class="text-slate-600 mt-1">{{ __('transaction_history_for') }} {{ $customer->name }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.cash_history') }}</h1>
+                    <p class="text-slate-600 mt-1">{{ __('messages.transaction_history_for') }} {{ $customer->name }}</p>
                 </div>
                 <div class="flex gap-2">
                     <a wire:navigate href="{{ localized_route('grocery.cash.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 px-4 py-2 bg-slate-100 rounded-lg">
                         <i class="fas fa-arrow-left"></i>
-                        {{ __('back_to_cash_management') }}
+                        {{ __('messages.back_to_cash_management') }}
                     </a>
                     <button 
                         wire:click="printHistory"
                         class="inline-flex items-center gap-2 text-sm text-slate-700 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg"
                     >
                         <i class="fas fa-print"></i>
-                        {{ __('print') }}
+                        {{ __('messages.print') }}
                     </button>
                 </div>
             </div>
@@ -25,21 +25,21 @@
 
         <!-- Customer Information Card -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 print-section">
-            <div class="bg-gradient-to-r from-green-600 to-emerald-500 h-2 no-print"></div>
+            <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2 no-print"></div>
             <div class="p-6 print-content">
-                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('customer_information') }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.customer_information') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 print-grid">
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('customer_name') }}</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.customer_name') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $customer->name }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('customer_number') }}</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.customer_number') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $customer->number ?: '--' }}</p>
                     </div>
                     @if($customer->email)
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('email') }}</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.email') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $customer->email }}</p>
                     </div>
                     @endif
@@ -49,22 +49,25 @@
 
         <!-- Summary Card -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 no-print">
-            <div class="bg-gradient-to-r from-green-600 to-emerald-500 h-2"></div>
+            <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2"></div>
             <div class="p-6">
-                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('summary') }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.summary') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('total_cash_in') }}</label>
-                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($transactions->where('type', 'cash-in')->sum('return_amount'), 2) }}</p>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.total_credit') }}</label>
+                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($totalCredit, 2) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('total_cash_out') }}</label>
-                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($transactions->where('type', 'cash-out')->sum('returned_amount'), 2) }}</p>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.total_debit') }}</label>
+                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($totalDebit, 2) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">{{ __('total_remaining') }}</label>
-                        <p class="text-xl font-bold {{ ($transactions->where('type', 'cash-in')->sum('return_amount') - $transactions->where('type', 'cash-out')->sum('returned_amount')) >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            Rs {{ number_format($transactions->where('type', 'cash-in')->sum('return_amount') - $transactions->where('type', 'cash-out')->sum('returned_amount'), 2) }}
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.balance') }}</label>
+                        <p class="text-xl font-bold {{ $finalBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                            Rs {{ number_format($finalBalance, 2) }}
+                            @if($finalBalance < 0)
+                                <span class="text-sm">dr</span>
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -73,120 +76,69 @@
 
         <!-- Transactions Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-200 no-print">
-                <h2 class="text-lg font-semibold text-slate-900">{{ __('transaction_history') }}</h2>
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="print-table-header" style="display: none;">
-                <h2 class="text-lg font-semibold text-slate-900">{{ __('transaction_history') }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="overflow-x-auto print-table-container">
                 <table class="min-w-full divide-y divide-gray-200" id="history-table">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('date') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('type') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('invest_cash') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('interest') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('time_period') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('due_date') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('return_amount') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('available_balance') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('returned_amount') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('remaining_balance') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('status') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('notes') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.date') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.details') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.debit') }} (-)</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.credit') }} (+)</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.balance') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($transactions as $index => $transaction)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-semibold">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 font-semibold">
                                     {{ $index + 1 }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $transaction->date->format('Y-m-d') }}
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                                    {{ $transaction->date->format('d M y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($transaction->type === 'cash-in')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-arrow-down mr-1"></i>{{ __('cash_in') }}
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            <i class="fas fa-arrow-up mr-1"></i>{{ __('cash_out') }}
-                                        </span>
-                                    @endif
+                                <td class="px-4 py-3 text-sm text-gray-700">
+                                    <div>
+                                        @if($transaction->notes)
+                                            <div class="font-medium">{{ $transaction->notes }}</div>
+                                        @else
+                                            <div class="font-medium">{{ $transaction->type === 'cash-in' ? __('messages.cash_in') : __('messages.cash_out') }}</div>
+                                        @endif
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    @if($transaction->type === 'cash-in')
-                                        Rs {{ number_format($transaction->invest_cash, 2) }}
-                                    @else
-                                        --
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    @if($transaction->type === 'cash-in' && $transaction->interest > 0)
-                                        Rs {{ number_format($transaction->interest, 2) }}
-                                    @else
-                                        --
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $transaction->time_period ?: '--' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    @if($transaction->due_date)
-                                        <span class="@if($transaction->due_date < now()) text-red-600 font-semibold @elseif($transaction->due_date->diffInDays(now()) <= 7) text-yellow-600 @endif">
-                                            {{ $transaction->due_date->format('Y-m-d') }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-400">--</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {{ $transaction->type === 'cash-in' ? 'text-green-600' : 'text-gray-400' }}">
-                                    @if($transaction->type === 'cash-in')
-                                        Rs {{ number_format($transaction->return_amount, 2) }}
-                                    @else
-                                        --
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-red-600 text-right">
                                     @if($transaction->type === 'cash-out')
-                                        Rs {{ number_format($transaction->available_balance, 2) }}
+                                        Rs {{ number_format((float)($transaction->returned_amount ?? 0), 2) }}
                                     @else
                                         --
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {{ $transaction->type === 'cash-out' ? 'text-red-600' : 'text-gray-400' }}">
-                                    @if($transaction->type === 'cash-out')
-                                        Rs {{ number_format($transaction->returned_amount, 2) }}
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600 text-right">
+                                    @if($transaction->type === 'cash-in')
+                                        Rs {{ number_format((float)($transaction->return_amount ?? 0), 2) }}
                                     @else
                                         --
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                                    @if($transaction->type === 'cash-out')
-                                        Rs {{ number_format($transaction->remaining_balance, 2) }}
-                                    @else
-                                        --
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->running_balance ?? 0) >= 0 ? 'text-gray-700' : 'text-red-600' }}">
+                                    Rs {{ number_format((float)($transaction->running_balance ?? 0), 2) }}
+                                    @if(($transaction->running_balance ?? 0) < 0)
+                                        <span class="text-xs">dr</span>
                                     @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $transaction->status === 'returned' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $transaction->status === 'returned' ? __('returned') : __('pending') }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    {{ $transaction->notes ?: '--' }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="13" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
-                                        <p>{{ __('no_transactions_found') }}</p>
+                                        <p>{{ __('messages.no_transactions_found') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -420,4 +372,3 @@
     });
     </script>
 </div>
-

@@ -58,9 +58,9 @@
                                     <h3 class="text-lg font-semibold text-gray-900">{{ $sale->customer_name }}</h3>
                                     <p class="text-sm text-gray-600 mt-1">
                                         <i class="fas fa-phone text-xs"></i>
-                                        {{ $sale->customer_number }}
+                                    {{ $sale->customer_number }}
                                     </p>
-                                </div>
+            </div>
                             </div>
                         </div>
 
@@ -132,27 +132,27 @@
                                 >
                                     <i class="fas fa-history mr-1"></i> {{ __('messages.history') }}
                                 </a>
-                                <a 
-                                    wire:navigate
-                                    href="{{ localized_route('property.sale.edit', $sale) }}"
+                            <a 
+                                wire:navigate
+                                href="{{ localized_route('property.sale.edit', $sale) }}"
                                     class="flex-1 text-center px-3 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
                                     title="{{ __('messages.edit') }}"
-                                >
+                            >
                                     <i class="fas fa-edit mr-1"></i> {{ __('messages.edit') }}
-                                </a>
-                                <button 
-                                    wire:click="confirmDelete({{ $sale->id }})"
+                            </a>
+                            <button 
+                                wire:click="confirmDelete({{ $sale->id }})"
                                     type="button"
                                     class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
                                     title="{{ __('messages.delete') }}"
-                                >
+                            >
                                     <i class="fas fa-trash"></i>
-                                </button>
+                            </button>
                             </div>
                         </div>
+                        </div>
                     </div>
-                </div>
-            @empty
+                @empty
                 <div class="col-span-full">
                     <div class="bg-white shadow-soft-xl rounded-2xl p-12 text-center">
                         <i class="fas fa-handshake text-gray-300 text-6xl mb-4"></i>
@@ -162,16 +162,16 @@
                             {{ __('messages.add_plot_sale') }}
                         </a>
                     </div>
-                </div>
-            @endforelse
-        </div>
+                    </div>
+                @endforelse
+            </div>
 
         <!-- Pagination -->
-        @if($sales->hasPages())
+            @if($sales->hasPages())
             <div class="flex justify-center py-6 mt-6">
-                {{ $sales->links() }}
-            </div>
-        @endif
+                    {{ $sales->links() }}
+                </div>
+            @endif
     </div>
 
     <!-- Delete Confirmation Modal -->

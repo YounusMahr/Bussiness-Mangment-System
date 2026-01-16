@@ -93,6 +93,10 @@ class Index extends Component
             $customer->status = $latestTransaction ? $latestTransaction->status : 'pending';
         }
 
-        return view('livewire.grocery.cash.index', compact('customers'));
+        // Calculate overall totals (Credit = Cash-In, Debit = Cash-Out)
+        $totalCredit = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
+        $totalDebit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
+
+        return view('livewire.grocery.cash.index', compact('customers', 'totalCredit', 'totalDebit'));
     }
 }

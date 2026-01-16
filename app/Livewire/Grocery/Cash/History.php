@@ -23,10 +23,35 @@ class History extends Component
 
     public function render()
     {
-        $transactions = $this->customer->groceryCashTransactions()->orderBy('date', 'desc')->get();
+        // Get transactions ordered by date ascending for running balance calculation
+        $transactions = $this->customer->groceryCashTransactions()
+            ->orderBy('date', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
         
-        return view('livewire.grocery.cash.history', compact('transactions'))
-            ->title('Cash History - ' . $this->customer->name);
+        // Calculate running balance
+        $runningBalance = 0;
+        $transactionsWithBalance = $transactions->map(function ($transaction) use (&$runningBalance) {
+            if ($transaction->type === 'cash-in') {
+                $runningBalance += (float)($transaction->return_amount ?? 0);
+            } else {
+                $runningBalance -= (float)($transaction->returned_amount ?? 0);
+            }
+            $transaction->running_balance = $runningBalance;
+            return $transaction;
+        });
+        
+        // Calculate totals
+        $totalCredit = $transactions->where('type', 'cash-in')->sum('return_amount');
+        $totalDebit = $transactions->where('type', 'cash-out')->sum('returned_amount');
+        $finalBalance = $totalCredit - $totalDebit;
+        
+        return view('livewire.grocery.cash.history', [
+            'transactions' => $transactionsWithBalance,
+            'totalCredit' => $totalCredit,
+            'totalDebit' => $totalDebit,
+            'finalBalance' => $finalBalance
+        ])->title('Cash History - ' . $this->customer->name);
     }
 }
 

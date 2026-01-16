@@ -5,7 +5,7 @@
             <div class="flex items-start justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">Plot Purchase History</h1>
-                    <p class="text-slate-600 mt-1">Transaction history for {{ $purchase->plot_area }}</p>
+                    <p class="text-slate-600 mt-1">Transaction history for {{ $purchase->plot_area ?? 'N/A' }} @if($purchase->customer) - {{ $purchase->customer->name }}@endif</p>
                 </div>
                 <div class="flex gap-2">
                     <a wire:navigate href="{{ localized_route('property.purchase.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 px-4 py-2 bg-slate-100 rounded-lg">
@@ -29,21 +29,27 @@
             <div class="p-6 print-content">
                 <h2 class="text-lg font-semibold text-slate-900 mb-4">Plot Purchase Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-grid">
+                    @if($purchase->customer)
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Customer</label>
+                        <p class="text-base font-semibold text-slate-900">{{ $purchase->customer->name }} ({{ $purchase->customer->number }})</p>
+                    </div>
+                    @endif
                     <div>
                         <label class="text-sm font-medium text-slate-500">Plot Area</label>
-                        <p class="text-base font-semibold text-slate-900">{{ $purchase->plot_area }}</p>
+                        <p class="text-base font-semibold text-slate-900">{{ $purchase->plot_area ?? 'N/A' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-500">Location</label>
-                        <p class="text-base font-semibold text-slate-900">{{ $purchase->location }}</p>
+                        <p class="text-base font-semibold text-slate-900">{{ $purchase->location ?? 'N/A' }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-500">Plot Price</label>
-                        <p class="text-base font-semibold text-slate-900">Rs {{ number_format($purchase->plot_price, 2) }}</p>
+                        <p class="text-base font-semibold text-slate-900">Rs {{ number_format((float)($purchase->plot_price ?? 0), 2) }}</p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-500">Purchase Date</label>
-                        <p class="text-base font-semibold text-slate-900">{{ $purchase->date->format('Y-m-d') }}</p>
+                        <p class="text-base font-semibold text-slate-900">{{ $purchase->date ? $purchase->date->format('Y-m-d') : 'N/A' }}</p>
                     </div>
                     @if($purchase->installments)
                     <div class="md:col-span-2 lg:col-span-4">

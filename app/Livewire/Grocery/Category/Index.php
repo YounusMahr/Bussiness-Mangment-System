@@ -31,6 +31,7 @@ class Index extends Component
     public function confirmDelete($id) 
     {
         $this->confirmingDeleteId = $id;
+        $this->dispatch('delete-confirmed');
     }
 
     public function cancelDelete() 

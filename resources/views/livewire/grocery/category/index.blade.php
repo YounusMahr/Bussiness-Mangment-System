@@ -86,12 +86,20 @@
                                         </a>
                                         <button 
                                             type="button"
-                                            wire:click="confirmDelete({{ $category->id }})" 
+                                            wire:click.stop="confirmDelete({{ $category->id }})" 
+                                            wire:key="delete-btn-{{ $category->id }}"
                                             wire:loading.attr="disabled"
-                                            class="text-red-600 hover:text-red-900 transition-colors px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed" 
+                                            wire:target="confirmDelete"
+                                            onclick="event.stopPropagation();"
+                                            class="text-red-600 hover:text-red-900 transition-colors px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" 
                                             title="Delete"
                                         >
-                                            <i class="fas fa-trash"></i>
+                                            <span wire:loading.remove wire:target="confirmDelete">
+                                                <i class="fas fa-trash"></i>
+                                            </span>
+                                            <span wire:loading wire:target="confirmDelete">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                            </span>
                                         </button>
                                     </div>
                                 </td>

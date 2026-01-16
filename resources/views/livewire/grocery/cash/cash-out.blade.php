@@ -73,17 +73,33 @@
                             <label for="returned_amount" class="block text-sm font-medium text-slate-700 mb-2">{{ __('returned_amount') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model.live="returned_amount" id="returned_amount" step="0.01" min="0" max="{{ $available_balance }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                                <input type="number" wire:model.live="returned_amount" id="returned_amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
                             </div>
+                            <p class="mt-1 text-xs text-slate-500">
+                                @if($excess_amount > 0)
+                                    <span class="text-green-600 font-medium">
+                                        <i class="fas fa-info-circle"></i> 
+                                        {{ __('messages.overpaid_amount_will_be_added_to_cash_in') }} (Rs {{ number_format($excess_amount, 2) }})
+                                    </span>
+                                @else
+                                    {{ __('messages.enter_returned_amount') }}
+                                @endif
+                            </p>
                             @error('returned_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label for="remaining_balance" class="block text-sm font-medium text-slate-700 mb-2">{{ __('remaining_balance') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model="remaining_balance" id="remaining_balance" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent bg-slate-50" readonly>
+                                <input type="number" wire:model="remaining_balance" id="remaining_balance" step="0.01" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent bg-slate-50 {{ $remaining_balance < 0 ? 'border-green-300 bg-green-50' : '' }}" readonly>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">{{ __('calculated_automatically') }}</p>
+                            <p class="mt-1 text-xs text-slate-500">
+                                @if($remaining_balance < 0)
+                                    <span class="text-green-600 font-medium">{{ __('messages.overpaid_amount_will_be_added_to_cash_in') }}</span>
+                                @else
+                                    {{ __('messages.calculated_automatically') }}
+                                @endif
+                            </p>
                             @error('remaining_balance') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>

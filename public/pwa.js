@@ -35,7 +35,7 @@
       });
     });
   }
-
+  
   // Check if browser supports service workers
   if ('serviceWorker' in navigator && !swDisabled && !isAuthPage) {
     window.addEventListener('load', () => {

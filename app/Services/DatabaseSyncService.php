@@ -112,7 +112,8 @@ class DatabaseSyncService
             'skipped' => [],
             'errors' => [],
             'total' => 0,
-            'totalSkipped' => 0
+            'totalSkipped' => 0,
+            'migrations_synced' => false
         ];
 
         if (!$this->isOnline() || !$this->isRemoteConnected()) {
@@ -121,6 +122,17 @@ class DatabaseSyncService
             return $results;
         }
 
+        // First, sync migrations table to ensure schema consistency
+        try {
+            $this->syncMigrationsTable();
+            $results['migrations_synced'] = true;
+            Log::info('Migrations table synced successfully');
+        } catch (Exception $e) {
+            Log::warning('Failed to sync migrations table: ' . $e->getMessage());
+            // Continue with data sync even if migrations sync fails
+        }
+
+        // Then sync all data tables
         $tables = $this->getTablesToSync();
 
         foreach ($tables as $table) {
@@ -380,11 +392,84 @@ class DatabaseSyncService
     }
 
     /**
+     * Sync migrations table from local to remote
+     * This ensures both databases know which migrations have been run
+     */
+    protected function syncMigrationsTable(): void
+    {
+        try {
+            // Check if migrations table exists on remote, if not, create it
+            $tableExists = DB::connection($this->remoteConnection)
+                ->select("SHOW TABLES LIKE 'migrations'");
+            
+            if (empty($tableExists)) {
+                // Create migrations table if it doesn't exist
+                DB::connection($this->remoteConnection)->statement("
+                    CREATE TABLE IF NOT EXISTS `migrations` (
+                        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                        `migration` varchar(255) NOT NULL,
+                        `batch` int(11) NOT NULL,
+                        PRIMARY KEY (`id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ");
+                Log::info('Created migrations table on remote database');
+            }
+            
+            // Get all migration records from local
+            $localMigrations = DB::connection($this->localConnection)
+                ->table('migrations')
+                ->get();
+            
+            if ($localMigrations->isEmpty()) {
+                return;
+            }
+            
+            // Get existing migration records from remote
+            $remoteMigrations = DB::connection($this->remoteConnection)
+                ->table('migrations')
+                ->pluck('migration')
+                ->toArray();
+            
+            $remoteMigrationsSet = array_flip($remoteMigrations);
+            $syncedCount = 0;
+            
+            // Insert missing migrations into remote
+            foreach ($localMigrations as $migration) {
+                $migrationName = $migration->migration;
+                
+                // Check if migration already exists in remote
+                if (!isset($remoteMigrationsSet[$migrationName])) {
+                    // Insert new migration record
+                    DB::connection($this->remoteConnection)
+                        ->table('migrations')
+                        ->insert([
+                            'migration' => $migrationName,
+                            'batch' => $migration->batch ?? 1
+                        ]);
+                    
+                    $syncedCount++;
+                    Log::info("Synced migration: {$migrationName} to remote database");
+                }
+            }
+            
+            if ($syncedCount > 0) {
+                Log::info("Synced {$syncedCount} migration(s) to remote database");
+            }
+        } catch (Exception $e) {
+            // Log the error but don't fail the entire sync
+            Log::warning('Failed to sync migrations table: ' . $e->getMessage());
+            // Re-throw to be caught by caller
+            throw $e;
+        }
+    }
+
+    /**
      * Get list of tables to sync (excluding system tables)
      */
     protected function getTablesToSync(): array
     {
-        $excludedTables = ['migrations', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'failed_jobs', 'job_batches', 'jobs'];
+        // Exclude system tables but keep migrations for separate handling
+        $excludedTables = ['password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'failed_jobs', 'job_batches', 'jobs'];
         
         $tables = DB::connection($this->localConnection)
             ->select("SHOW TABLES");

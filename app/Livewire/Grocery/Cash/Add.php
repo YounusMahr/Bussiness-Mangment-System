@@ -62,8 +62,8 @@ class Add extends Component
 
     public function calculateReturnAmount()
     {
-        $invest = $this->invest_cash ?? 0;
-        $interest = $this->interest ?? 0;
+        $invest = (float)($this->invest_cash ?? 0);
+        $interest = (float)($this->interest ?? 0);
         $this->return_amount = $invest + $interest;
     }
 

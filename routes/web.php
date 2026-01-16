@@ -173,6 +173,7 @@ Route::group([
     Route::get('grocery/cash/{customer}/cash-in', App\Livewire\Grocery\Cash\CashIn::class)->name('grocery.cash.cash-in');
     Route::get('grocery/cash/{customer}/cash-out', App\Livewire\Grocery\Cash\CashOut::class)->name('grocery.cash.cash-out');
     Route::get('grocery/cash/{customer}/history', App\Livewire\Grocery\Cash\History::class)->name('grocery.cash.history');
+    Route::get('grocery/cash/history/all', App\Livewire\Grocery\Cash\AllHistory::class)->name('grocery.cash.history.all');
 
     // Grocery Stock Purchase Routes
     Route::get('grocery/purchases', App\Livewire\Grocery\Purchase\BulkPurchase::class)->name('purchases.bulk');

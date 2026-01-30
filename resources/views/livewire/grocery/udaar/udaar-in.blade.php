@@ -116,12 +116,12 @@
                             @error('product_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="new_udaar_amount" class="block text-sm font-medium text-slate-700 mb-2">New Udaar Amount *</label>
+                            <label for="new_udaar_amount" class="block text-sm font-medium text-slate-700 mb-2">New Udaar Amount</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="number" wire:model.live="new_udaar_amount" id="new_udaar_amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Amount of new purchase on udaar</p>
+                            <p class="mt-1 text-xs text-slate-500">Amount of new purchase on udaar (defaults to 0 if empty)</p>
                             @error('new_udaar_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>

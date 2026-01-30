@@ -5,6 +5,7 @@ namespace App\Livewire\Property\Sale;
 use App\Models\Customer;
 use App\Models\PlotPurchase;
 use App\Models\PlotSale;
+use App\Models\PlotSaleTransaction;
 use Livewire\Component;
 
 class Add extends Component
@@ -121,7 +122,7 @@ class Add extends Component
         $this->validate();
         $this->calculateRemaining();
 
-        PlotSale::create([
+        $sale = PlotSale::create([
             'date' => $this->date,
             'plot_purchase_id' => $this->plot_purchase_id,
             'customer_name' => $this->customer_name,
@@ -133,6 +134,24 @@ class Add extends Component
             'remaining' => $this->remaining,
             'time_period' => $this->time_period ?: null,
             'status' => $this->status,
+        ]);
+
+        // Create initial transaction record for the new sale
+        // For Khata: Use total_sale_price as the main transaction amount
+        PlotSaleTransaction::create([
+            'plot_sale_id' => $sale->id,
+            'date' => $this->date,
+            'type' => 'sale-in', // Credit - initial sale
+            'installment_no' => $this->installment_no ?: 'Initial',
+            'installment_amount' => $this->total_sale_price, // Main transaction amount for Khata
+            'paid_amount' => $this->paid,
+            'total_sale_price_before' => 0,
+            'paid_before' => 0,
+            'remaining_before' => 0,
+            'total_sale_price_after' => $this->total_sale_price,
+            'paid_after' => $this->paid,
+            'remaining_after' => $this->remaining,
+            'notes' => 'Initial plot sale record created: Rs ' . number_format($this->total_sale_price, 2),
         ]);
 
         session()->flash('message', 'Plot sale created successfully!');

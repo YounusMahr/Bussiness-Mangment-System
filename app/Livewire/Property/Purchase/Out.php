@@ -3,6 +3,7 @@
 namespace App\Livewire\Property\Purchase;
 
 use App\Models\PlotPurchase;
+use App\Models\PlotPurchaseTransaction;
 use Livewire\Component;
 
 class Out extends Component
@@ -67,17 +68,27 @@ class Out extends Component
         $this->validate();
         $this->calculateAmounts();
 
-        // TODO: Create a PlotPurchaseTransaction model to properly track transactions
-        // For now, we'll just show a success message
-        // The transaction will be stored in a transaction table when implemented
+        $purchase = PlotPurchase::findOrFail($this->purchaseId);
         
-        $message = 'Installment recorded successfully! ';
-        $message .= 'Installment #' . $this->installment_no . ': ';
-        $message .= 'Amount: Rs ' . number_format($this->installment_amount, 2) . ', ';
-        $message .= 'Paid: Rs ' . number_format($this->paid_amount, 2) . ', ';
-        $message .= 'Remaining: Rs ' . number_format($this->remaining, 2);
+        // Store old values
+        $oldPlotPrice = $purchase->plot_price ?? 0;
         
-        session()->flash('message', $message);
+        // Create transaction record (Debit - payment made)
+        // For Khata: Debit = Money paid, use installment_amount as payment_amount
+        PlotPurchaseTransaction::create([
+            'plot_purchase_id' => $this->purchaseId,
+            'date' => $this->date,
+            'type' => 'purchase-out',
+            'installment_no' => $this->installment_no,
+            'installment_amount' => $this->installment_amount, // Main transaction amount
+            'paid_amount' => $this->paid_amount,
+            'payment_amount' => $this->installment_amount, // This is the debit amount (money paid) - use installment_amount
+            'plot_price_before' => $oldPlotPrice,
+            'plot_price_after' => $oldPlotPrice, // Plot price doesn't change on payment
+            'notes' => $this->notes ?: 'Debit transaction - Payment made: Rs ' . number_format($this->installment_amount, 2),
+        ]);
+        
+        session()->flash('message', 'Debit transaction recorded successfully! Installment #' . $this->installment_no . ': Amount: Rs ' . number_format($this->installment_amount, 2) . ', Paid: Rs ' . number_format($this->paid_amount, 2) . ', Remaining: Rs ' . number_format($this->remaining, 2));
         return $this->redirectRoute('property.purchase.index', ['locale' => app()->getLocale()]);
     }
 

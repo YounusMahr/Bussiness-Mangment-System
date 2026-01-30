@@ -3,6 +3,7 @@
 namespace App\Livewire\Grocery\Udaar;
 
 use App\Models\Udaar;
+use App\Models\UdaarTransaction;
 use Livewire\Component;
 
 class History extends Component
@@ -13,7 +14,7 @@ class History extends Component
 
     public function mount(Udaar $udaar)
     {
-        $this->udaar = $udaar->load(['transactions.product']);
+        $this->udaar = $udaar;
     }
 
     public function printHistory()
@@ -23,37 +24,38 @@ class History extends Component
 
     public function render()
     {
-        // Get transactions ordered by date ascending for running balance calculation
-        $transactions = $this->udaar->transactions()
+        // Simple like Cash: date asc, id asc (oldest first). Bypass relation default order.
+        $transactions = UdaarTransaction::where('udaar_id', $this->udaar->id)
             ->orderBy('date', 'asc')
             ->orderBy('id', 'asc')
             ->get();
-        
-        // Calculate running balance
+
+        // Running balance: debit adds, credit subtracts. Allow negative (overpayment).
         $runningBalance = 0;
-        $transactionsWithBalance = $transactions->map(function ($transaction) use (&$runningBalance) {
-            if ($transaction->type === 'udaar-in') {
-                // Credit: Add the new udaar amount
-                $runningBalance += (float)($transaction->new_udaar_amount ?? 0);
+        $balanceMap = [];
+        foreach ($transactions as $t) {
+            if ($t->type === 'udaar-in') {
+                $runningBalance += (float)($t->new_udaar_amount ?? 0);
             } else {
-                // Debit: Subtract the payment amount
-                $runningBalance -= (float)($transaction->payment_amount ?? 0);
+                $runningBalance -= (float)($t->payment_amount ?? 0);
             }
-            $transaction->running_balance = $runningBalance;
-            return $transaction;
+            $balanceMap[$t->id] = $runningBalance;
+        }
+
+        $withBalance = $transactions->map(function ($t) use ($balanceMap) {
+            $t->running_balance = $balanceMap[$t->id] ?? 0;
+            return $t;
         });
-        
-        // Calculate totals
-        $totalCredit = $transactions->where('type', 'udaar-in')->sum('new_udaar_amount');
-        $totalDebit = $transactions->where('type', 'udaar-out')->sum('payment_amount');
-        $finalBalance = $totalCredit - $totalDebit;
-        
+
+        $totalCredit = (float) $transactions->where('type', 'udaar-out')->sum('payment_amount');
+        $totalDebit = (float) $transactions->where('type', 'udaar-in')->sum('new_udaar_amount');
+        $finalBalance = $totalDebit - $totalCredit;
+
         return view('livewire.grocery.udaar.udaar-history', [
-            'transactions' => $transactionsWithBalance,
+            'transactions' => $withBalance,
             'totalCredit' => $totalCredit,
             'totalDebit' => $totalDebit,
-            'finalBalance' => $finalBalance
-        ])->title('Udaar History - ' . $this->udaar->customer_name);
+            'finalBalance' => $finalBalance,
+        ])->title(__('messages.udaar_history') . ' - ' . $this->udaar->customer_name);
     }
 }
-

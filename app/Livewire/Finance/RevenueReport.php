@@ -8,6 +8,31 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 
+class RevenueRecord
+{
+    public $id;
+    public $date;
+    public $system;
+    public $customer_name;
+    public $customer_number;
+    public $total_price;
+    public $paid_amount;
+    public $remaining_amount;
+    public $payment_method;
+
+    public function __construct($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
+    public function getKey()
+    {
+        return $this->id;
+    }
+}
+
 class RevenueReport extends Component
 {
     use WithPagination;
@@ -66,17 +91,17 @@ class RevenueReport extends Component
             }
             
             $grocerySales = $groceryQuery->get()->map(function($sale) {
-                return (object)[
+                return new RevenueRecord([
                     'id' => 'grocery-' . $sale->id,
                     'date' => $sale->date,
                     'system' => 'Grocery',
                     'customer_name' => $sale->customer_name,
                     'customer_number' => null,
-                    'total_price' => $sale->total_price,
-                    'paid_amount' => $sale->paid_amount,
-                    'remaining_amount' => $sale->total_price - $sale->paid_amount,
+                    'total_price' => (float)$sale->total_price,
+                    'paid_amount' => (float)$sale->paid_amount,
+                    'remaining_amount' => (float)$sale->total_price - (float)$sale->paid_amount,
                     'payment_method' => $sale->payment_method,
-                ];
+                ]);
             });
         }
         
@@ -92,17 +117,17 @@ class RevenueReport extends Component
             }
             
             $carInstallments = $installmentQuery->get()->map(function($installment) {
-                return (object)[
+                return new RevenueRecord([
                     'id' => 'installment-' . $installment->id,
                     'date' => $installment->date,
                     'system' => 'Car-Installment',
                     'customer_name' => $installment->customer->name ?? 'N/A',
                     'customer_number' => $installment->number ?? $installment->customer->number ?? null,
-                    'total_price' => $installment->total_price,
-                    'paid_amount' => $installment->paid,
-                    'remaining_amount' => $installment->remaining,
+                    'total_price' => (float)$installment->total_price,
+                    'paid_amount' => (float)$installment->paid,
+                    'remaining_amount' => (float)$installment->remaining,
                     'payment_method' => 'Installment',
-                ];
+                ]);
             });
         }
         
@@ -111,15 +136,20 @@ class RevenueReport extends Component
         
         // Paginate manually
         $perPage = 50;
-        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
-        $items = $allRecords->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $currentPage = request()->get('page', 1);
+        $items = $allRecords->slice(($currentPage - 1) * $perPage, $perPage)->values();
         $sales = new \Illuminate\Pagination\LengthAwarePaginator(
             $items,
             $allRecords->count(),
             $perPage,
             $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+                'pageName' => 'page',
+            ]
         );
+        $sales->setCollection($items);
 
         // Calculate totals
         $totalRevenue = $allRecords->sum('paid_amount');

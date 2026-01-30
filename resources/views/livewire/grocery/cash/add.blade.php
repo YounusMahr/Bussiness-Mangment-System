@@ -68,53 +68,12 @@
                             @error('date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label for="invest_cash" class="block text-sm font-medium text-slate-700 mb-2">{{ __('cash') }} *</label>
+                            <label for="amount" class="block text-sm font-medium text-slate-700 mb-2">{{ __('amount') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model.live="invest_cash" id="invest_cash" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                                <input type="number" wire:model="amount" id="amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
                             </div>
-                            @error('invest_cash') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label for="interest" class="block text-sm font-medium text-slate-700 mb-2">{{ __('interest') }}</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model.live="interest" id="interest" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
-                            </div>
-                            @error('interest') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label for="time_period" class="block text-sm font-medium text-slate-700 mb-2">{{ __('time_period') }}</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-clock"></i></span>
-                                <input type="text" wire:model="time_period" id="time_period" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent placeholder:text-slate-400" placeholder="e.g., 3 months, 1 year">
-                            </div>
-                            @error('time_period') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label for="return_amount" class="block text-sm font-medium text-slate-700 mb-2">{{ __('total_return') }}</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model="return_amount" id="return_amount" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent bg-slate-50" readonly>
-                            </div>
-                            <p class="mt-1 text-xs text-slate-500">{{ __('calculated_automatically') }}</p>
-                            @error('return_amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label for="due_date" class="block text-sm font-medium text-slate-700 mb-2">{{ __('return_date') }}</label>
-                            <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-calendar-alt"></i></span>
-                                <input type="date" wire:model="due_date" id="due_date" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
-                            </div>
-                            @error('due_date') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-slate-700 mb-2">{{ __('status') }} *</label>
-                            <select wire:model="status" id="status" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
-                                <option value="pending">{{ __('pending') }}</option>
-                                <option value="returned">{{ __('returned') }}</option>
-                            </select>
-                            @error('status') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @error('amount') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
@@ -132,7 +91,7 @@
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
                     <a wire:navigate href="{{ localized_route('grocery.cash.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('cancel') }}</a>
-                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white rounded-lg">{{ __('save_cash_in') }}</button>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white rounded-lg">{{ __('credit') }}</button>
                 </div>
             </form>
         </div>

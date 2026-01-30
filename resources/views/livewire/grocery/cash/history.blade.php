@@ -63,11 +63,8 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-slate-500">{{ __('messages.balance') }}</label>
-                        <p class="text-xl font-bold {{ $finalBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            Rs {{ number_format($finalBalance, 2) }}
-                            @if($finalBalance < 0)
-                                <span class="text-sm">dr</span>
-                            @endif
+                        <p class="text-xl font-bold {{ $finalBalance > 0 ? 'text-red-600' : 'text-gray-900' }}">
+                            Rs {{ number_format($finalBalance, 2) }}{{ $finalBalance > 0 ? ' dr' : '' }}
                         </p>
                     </div>
                 </div>
@@ -108,29 +105,26 @@
                                         @if($transaction->notes)
                                             <div class="font-medium">{{ $transaction->notes }}</div>
                                         @else
-                                            <div class="font-medium">{{ $transaction->type === 'cash-in' ? __('messages.cash_in') : __('messages.cash_out') }}</div>
+                                            <div class="font-medium">{{ $transaction->type === 'cash-in' ? __('messages.credit') : __('messages.debit') }}</div>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-red-600 text-right">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ $transaction->type === 'cash-out' ? 'bg-red-50 text-red-600' : 'text-gray-400' }}">
                                     @if($transaction->type === 'cash-out')
-                                        Rs {{ number_format((float)($transaction->returned_amount ?? 0), 2) }}
+                                        Rs {{ number_format((float)($transaction->returned_amount ?? 0), 2) }} (-)
                                     @else
                                         --
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600 text-right">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ $transaction->type === 'cash-in' ? 'bg-green-50 text-green-600' : 'text-gray-400' }}">
                                     @if($transaction->type === 'cash-in')
-                                        Rs {{ number_format((float)($transaction->return_amount ?? 0), 2) }}
+                                        Rs {{ number_format((float)($transaction->return_amount ?? 0), 2) }} (+)
                                     @else
                                         --
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->running_balance ?? 0) >= 0 ? 'text-gray-700' : 'text-red-600' }}">
-                                    Rs {{ number_format((float)($transaction->running_balance ?? 0), 2) }}
-                                    @if(($transaction->running_balance ?? 0) < 0)
-                                        <span class="text-xs">dr</span>
-                                    @endif
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ (float)($transaction->running_balance ?? 0) > 0 ? 'text-red-600' : 'text-gray-600' }}">
+                                    Rs {{ number_format((float)($transaction->running_balance ?? 0), 2) }}{{ (float)($transaction->running_balance ?? 0) > 0 ? ' dr' : '' }}
                                 </td>
                             </tr>
                         @empty

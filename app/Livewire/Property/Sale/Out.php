@@ -3,6 +3,7 @@
 namespace App\Livewire\Property\Sale;
 
 use App\Models\PlotSale;
+use App\Models\PlotSaleTransaction;
 use Livewire\Component;
 
 class Out extends Component
@@ -67,17 +68,44 @@ class Out extends Component
         $this->validate();
         $this->calculateAmounts();
 
-        // TODO: Create a PlotSaleTransaction model to properly track transactions
-        // For now, we'll just show a success message
-        // The transaction will be stored in a transaction table when implemented
+        $sale = PlotSale::findOrFail($this->saleId);
         
-        $message = 'Debit transaction recorded successfully! ';
-        $message .= 'Installment #' . $this->installment_no . ': ';
-        $message .= 'Amount: Rs ' . number_format($this->installment_amount, 2) . ', ';
-        $message .= 'Paid: Rs ' . number_format($this->paid_amount, 2) . ', ';
-        $message .= 'Remaining: Rs ' . number_format($this->remaining, 2);
+        // Store old values
+        $oldTotalSalePrice = $sale->total_sale_price ?? 0;
+        $oldPaid = $sale->paid ?? 0;
+        $oldRemaining = $sale->remaining ?? 0;
         
-        session()->flash('message', $message);
+        // Calculate new values (Debit - payment made/refund)
+        $newPaid = max($oldPaid - $this->paid_amount, 0);
+        $newRemaining = $oldRemaining + $this->paid_amount;
+        
+        // Create transaction record (Debit - payment made/refund)
+        // For Khata: Debit = Money paid, use installment_amount as payment_amount
+        PlotSaleTransaction::create([
+            'plot_sale_id' => $this->saleId,
+            'date' => $this->date,
+            'type' => 'sale-out',
+            'installment_no' => $this->installment_no,
+            'installment_amount' => $this->installment_amount, // Main transaction amount
+            'paid_amount' => $this->paid_amount,
+            'payment_amount' => $this->installment_amount, // This is the debit amount (money paid/refunded) - use installment_amount
+            'total_sale_price_before' => $oldTotalSalePrice,
+            'paid_before' => $oldPaid,
+            'remaining_before' => $oldRemaining,
+            'total_sale_price_after' => $oldTotalSalePrice,
+            'paid_after' => $newPaid,
+            'remaining_after' => $newRemaining,
+            'notes' => $this->notes ?: 'Debit transaction - Payment made/refund: Rs ' . number_format($this->installment_amount, 2),
+        ]);
+        
+        // Update the sale record
+        $sale->update([
+            'paid' => $newPaid,
+            'remaining' => $newRemaining,
+            'status' => $newRemaining > 0 ? 'remaining' : 'paid',
+        ]);
+        
+        session()->flash('message', 'Debit transaction recorded successfully! Installment #' . $this->installment_no . ': Amount: Rs ' . number_format($this->installment_amount, 2) . ', Paid: Rs ' . number_format($this->paid_amount, 2) . ', Remaining: Rs ' . number_format($this->remaining, 2));
         return $this->redirectRoute('property.sale.index', ['locale' => app()->getLocale()]);
     }
 

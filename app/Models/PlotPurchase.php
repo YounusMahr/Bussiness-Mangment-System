@@ -29,4 +29,9 @@ class PlotPurchase extends Model
     {
         return $this->hasMany(PlotSale::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(PlotPurchaseTransaction::class)->orderBy('date', 'desc')->orderBy('created_at', 'desc');
+    }
 }

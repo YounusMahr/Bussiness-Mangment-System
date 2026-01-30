@@ -3,6 +3,7 @@
 namespace App\Livewire\Grocery\Purchase;
 
 use App\Models\StockPurchase;
+use App\Models\StockPurchaseTransaction;
 use Livewire\Component;
 
 class Update extends Component
@@ -82,6 +83,22 @@ class Update extends Component
         $this->calculateRemaining();
 
         $purchase = StockPurchase::findOrFail($this->purchaseId);
+        
+        // Store old values before update
+        $oldTotalStock = $purchase->total_stock;
+        $oldGivenStock = $purchase->given_stock;
+        $oldRemainingStock = $purchase->remaining_stock;
+        $oldGoodsTotalPrice = $purchase->goods_total_price ?? 0;
+        $oldPaid = $purchase->paid ?? 0;
+        $oldRemaining = $purchase->remaining ?? 0;
+        $oldInterest = $purchase->interest ?? 0;
+        $oldTotalRemaining = $purchase->total_remaining ?? 0;
+        
+        // Calculate differences
+        $stockDifference = $this->total_stock - $oldTotalStock;
+        $givenStockDifference = $this->given_stock - $oldGivenStock;
+        $remainingStockDifference = $this->remaining_stock - $oldRemainingStock;
+        
         $purchase->update([
             'date' => $this->date,
             'goods_name' => $this->goods_name,
@@ -95,6 +112,66 @@ class Update extends Component
             'status' => $this->status,
             'notes' => $this->notes ?: null,
         ]);
+
+        // Create transaction record for the edit if there are significant changes
+        if (abs($stockDifference) > 0.01 || abs($givenStockDifference) > 0.01 || abs($remainingStockDifference) > 0.01) {
+            // Determine transaction type based on changes
+            // If stock increased, it's a debit (stock-in)
+            // If stock decreased or payment made, it's a credit (stock-out)
+            if ($stockDifference > 0) {
+                // Debit: New stock added
+                StockPurchaseTransaction::create([
+                    'stock_purchase_id' => $purchase->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'stock-in',
+                    'new_goods_name' => $this->goods_name,
+                    'new_goods_total_price' => 0, // No price change in stock-only edit
+                    'new_paid' => 0,
+                    'new_interest' => 0,
+                    'new_total_stock' => abs($stockDifference),
+                    'new_given_stock' => abs($givenStockDifference),
+                    'total_stock_before' => $oldTotalStock,
+                    'remaining_stock_before' => $oldRemainingStock,
+                    'goods_total_price_before' => $oldGoodsTotalPrice,
+                    'paid_before' => $oldPaid,
+                    'remaining_before' => $oldRemaining,
+                    'interest_before' => $oldInterest,
+                    'total_remaining_before' => $oldTotalRemaining,
+                    'total_stock_after' => $this->total_stock,
+                    'remaining_stock_after' => $this->remaining_stock,
+                    'goods_total_price_after' => $oldGoodsTotalPrice,
+                    'paid_after' => $oldPaid,
+                    'remaining_after' => $oldRemaining,
+                    'interest_after' => $oldInterest,
+                    'total_remaining_after' => $oldTotalRemaining,
+                    'notes' => $this->notes ?: 'Stock purchase record updated',
+                ]);
+            } elseif ($givenStockDifference > 0) {
+                // Credit: Stock returned
+                StockPurchaseTransaction::create([
+                    'stock_purchase_id' => $purchase->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'stock-out',
+                    'return_stock' => abs($givenStockDifference),
+                    'return_payment' => 0, // No payment change in stock-only edit
+                    'total_stock_before' => $oldTotalStock,
+                    'remaining_stock_before' => $oldRemainingStock,
+                    'goods_total_price_before' => $oldGoodsTotalPrice,
+                    'paid_before' => $oldPaid,
+                    'remaining_before' => $oldRemaining,
+                    'interest_before' => $oldInterest,
+                    'total_remaining_before' => $oldTotalRemaining,
+                    'total_stock_after' => $this->total_stock,
+                    'remaining_stock_after' => $this->remaining_stock,
+                    'goods_total_price_after' => $oldGoodsTotalPrice,
+                    'paid_after' => $oldPaid,
+                    'remaining_after' => $oldRemaining,
+                    'interest_after' => $oldInterest,
+                    'total_remaining_after' => $oldTotalRemaining,
+                    'notes' => $this->notes ?: 'Stock purchase record updated - stock adjustment',
+                ]);
+            }
+        }
 
         session()->flash('message', 'Stock purchase updated successfully!');
         return $this->redirectRoute('purchases.bulk', ['locale' => app()->getLocale()]);

@@ -5,6 +5,7 @@ namespace App\Livewire\Grocery\Udaar;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Udaar;
+use App\Models\UdaarTransaction;
 use Livewire\Component;
 
 class Add extends Component
@@ -83,7 +84,7 @@ class Add extends Component
         $this->validate();
         $this->calculateRemaining();
 
-        Udaar::create([
+        $udaar = Udaar::create([
             'buy_date' => $this->buy_date,
             'customer_name' => $this->customer_name,
             'customer_number' => $this->customer_number,
@@ -94,6 +95,23 @@ class Add extends Component
             'interest_amount' => $this->interest_amount,
             'due_date' => $this->due_date,
             'notes' => $this->notes,
+        ]);
+
+        // Create initial transaction record for the new udhaar
+        UdaarTransaction::create([
+            'udaar_id' => $udaar->id,
+            'date' => $this->buy_date,
+            'type' => 'udaar-in',
+            'new_udaar_amount' => $this->remaining_amount + $this->paid_amount - ($this->interest_amount ?? 0),
+            'interest_amount' => $this->interest_amount ?? 0,
+            'product_id' => $this->product_id ?: null,
+            'time_period' => $this->time_period,
+            'due_date' => $this->due_date,
+            'paid_amount_before' => 0,
+            'remaining_amount_before' => 0,
+            'paid_amount_after' => $this->paid_amount,
+            'remaining_amount_after' => $this->remaining_amount,
+            'notes' => $this->notes ?: 'Initial udhaar record created',
         ]);
 
         session()->flash('message', 'Udhaar record created successfully!');

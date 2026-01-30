@@ -185,7 +185,7 @@
         </div>
 
         <!-- Cash Debit Card -->
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:w-1/2">
+        <!-- <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:w-1/2">
             <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border my-4 mx-2">
                 <div class="flex-auto p-6">
                     <div class="flex items-center justify-between mb-4">
@@ -207,7 +207,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 

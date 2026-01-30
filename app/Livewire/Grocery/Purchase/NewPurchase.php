@@ -3,6 +3,7 @@
 namespace App\Livewire\Grocery\Purchase;
 
 use App\Models\StockPurchase;
+use App\Models\StockPurchaseTransaction;
 use Livewire\Component;
 
 class NewPurchase extends Component
@@ -103,7 +104,7 @@ class NewPurchase extends Component
         $this->calculateRemaining();
         $this->calculateFinancials();
 
-        StockPurchase::create([
+        $purchase = StockPurchase::create([
             'date' => $this->date,
             'goods_name' => $this->goods_name,
             'seller_name' => $this->seller_name,
@@ -120,6 +121,34 @@ class NewPurchase extends Component
             'due_date' => $this->due_date,
             'status' => $this->status,
             'notes' => $this->notes ?: null,
+        ]);
+
+        // Create initial transaction record for the new purchase
+        StockPurchaseTransaction::create([
+            'stock_purchase_id' => $purchase->id,
+            'date' => $this->date,
+            'type' => 'stock-in',
+            'new_goods_name' => $this->goods_name,
+            'new_goods_total_price' => $this->goods_total_price,
+            'new_paid' => $this->paid,
+            'new_interest' => $this->interest ?? 0,
+            'new_total_stock' => $this->total_stock,
+            'new_given_stock' => $this->given_stock,
+            'total_stock_before' => 0,
+            'remaining_stock_before' => 0,
+            'goods_total_price_before' => 0,
+            'paid_before' => 0,
+            'remaining_before' => 0,
+            'interest_before' => 0,
+            'total_remaining_before' => 0,
+            'total_stock_after' => $this->total_stock,
+            'remaining_stock_after' => $this->remaining_stock,
+            'goods_total_price_after' => $this->goods_total_price,
+            'paid_after' => $this->paid,
+            'remaining_after' => $this->remaining,
+            'interest_after' => $this->interest ?? 0,
+            'total_remaining_after' => $this->total_remaining,
+            'notes' => $this->notes ?: 'Initial stock purchase record created',
         ]);
 
         session()->flash('message', 'Stock purchase created successfully!');

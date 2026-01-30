@@ -4,6 +4,7 @@ namespace App\Livewire\Property\Sale;
 
 use App\Models\PlotPurchase;
 use App\Models\PlotSale;
+use App\Models\PlotSaleTransaction;
 use Livewire\Component;
 
 class Edit extends Component
@@ -92,6 +93,17 @@ class Edit extends Component
         $this->calculateRemaining();
 
         $sale = PlotSale::findOrFail($this->saleId);
+        
+        // Store old values
+        $oldTotalSalePrice = $sale->total_sale_price ?? 0;
+        $oldPaid = $sale->paid ?? 0;
+        $oldRemaining = $sale->remaining ?? 0;
+        
+        // Calculate differences
+        $totalDifference = $this->total_sale_price - $oldTotalSalePrice;
+        $paidDifference = $this->paid - $oldPaid;
+        $remainingDifference = $this->remaining - $oldRemaining;
+        
         $sale->update([
             'date' => $this->date,
             'plot_purchase_id' => $this->plot_purchase_id,
@@ -105,6 +117,46 @@ class Edit extends Component
             'time_period' => $this->time_period ?: null,
             'status' => $this->status,
         ]);
+
+        // Create transaction record for the edit if there are significant changes
+        if (abs($totalDifference) > 0.01 || abs($paidDifference) > 0.01 || abs($remainingDifference) > 0.01) {
+            // Determine transaction type based on changes
+            if ($paidDifference > 0 || $remainingDifference < 0) {
+                // Credit: Payment received
+                $amount = abs($paidDifference) > 0.01 ? abs($paidDifference) : abs($remainingDifference);
+                PlotSaleTransaction::create([
+                    'plot_sale_id' => $sale->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'sale-in',
+                    'installment_amount' => $amount, // Main transaction amount for Khata
+                    'paid_amount' => $amount,
+                    'total_sale_price_before' => $oldTotalSalePrice,
+                    'paid_before' => $oldPaid,
+                    'remaining_before' => $oldRemaining,
+                    'total_sale_price_after' => $this->total_sale_price,
+                    'paid_after' => $this->paid,
+                    'remaining_after' => $this->remaining,
+                    'notes' => 'Plot sale record updated - payment adjustment: Rs ' . number_format($amount, 2),
+                ]);
+            } elseif ($paidDifference < 0 || $remainingDifference > 0) {
+                // Debit: Payment made/refund
+                $amount = abs($paidDifference) > 0.01 ? abs($paidDifference) : abs($remainingDifference);
+                PlotSaleTransaction::create([
+                    'plot_sale_id' => $sale->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'sale-out',
+                    'installment_amount' => $amount, // Main transaction amount for Khata
+                    'payment_amount' => $amount,
+                    'total_sale_price_before' => $oldTotalSalePrice,
+                    'paid_before' => $oldPaid,
+                    'remaining_before' => $oldRemaining,
+                    'total_sale_price_after' => $this->total_sale_price,
+                    'paid_after' => $this->paid,
+                    'remaining_after' => $this->remaining,
+                    'notes' => 'Plot sale record updated - payment adjustment: Rs ' . number_format($amount, 2),
+                ]);
+            }
+        }
 
         session()->flash('message', 'Plot sale updated successfully!');
         return $this->redirectRoute('property.sale.index', ['locale' => app()->getLocale()]);

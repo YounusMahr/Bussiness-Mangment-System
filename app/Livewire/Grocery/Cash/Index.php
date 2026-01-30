@@ -75,27 +75,24 @@ class Index extends Component
 
         // Calculate totals for each customer
         foreach ($customers as $customer) {
-            $customer->total_cash_in = GroceryCashTransaction::where('customer_id', $customer->id)
+            // Cash-in transactions (Credit)
+            $customer->total_cash_in = (float)(GroceryCashTransaction::where('customer_id', $customer->id)
                 ->where('type', 'cash-in')
-                ->sum('return_amount');
+                ->sum('return_amount') ?? 0);
             
-            $customer->total_cash_out = GroceryCashTransaction::where('customer_id', $customer->id)
+            // Cash-out transactions (Debit)
+            $customer->total_cash_out = (float)(GroceryCashTransaction::where('customer_id', $customer->id)
                 ->where('type', 'cash-out')
-                ->sum('returned_amount');
+                ->sum('returned_amount') ?? 0);
             
-            $customer->total_amount = $customer->total_cash_in - $customer->total_cash_out;
-            
-            // Get latest transaction status
-            $latestTransaction = GroceryCashTransaction::where('customer_id', $customer->id)
-                ->orderBy('date', 'desc')
-                ->first();
-            
-            $customer->status = $latestTransaction ? $latestTransaction->status : 'pending';
+            // Total = Sum of all transactions (cash_in + cash_out), never negative
+            $customer->total_amount = max(0, $customer->total_cash_in + $customer->total_cash_out);
         }
 
-        // Calculate overall totals (Credit = Cash-In, Debit = Cash-Out)
-        $totalCredit = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
-        $totalDebit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
+        // Calculate overall totals
+        // cash-out = Credit (Payment In), cash-in = Debit (Payment Out)
+        $totalCredit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
+        $totalDebit = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
 
         return view('livewire.grocery.cash.index', compact('customers', 'totalCredit', 'totalDebit'));
     }

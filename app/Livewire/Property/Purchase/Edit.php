@@ -4,6 +4,7 @@ namespace App\Livewire\Property\Purchase;
 
 use App\Models\Customer;
 use App\Models\PlotPurchase;
+use App\Models\PlotPurchaseTransaction;
 use Livewire\Component;
 
 class Edit extends Component
@@ -45,6 +46,11 @@ class Edit extends Component
         $this->validate();
 
         $purchase = PlotPurchase::findOrFail($this->purchaseId);
+        
+        // Store old values
+        $oldPlotPrice = $purchase->plot_price ?? 0;
+        $priceDifference = $this->plot_price - $oldPlotPrice;
+        
         $purchase->update([
             'customer_id' => $this->customer_id ?: null,
             'date' => $this->date,
@@ -53,6 +59,37 @@ class Edit extends Component
             'installments' => $this->installments ?: null,
             'location' => $this->location,
         ]);
+
+        // Create transaction record for the edit if there are significant changes
+        if (abs($priceDifference) > 0.01) {
+            $amount = abs($priceDifference);
+            // Determine transaction type based on changes
+            if ($priceDifference > 0) {
+                // Debit: Price increased
+                PlotPurchaseTransaction::create([
+                    'plot_purchase_id' => $purchase->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'purchase-out',
+                    'installment_amount' => $amount, // Main transaction amount for Khata
+                    'payment_amount' => $amount,
+                    'plot_price_before' => $oldPlotPrice,
+                    'plot_price_after' => $this->plot_price,
+                    'notes' => 'Plot purchase record updated - price adjustment: Rs ' . number_format($amount, 2),
+                ]);
+            } else {
+                // Credit: Price decreased
+                PlotPurchaseTransaction::create([
+                    'plot_purchase_id' => $purchase->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'purchase-in',
+                    'installment_amount' => $amount, // Main transaction amount for Khata
+                    'paid_amount' => $amount,
+                    'plot_price_before' => $oldPlotPrice,
+                    'plot_price_after' => $this->plot_price,
+                    'notes' => 'Plot purchase record updated - price adjustment: Rs ' . number_format($amount, 2),
+                ]);
+            }
+        }
 
         session()->flash('message', 'Plot purchase updated successfully!');
         return $this->redirectRoute('property.purchase.index', ['locale' => app()->getLocale()]);

@@ -124,6 +124,33 @@
             </div>
         </div>
 
+        <!-- Summary Card -->
+        <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 no-print">
+            <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2"></div>
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">Summary</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Total Debit</label>
+                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($totalDebit, 2) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Total Credit</label>
+                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($totalCredit, 2) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Balance</label>
+                        <p class="text-xl font-bold {{ $finalBalance >= 0 ? 'text-red-600' : 'text-green-600' }}">
+                            Rs {{ number_format($finalBalance, 2) }}
+                            @if($finalBalance < 0)
+                                <span class="text-sm">(Credit)</span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Transactions Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
             <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
@@ -160,12 +187,12 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($transaction->type === 'stock-in')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-arrow-down mr-1"></i>Credit
-                                        </span>
-                                    @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                             <i class="fas fa-arrow-up mr-1"></i>Debit
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-arrow-down mr-1"></i>Credit
                                         </span>
                                     @endif
                                 </td>

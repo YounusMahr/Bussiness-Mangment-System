@@ -27,7 +27,7 @@ class UdaarIn extends Component
 
     protected $rules = [
         'date' => 'required|date',
-        'new_udaar_amount' => 'required|numeric|min:0',
+        'new_udaar_amount' => 'nullable|numeric|min:0',
         'product_id' => 'nullable|exists:products,id',
         'interest_amount' => 'nullable|numeric|min:0',
         'time_period' => 'nullable|string|max:255',
@@ -49,35 +49,56 @@ class UdaarIn extends Component
 
     public function updatedNewUdaarAmount()
     {
+        // Normalize empty string to 0
+        if ($this->new_udaar_amount === '' || $this->new_udaar_amount === null) {
+            $this->new_udaar_amount = 0;
+        }
         $this->calculateNewRemaining();
     }
 
     public function updatedInterestAmount()
     {
+        // Normalize empty string to 0
+        if ($this->interest_amount === '' || $this->interest_amount === null) {
+            $this->interest_amount = 0;
+        }
         $this->calculateNewRemaining();
     }
 
     public function calculateNewRemaining()
     {
-        $newAmount = $this->new_udaar_amount ?? 0;
-        $interest = $this->interest_amount ?? 0;
+        // Convert to float, handling empty strings and null values
+        $newAmount = (float)($this->new_udaar_amount ?? 0);
+        $interest = (float)($this->interest_amount ?? 0);
+        $currentRemaining = (float)($this->current_remaining ?? 0);
+        
         $totalNewAmount = $newAmount + $interest;
         
         // If customer has credit balance (negative remaining), apply it to new purchase
         // Credit balance reduces the new remaining amount
-        $this->new_remaining = $this->current_remaining + $totalNewAmount;
+        $this->new_remaining = $currentRemaining + $totalNewAmount;
     }
 
     public function save()
     {
+        // Normalize empty values to 0 before validation
+        if ($this->new_udaar_amount === '' || $this->new_udaar_amount === null) {
+            $this->new_udaar_amount = 0;
+        }
+        if ($this->interest_amount === '' || $this->interest_amount === null) {
+            $this->interest_amount = 0;
+        }
+        
         $this->validate();
         $this->calculateNewRemaining();
 
         // Update the udaar record - add new udaar amount to remaining
         $udaar = Udaar::findOrFail($this->udaarId);
         
-        // Calculate new interest amount (add to existing)
-        $newInterestAmount = $udaar->interest_amount + $this->interest_amount;
+        // Calculate new interest amount (add to existing) - ensure numeric values
+        $existingInterest = (float)($udaar->interest_amount ?? 0);
+        $newInterest = (float)($this->interest_amount ?? 0);
+        $newInterestAmount = $existingInterest + $newInterest;
         
         $updateData = [
             'remaining_amount' => $this->new_remaining,

@@ -3,6 +3,7 @@
 namespace App\Livewire\Property\Purchase;
 
 use App\Models\PlotPurchase;
+use App\Models\PlotPurchaseTransaction;
 use Livewire\Component;
 
 class In extends Component
@@ -67,17 +68,26 @@ class In extends Component
         $this->validate();
         $this->calculateAmounts();
 
-        // TODO: Create a PlotPurchaseTransaction model to properly track transactions
-        // For now, we'll just show a success message
-        // The transaction will be stored in a transaction table when implemented
+        $purchase = PlotPurchase::findOrFail($this->purchaseId);
         
-        $message = 'Credit transaction recorded successfully! ';
-        $message .= 'Installment #' . $this->installment_no . ': ';
-        $message .= 'Amount: Rs ' . number_format($this->installment_amount, 2) . ', ';
-        $message .= 'Paid: Rs ' . number_format($this->paid_amount, 2) . ', ';
-        $message .= 'Remaining: Rs ' . number_format($this->remaining, 2);
+        // Store old values
+        $oldPlotPrice = $purchase->plot_price ?? 0;
         
-        session()->flash('message', $message);
+        // Create transaction record (Credit - payment received)
+        // For Khata: Credit = Money received, use installment_amount as the transaction amount
+        PlotPurchaseTransaction::create([
+            'plot_purchase_id' => $this->purchaseId,
+            'date' => $this->date,
+            'type' => 'purchase-in',
+            'installment_no' => $this->installment_no,
+            'installment_amount' => $this->installment_amount, // Main transaction amount
+            'paid_amount' => $this->paid_amount, // Amount actually paid/received
+            'plot_price_before' => $oldPlotPrice,
+            'plot_price_after' => $oldPlotPrice, // Plot price doesn't change on payment
+            'notes' => $this->notes ?: 'Credit transaction - Payment received: Rs ' . number_format($this->installment_amount, 2),
+        ]);
+        
+        session()->flash('message', 'Credit transaction recorded successfully! Installment #' . $this->installment_no . ': Amount: Rs ' . number_format($this->installment_amount, 2) . ', Paid: Rs ' . number_format($this->paid_amount, 2) . ', Remaining: Rs ' . number_format($this->remaining, 2));
         return $this->redirectRoute('property.purchase.index', ['locale' => app()->getLocale()]);
     }
 

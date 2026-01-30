@@ -13,22 +13,12 @@ class CashIn extends Component
     public $customerId;
     public $customer;
     public $date;
-    public $invest_cash = 0;
-    public $interest = 0;
-    public $time_period = '';
-    public $due_date;
-    public $return_amount = 0;
-    public $status = 'pending';
+    public $amount = 0;
     public $notes = '';
 
     protected $rules = [
         'date' => 'required|date',
-        'invest_cash' => 'required|numeric|min:0',
-        'interest' => 'nullable|numeric|min:0',
-        'time_period' => 'nullable|string|max:255',
-        'due_date' => 'nullable|date',
-        'return_amount' => 'nullable|numeric|min:0',
-        'status' => 'required|in:pending,returned',
+        'amount' => 'required|numeric|min:0',
         'notes' => 'nullable|string',
     ];
 
@@ -39,38 +29,18 @@ class CashIn extends Component
         $this->date = now()->format('Y-m-d');
     }
 
-    public function updatedInvestCash()
-    {
-        $this->calculateReturnAmount();
-    }
-
-    public function updatedInterest()
-    {
-        $this->calculateReturnAmount();
-    }
-
-    public function calculateReturnAmount()
-    {
-        $invest = (float)($this->invest_cash ?? 0);
-        $interest = (float)($this->interest ?? 0);
-        $this->return_amount = $invest + $interest;
-    }
-
     public function save()
     {
         $this->validate();
-        $this->calculateReturnAmount();
 
         GroceryCashTransaction::create([
             'date' => $this->date,
             'customer_id' => $this->customerId,
             'type' => 'cash-in',
-            'invest_cash' => $this->invest_cash,
-            'interest' => $this->interest,
-            'time_period' => $this->time_period,
-            'due_date' => $this->due_date,
-            'return_amount' => $this->return_amount,
-            'status' => $this->status,
+            'invest_cash' => $this->amount,
+            'interest' => 0,
+            'return_amount' => $this->amount,
+            'status' => 'pending',
             'notes' => $this->notes,
         ]);
 

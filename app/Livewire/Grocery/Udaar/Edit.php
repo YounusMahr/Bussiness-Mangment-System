@@ -4,6 +4,7 @@ namespace App\Livewire\Grocery\Udaar;
 
 use App\Models\Product;
 use App\Models\Udaar;
+use App\Models\UdaarTransaction;
 use Livewire\Component;
 
 class Edit extends Component
@@ -81,6 +82,20 @@ class Edit extends Component
         $this->calculateRemaining();
 
         $udaar = Udaar::findOrFail($this->udaarId);
+        
+        // Store old values before update
+        $oldPaidAmount = $udaar->paid_amount;
+        $oldRemainingAmount = $udaar->remaining_amount;
+        $oldInterestAmount = $udaar->interest_amount ?? 0;
+        $oldTotalAmount = $udaar->paid_amount + $udaar->remaining_amount - $oldInterestAmount;
+        $newTotalAmount = $this->total_amount;
+        
+        // Calculate the difference
+        $paidDifference = $this->paid_amount - $oldPaidAmount;
+        $remainingDifference = $this->remaining_amount - $oldRemainingAmount;
+        $totalDifference = $newTotalAmount - $oldTotalAmount;
+        $interestDifference = ($this->interest_amount ?? 0) - $oldInterestAmount;
+        
         $udaar->update([
             'buy_date' => $this->buy_date,
             'customer_name' => $this->customer_name,
@@ -93,6 +108,59 @@ class Edit extends Component
             'due_date' => $this->due_date,
             'notes' => $this->notes,
         ]);
+
+        // Create transaction record for the edit if there are significant changes
+        if (abs($totalDifference) > 0.01 || abs($paidDifference) > 0.01 || abs($remainingDifference) > 0.01) {
+            // Determine transaction type based on changes
+            // If remaining amount increased, it's a debit (udaar-in)
+            // If remaining amount decreased, it's a credit (udaar-out)
+            if ($remainingDifference > 0) {
+                // Debit: New purchase/amount added
+                UdaarTransaction::create([
+                    'udaar_id' => $udaar->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'udaar-in',
+                    'new_udaar_amount' => abs($totalDifference),
+                    'interest_amount' => abs($interestDifference),
+                    'product_id' => $this->product_id ?: null,
+                    'time_period' => $this->time_period,
+                    'due_date' => $this->due_date,
+                    'paid_amount_before' => $oldPaidAmount,
+                    'remaining_amount_before' => $oldRemainingAmount,
+                    'paid_amount_after' => $this->paid_amount,
+                    'remaining_amount_after' => $this->remaining_amount,
+                    'notes' => $this->notes ?: 'Udhaar record updated',
+                ]);
+            } elseif ($remainingDifference < 0) {
+                // Credit: Payment made
+                UdaarTransaction::create([
+                    'udaar_id' => $udaar->id,
+                    'date' => now()->format('Y-m-d'),
+                    'type' => 'udaar-out',
+                    'payment_amount' => abs($remainingDifference),
+                    'paid_amount_before' => $oldPaidAmount,
+                    'remaining_amount_before' => $oldRemainingAmount,
+                    'paid_amount_after' => $this->paid_amount,
+                    'remaining_amount_after' => $this->remaining_amount,
+                    'notes' => $this->notes ?: 'Udhaar record updated',
+                ]);
+            } else {
+                // Only paid amount changed, create a credit transaction
+                if ($paidDifference > 0) {
+                    UdaarTransaction::create([
+                        'udaar_id' => $udaar->id,
+                        'date' => now()->format('Y-m-d'),
+                        'type' => 'udaar-out',
+                        'payment_amount' => abs($paidDifference),
+                        'paid_amount_before' => $oldPaidAmount,
+                        'remaining_amount_before' => $oldRemainingAmount,
+                        'paid_amount_after' => $this->paid_amount,
+                        'remaining_amount_after' => $this->remaining_amount,
+                        'notes' => $this->notes ?: 'Udhaar record updated - payment adjustment',
+                    ]);
+                }
+            }
+        }
 
         session()->flash('message', 'Udhaar record updated successfully!');
         return $this->redirectRoute('udaar.index', ['locale' => app()->getLocale()]);

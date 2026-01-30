@@ -77,6 +77,33 @@
             </div>
         </div>
 
+        <!-- Summary Card -->
+        <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 no-print">
+            <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2"></div>
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">Summary</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Total Credit</label>
+                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($totalCredit, 2) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Total Debit</label>
+                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($totalDebit, 2) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-500">Balance</label>
+                        <p class="text-xl font-bold {{ $finalBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                            Rs {{ number_format($finalBalance, 2) }}
+                            @if($finalBalance < 0)
+                                <span class="text-sm">dr</span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Transactions Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
             <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
@@ -91,9 +118,10 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Debit (-)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Credit (+)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
                         </tr>
                     </thead>
@@ -104,32 +132,38 @@
                                     {{ $index + 1 }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $transaction->date->format('Y-m-d') ?? '--' }}
+                                    {{ $transaction->date->format('d M y') ?? '--' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if(isset($transaction->type) && $transaction->type === 'credit')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="fas fa-arrow-down mr-1"></i>Credit
-                                        </span>
-                                    @elseif(isset($transaction->type) && $transaction->type === 'debit')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            <i class="fas fa-arrow-up mr-1"></i>Debit
-                                        </span>
-                                    @else
-                                        <span class="text-gray-500">--</span>
-                                    @endif
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    <div>
+                                        @if($transaction->notes)
+                                            <div class="font-medium">{{ $transaction->notes }}</div>
+                                        @elseif($transaction->installment_no)
+                                            <div class="font-medium">Installment #{{ $transaction->installment_no }}</div>
+                                        @else
+                                            <div class="font-medium">{{ $transaction->type === 'sale-in' ? 'Credit' : 'Debit' }}</div>
+                                        @endif
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    @if(isset($transaction->amount))
-                                        <span class="font-medium {{ isset($transaction->type) && $transaction->type === 'credit' ? 'text-green-600' : 'text-red-600' }}">
-                                            {{ isset($transaction->type) && $transaction->type === 'credit' ? '+' : '-' }}Rs {{ number_format($transaction->amount, 2) }}
-                                        </span>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600 text-right">
+                                    @if($transaction->type === 'sale-out')
+                                        Rs {{ number_format((float)($transaction->payment_amount ?? $transaction->installment_amount ?? 0), 2) }}
                                     @else
                                         --
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    {{ $transaction->description ?? '--' }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
+                                    @if($transaction->type === 'sale-in')
+                                        Rs {{ number_format((float)($transaction->installment_amount ?? $transaction->paid_amount ?? 0), 2) }}
+                                    @else
+                                        --
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->running_balance ?? 0) >= 0 ? 'text-gray-700' : 'text-red-600' }}">
+                                    Rs {{ number_format((float)($transaction->running_balance ?? 0), 2) }}
+                                    @if(($transaction->running_balance ?? 0) < 0)
+                                        <span class="text-xs">dr</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     {{ $transaction->notes ?? '--' }}
@@ -137,7 +171,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>

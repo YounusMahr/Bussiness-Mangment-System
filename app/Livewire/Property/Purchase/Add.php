@@ -4,6 +4,7 @@ namespace App\Livewire\Property\Purchase;
 
 use App\Models\Customer;
 use App\Models\PlotPurchase;
+use App\Models\PlotPurchaseTransaction;
 use Livewire\Component;
 
 class Add extends Component
@@ -70,7 +71,7 @@ class Add extends Component
     {
         $this->validate();
 
-        PlotPurchase::create([
+        $purchase = PlotPurchase::create([
             'customer_id' => $this->customer_id ?: null,
             'date' => $this->date,
             'plot_area' => $this->plot_area,
@@ -78,6 +79,23 @@ class Add extends Component
             'installments' => $this->installments ?: null,
             'location' => $this->location,
         ]);
+
+        // Create initial transaction record if there's an installment amount
+        // For Khata: Use installment_amount as the main transaction amount
+        if ($this->installment_amount > 0 || $this->paid_amount > 0) {
+            $amount = $this->installment_amount > 0 ? $this->installment_amount : $this->paid_amount;
+            PlotPurchaseTransaction::create([
+                'plot_purchase_id' => $purchase->id,
+                'date' => $this->date,
+                'type' => 'purchase-in', // Credit - initial purchase
+                'installment_no' => $this->installment_no ?: 'Initial',
+                'installment_amount' => $amount, // Main transaction amount for Khata
+                'paid_amount' => $this->paid_amount,
+                'plot_price_before' => 0,
+                'plot_price_after' => $this->plot_price,
+                'notes' => 'Initial plot purchase record created: Rs ' . number_format($amount, 2),
+            ]);
+        }
 
         session()->flash('message', 'Plot purchase created successfully!');
         return $this->redirectRoute('property.purchase.index', ['locale' => app()->getLocale()]);

@@ -31,7 +31,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_credit') }}</p>
-                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalCredit, 2) }}</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalDebit, 2) }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_in_transactions') }}</p>
                         </div>
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 flex items-center justify-center">
@@ -46,7 +46,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_debit') }}</p>
-                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalDebit, 2) }}</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalCredit, 2) }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_out_transactions') }}</p>
                         </div>
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-pink-400 flex items-center justify-center">
@@ -110,7 +110,7 @@
                         <div class="border-t border-gray-200 pt-4 space-y-2">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">{{ __('messages.total_amount') }}:</span>
-                                <span class="text-lg font-bold {{ $customer->total_amount >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                <span class="text-lg font-bold text-gray-900">
                                     Rs {{ number_format($customer->total_amount, 2) }}
                                 </span>
                             </div>
@@ -122,13 +122,6 @@
                                 <span class="text-sm text-gray-600">{{ __('messages.cash_out') }}:</span>
                                 <span class="text-sm font-medium text-red-600">Rs {{ number_format($customer->total_cash_out, 2) }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('messages.status') }}:</span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $customer->status === 'returned' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                    <i class="fas fa-circle mr-1 text-xs"></i>
-                                    {{ $customer->status === 'returned' ? __('messages.returned') : __('messages.pending') }}
-                                </span>
-                            </div>
                         </div>
 
                         <!-- Action Buttons -->
@@ -137,17 +130,17 @@
                             <div class="flex gap-2">
                                 <a 
                                     wire:navigate
-                                     href="{{ localized_route('grocery.cash.cash-out', $customer) }}"
+                                    href="{{ localized_route('grocery.cash.cash-in', $customer) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Credit (Payment In)"
+                                    title="Credit (Money In)"
                                 >
                                     <i class="fas fa-arrow-down mr-1"></i> Credit
                                 </a>
                                 <a 
                                     wire:navigate
-                                    href="{{ localized_route('grocery.cash.cash-in', $customer) }}"
+                                    href="{{ localized_route('grocery.cash.cash-out', $customer) }}"
                                     class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Debit (Payment Out)"
+                                    title="Debit (Money Out)"
                                 >
                                     <i class="fas fa-arrow-up mr-1"></i> Debit
                                 </a>

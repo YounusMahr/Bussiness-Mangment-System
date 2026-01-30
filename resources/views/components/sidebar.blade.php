@@ -99,9 +99,9 @@
                   <li class="w-full">
                   <a wire:navigate class="py-2 text-xs ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-3 transition-colors rounded-lg {{ request()->routeIs('grocery.cash.index') ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50' }}" href="{{ localized_route('grocery.cash.index') }}">
                     <div class="shadow-soft-2xl mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center">
-                      <i class="fas fa-list {{ request()->routeIs('grocery.cash.index') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
+                      <i class="fas fa-arrow-down {{ request()->routeIs('grocery.cash.index') ? 'text-purple-600' : 'text-slate-600' }} text-xs"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.cash_manage') }}</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('messages.credit') }}</span>
                   </a>
                 </li>
 

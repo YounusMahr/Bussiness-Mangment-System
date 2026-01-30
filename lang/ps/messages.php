@@ -372,6 +372,8 @@ return [
     'total_sales_description' => 'د ټولو پلاټ خرڅلاوونو څخه ټول مقدار',
     'sales_plots' => 'خرڅل شوي پلاټونه',
     'sales_plots_description' => 'د خرڅل شوي پلاټونو ټول شمیر',
+    'purchase_plot' => 'پیرودل شوي پلاټ',
+    'purchase_plot_description' => 'د پیرودل شوي پلاټونو ټول شمیر',
     'plots' => 'پلاټونه',
     'remaining_plots' => 'پاتې پلاټونه',
     'remaining_plots_description' => 'د خرڅلاو لپاره شته پلاټونو ټول شمیر',

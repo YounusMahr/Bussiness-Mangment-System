@@ -372,6 +372,8 @@ return [
     'total_sales_description' => 'Total amount from all plot sales',
     'sales_plots' => 'Sales Plots',
     'sales_plots_description' => 'Total number of plots sold',
+    'purchase_plot' => 'Purchase Plot',
+    'purchase_plot_description' => 'Total number of plots purchased',
     'plots' => 'Plots',
     'remaining_plots' => 'Remaining Plots',
     'remaining_plots_description' => 'Total number of plots available for sale',

@@ -73,29 +73,47 @@
                             </div>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
-                                <select wire:model="customer_id" id="customer_id" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
+                                <select wire:model.live="customer_id" id="customer_id" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent">
                                     <option value="">{{ __('messages.select_customer') }}</option>
                                     @foreach($customers as $customer)
                                         <option value="{{ $customer->id }}">{{ $customer->name }} @if($customer->number) - {{ $customer->number }} @endif</option>
                                     @endforeach
                                 </select>
                             </div>
+                            @if($customer_id)
+                                <p class="mt-1 text-xs text-green-600 flex items-center gap-1">
+                                    <i class="fas fa-check-circle"></i>
+                                    {{ __('messages.customer_info_auto_filled') ?? 'Customer information will be auto-filled below' }}
+                                </p>
+                            @endif
                             @error('customer_id') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label for="customer_name" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.customer_name') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-user"></i></span>
-                                <input type="text" wire:model="customer_name" id="customer_name" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="{{ __('messages.enter_customer_name') }}">
+                                <input type="text" wire:model="customer_name" id="customer_name" 
+                                    class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent {{ $customer_id ? 'bg-gray-50 cursor-not-allowed' : '' }}" 
+                                    placeholder="{{ __('messages.enter_customer_name') }}"
+                                    @if($customer_id) readonly @endif>
                             </div>
+                            @if($customer_id)
+                                <p class="mt-1 text-xs text-slate-500">{{ __('messages.auto_filled_from_customer') ?? 'Auto-filled from selected customer' }}</p>
+                            @endif
                             @error('customer_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label for="customer_number" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.customer_number') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400"><i class="fas fa-phone"></i></span>
-                                <input type="text" wire:model="customer_number" id="customer_number" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="{{ __('messages.enter_customer_number') }}">
+                                <input type="text" wire:model="customer_number" id="customer_number" 
+                                    class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent {{ $customer_id ? 'bg-gray-50 cursor-not-allowed' : '' }}" 
+                                    placeholder="{{ __('messages.enter_customer_number') }}"
+                                    @if($customer_id) readonly @endif>
                             </div>
+                            @if($customer_id)
+                                <p class="mt-1 text-xs text-slate-500">{{ __('messages.auto_filled_from_customer') ?? 'Auto-filled from selected customer' }}</p>
+                            @endif
                             @error('customer_number') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>

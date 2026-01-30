@@ -372,6 +372,8 @@ return [
     'total_sales_description' => 'تمام پلاٹ فروخت سے کل رقم',
     'sales_plots' => 'فروخت شدہ پلاٹ',
     'sales_plots_description' => 'فروخت شدہ پلاٹوں کی کل تعداد',
+    'purchase_plot' => 'خریداری پلاٹ',
+    'purchase_plot_description' => 'خریداری شدہ پلاٹوں کی کل تعداد',
     'plots' => 'پلاٹ',
     'remaining_plots' => 'باقی پلاٹ',
     'remaining_plots_description' => 'فروخت کے لیے دستیاب پلاٹوں کی کل تعداد',

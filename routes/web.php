@@ -3,6 +3,26 @@
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
+Route::get('/migrate-fresh', function () {
+    Artisan::call('migrate:fresh');
+    return 'Migration completed';
+});
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return 'Migration completed';
+});
+
+Route::get('/seed', function () {
+    Artisan::call('db:seed');
+    return 'Seeding completed';
+});
+
+Route::get('/optimize', function () {
+    Artisan::call('optimize:clear');
+    return 'Optimization completed';
+});
+
 // Storage Files Route (for shared hosting where symlinks don't work)
 Route::get('/storage/{path}', function ($path) {
     // Security: Prevent directory traversal

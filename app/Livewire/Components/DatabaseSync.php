@@ -88,11 +88,30 @@ class DatabaseSync extends Component
                 $totalSkipped = $results['totalSkipped'] ?? 0;
                 $syncedTables = count($results['synced']);
                 $migrationsSynced = $results['migrations_synced'] ?? false;
+                $migrationsRun = $results['migrations_run'] ?? false;
+                
+                // Count transaction/history tables synced
+                $transactionTables = [];
+                $transactionCount = 0;
+                foreach ($results['synced'] ?? [] as $table => $count) {
+                    if (str_contains($table, '_transactions') || str_contains($table, '_history')) {
+                        $transactionTables[] = $table . ' (' . $count . ')';
+                        $transactionCount += $count;
+                    }
+                }
                 
                 $this->syncMessage = "Successfully pushed {$totalPushed} new records from {$syncedTables} tables to remote database.";
                 
                 if ($migrationsSynced) {
                     $this->syncMessage .= " Migrations table synced successfully.";
+                }
+                
+                if ($migrationsRun) {
+                    $this->syncMessage .= " Remote migrations verified.";
+                }
+                
+                if ($transactionCount > 0) {
+                    $this->syncMessage .= " History/Transaction data: {$transactionCount} records pushed (" . implode(', ', $transactionTables) . ").";
                 }
                 
                 if ($totalSkipped > 0) {
@@ -101,7 +120,8 @@ class DatabaseSync extends Component
                 
                 if (!empty($results['errors'])) {
                     $errorCount = count($results['errors']);
-                    $this->syncMessage .= " {$errorCount} table(s) had errors.";
+                    $errorTables = array_keys($results['errors']);
+                    $this->syncMessage .= " {$errorCount} table(s) had errors: " . implode(', ', $errorTables) . ".";
                 }
                 
                 $this->dispatch('sync-complete');

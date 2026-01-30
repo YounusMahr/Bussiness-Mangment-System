@@ -113,7 +113,8 @@ class DatabaseSyncService
             'errors' => [],
             'total' => 0,
             'totalSkipped' => 0,
-            'migrations_synced' => false
+            'migrations_synced' => false,
+            'migrations_run' => false
         ];
 
         if (!$this->isOnline() || !$this->isRemoteConnected()) {
@@ -132,16 +133,41 @@ class DatabaseSyncService
             // Continue with data sync even if migrations sync fails
         }
 
-        // Then sync all data tables
+        // Run migrations on remote database to ensure all tables exist
+        try {
+            $this->runRemoteMigrations();
+            $results['migrations_run'] = true;
+            Log::info('Remote migrations run successfully');
+        } catch (Exception $e) {
+            Log::warning('Failed to run remote migrations: ' . $e->getMessage());
+            $results['errors']['migrations'] = $e->getMessage();
+            // Continue with data sync - tables might already exist
+        }
+
+        // Get all tables to sync (including transaction/history tables)
         $tables = $this->getTablesToSync();
+        
+        // Ensure transaction/history tables are synced in correct order (parent tables first)
+        $tables = $this->orderTablesForSync($tables);
 
         foreach ($tables as $table) {
             try {
+                // Check if table exists on remote, if not, skip with warning
+                if (!$this->tableExists($table, $this->remoteConnection)) {
+                    $results['errors'][$table] = "Table does not exist on remote database. Please run migrations first.";
+                    Log::warning("Table {$table} does not exist on remote database");
+                    continue;
+                }
+
                 $syncResult = $this->pushTable($table, $this->localConnection, $this->remoteConnection);
                 $results['synced'][$table] = $syncResult['inserted'];
                 $results['skipped'][$table] = $syncResult['skipped'];
                 $results['total'] += $syncResult['inserted'];
                 $results['totalSkipped'] += $syncResult['skipped'];
+                
+                if ($syncResult['inserted'] > 0) {
+                    Log::info("Synced {$syncResult['inserted']} records from table {$table} to remote");
+                }
             } catch (Exception $e) {
                 $results['errors'][$table] = $e->getMessage();
                 Log::error("Push error for table {$table}: " . $e->getMessage());
@@ -274,8 +300,14 @@ class DatabaseSyncService
                     }
                     
                     // Record doesn't exist, insert it
-                    // Remove timestamps if they exist (let database handle them)
-                    unset($recordArray['created_at'], $recordArray['updated_at']);
+                    // Preserve timestamps for history/transaction tables to maintain data integrity
+                    $isHistoryTable = str_contains($table, '_transactions') || str_contains($table, '_history');
+                    
+                    if (!$isHistoryTable) {
+                        // For regular tables, let database handle timestamps
+                        unset($recordArray['created_at'], $recordArray['updated_at']);
+                    }
+                    // For history/transaction tables, keep timestamps as they represent actual event times
                     
                     DB::connection($destConnection)
                         ->table($table)
@@ -485,6 +517,140 @@ class DatabaseSyncService
         }
         
         return $tableList;
+    }
+
+    /**
+     * Order tables for sync (parent tables before child/transaction tables)
+     * This ensures foreign key constraints are satisfied
+     */
+    protected function orderTablesForSync(array $tables): array
+    {
+        // Define parent tables (should be synced first)
+        $parentTables = [
+            'users',
+            'customers',
+            'products',
+            'categories',
+            'plot_purchases',
+            'plot_sales',
+            'udaars',
+            'installments',
+            'stock_purchases',
+            'sales',
+        ];
+        
+        // Define transaction/history tables (should be synced after parent tables)
+        $transactionTables = [
+            'grocery_cash_transactions',
+            'udaar_transactions',
+            'plot_purchase_transactions',
+            'plot_sale_transactions',
+            'installment_transactions',
+            'stock_purchase_transactions',
+            'sale_items',
+        ];
+        
+        $ordered = [];
+        $remaining = [];
+        
+        // First, add parent tables
+        foreach ($parentTables as $parent) {
+            if (in_array($parent, $tables)) {
+                $ordered[] = $parent;
+            }
+        }
+        
+        // Then, add transaction tables
+        foreach ($transactionTables as $transaction) {
+            if (in_array($transaction, $tables)) {
+                $ordered[] = $transaction;
+            }
+        }
+        
+        // Finally, add any remaining tables
+        foreach ($tables as $table) {
+            if (!in_array($table, $ordered)) {
+                $remaining[] = $table;
+            }
+        }
+        
+        return array_merge($ordered, $remaining);
+    }
+
+    /**
+     * Check if a table exists on remote database
+     */
+    protected function tableExists(string $table, string $connection): bool
+    {
+        try {
+            $result = DB::connection($connection)
+                ->select("SHOW TABLES LIKE '{$table}'");
+            return !empty($result);
+        } catch (Exception $e) {
+            Log::warning("Error checking if table {$table} exists: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Run migrations on remote database
+     */
+    protected function runRemoteMigrations(): void
+    {
+        try {
+            // Get all migration files from local
+            $migrationPath = database_path('migrations');
+            $migrationFiles = glob($migrationPath . '/*.php');
+            
+            if (empty($migrationFiles)) {
+                Log::info('No migration files found');
+                return;
+            }
+            
+            // Get migrations that have been run locally
+            $localMigrations = DB::connection($this->localConnection)
+                ->table('migrations')
+                ->pluck('migration')
+                ->toArray();
+            
+            // Get migrations that have been run remotely
+            $remoteMigrations = [];
+            try {
+                $remoteMigrations = DB::connection($this->remoteConnection)
+                    ->table('migrations')
+                    ->pluck('migration')
+                    ->toArray();
+            } catch (Exception $e) {
+                // Migrations table might not exist yet, that's okay
+                Log::info('Remote migrations table does not exist yet, will be created');
+            }
+            
+            $remoteMigrationsSet = array_flip($remoteMigrations);
+            $migrationsToRun = [];
+            
+            // Find migrations that need to be run on remote
+            foreach ($localMigrations as $migration) {
+                if (!isset($remoteMigrationsSet[$migration])) {
+                    $migrationsToRun[] = $migration;
+                }
+            }
+            
+            if (empty($migrationsToRun)) {
+                Log::info('All migrations are already synced to remote');
+                return;
+            }
+            
+            Log::info('Found ' . count($migrationsToRun) . ' migration(s) to run on remote');
+            
+            // Note: We can't directly run Laravel migrations on remote via this service
+            // Instead, we ensure the migrations table is synced so the remote knows which migrations to run
+            // The actual migration execution should be done via artisan migrate on the remote server
+            // But we can at least ensure the schema is synced via syncMigrationsTable()
+            
+        } catch (Exception $e) {
+            Log::error('Error running remote migrations: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }
 

@@ -485,5 +485,8 @@ return [
     'total_investment' => 'کل سرمایہ کاری',
     'available_for_sale' => 'فروخت کے لیے دستیاب',
     'max_payment' => 'زیادہ سے زیادہ',
+    'total_purchase_cost' => 'کل خریداری کی لاگت',
+    'total_purchase_cost_description' => 'تمام پلاٹ خریداری پر خرچ کی گئی کل رقم',
+    'all_purchased_plots' => 'تمام خریدی ہوئی پلاٹ',
 ];
 

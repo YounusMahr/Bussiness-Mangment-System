@@ -485,5 +485,8 @@ return [
     'total_investment' => 'Total Investment',
     'available_for_sale' => 'Available for sale',
     'max_payment' => 'Max',
+    'total_purchase_cost' => 'Total Purchase Cost',
+    'total_purchase_cost_description' => 'Total amount spent on all plot purchases',
+    'all_purchased_plots' => 'All purchased plots',
 ];
 

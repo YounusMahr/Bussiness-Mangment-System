@@ -60,6 +60,7 @@ class Index extends Component
                       ->orWhere('location', 'like', "%{$this->search}%")
                       ->orWhere('installments', 'like', "%{$this->search}%");
             })
+            ->withSum(['transactions as total_paid' => fn ($q) => $q->where('type', 'purchase-out')], 'payment_amount')
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 

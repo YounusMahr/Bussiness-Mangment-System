@@ -8,19 +8,24 @@
      x-transition:enter="transition ease-out duration-500"
      x-transition:enter-start="opacity-0 transform scale-95"
      x-transition:enter-end="opacity-100 transform scale-100">
-    <!-- row 1 -->
     <div class="flex flex-wrap -mx-3">
-      <!-- card1: Total Profit -->
+      <!-- Card 1: Total Profit -->
       <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/2">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border my-4 mx-2">
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_profit') }} ({{ __('messages.plot') }})</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_profit_description') ?? __('messages.plot_profit_description') }}</p>
+                <p class="text-sm text-gray-600 mb-2">{{ __('messages.total_profit_description') ?? 'Sales revenue minus purchase cost of sold plots' }}</p>
                 <div class="text-2xl font-bold {{ $totalProfit >= 0 ? 'text-green-600' : 'text-red-600' }}">
                   Rs {{ number_format((float)$totalProfit, 2) }}
                 </div>
+                @if($salesPlots > 0)
+                <div class="text-xs text-gray-500 mt-2 space-y-0.5">
+                  <div>{{ __('messages.total_sales') }}: Rs {{ number_format((float)$totalSales, 2) }}</div>
+                  <div>{{ __('messages.purchase_cost') ?? 'Cost' }}: Rs {{ number_format((float)$totalPurchaseCostOfSoldPlots, 2) }}</div>
+                </div>
+                @endif
               </div>
               <div class="ml-4">
                 <div class="inline-block w-16 h-16 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center">
@@ -35,16 +40,20 @@
         </div>
       </div>
 
-      <!-- card2: Total Sales -->
+      <!-- Card 2: Total Sales -->
       <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/2">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border my-4 mx-2">
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.total_sales') }} ({{ __('messages.plot') }})</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('messages.total_sales_description') ?? __('messages.plot_sales_description') }}</p>
+                <p class="text-sm text-gray-600 mb-2">{{ __('messages.total_sales_description') ?? 'Total sale value of all sold plots' }}</p>
                 <div class="text-2xl font-bold text-purple-600">
                   Rs {{ number_format((float)$totalSales, 2) }}
+                </div>
+                <div class="text-xs text-gray-500 mt-2 space-y-0.5">
+                  <div>{{ __('messages.paid') }}: Rs {{ number_format((float)$totalSalesAmountReceived, 2) }}</div>
+                  <div>{{ __('messages.remaining') }}: Rs {{ number_format((float)$totalSalesRemaining, 2) }}</div>
                 </div>
               </div>
               <div class="ml-4">
@@ -60,16 +69,19 @@
         </div>
       </div>
 
-      <!-- card3: Purchase Plot -->
+      <!-- Card 3: Purchase Plot -->
       <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/2">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border my-4 mx-2">
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.purchase_plot') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('messages.purchase_plot_description') ?? __('messages.total_plots_purchased') }}</p>
+                <p class="text-sm text-gray-600 mb-2">{{ __('messages.purchase_plot_description') ?? 'Total plots purchased' }}</p>
                 <div class="text-2xl font-bold text-purple-600">
-                  {{ number_format((int)$remainingPlots + (int)$salesPlots) }} {{ __('messages.plots') }}
+                  {{ number_format((int)$totalPlotsPurchased) }} {{ __('messages.plots') }}
+                </div>
+                <div class="text-xs text-gray-500 mt-2">
+                  {{ __('messages.total_investment') ?? 'Investment' }}: Rs {{ number_format((float)$totalPurchaseCost, 2) }}
                 </div>
               </div>
               <div class="ml-4">
@@ -85,16 +97,19 @@
         </div>
       </div>
 
-      <!-- card4: Remaining Plots -->
+      <!-- Card 4: Remaining Plots -->
       <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/2">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border my-4 mx-2">
           <div class="flex-auto p-6">
             <div class="flex items-center justify-between mb-4">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('messages.remaining_plots') }}</h3>
-                <p class="text-sm text-gray-600 mb-3">{{ __('messages.remaining_plots_description') }}</p>
+                <p class="text-sm text-gray-600 mb-2">{{ __('messages.remaining_plots_description') }}</p>
                 <div class="text-2xl font-bold text-purple-600">
                   {{ number_format((int)$remainingPlots) }} {{ __('messages.plots') }}
+                </div>
+                <div class="text-xs text-gray-500 mt-2">
+                  {{ __('messages.available_for_sale') ?? 'Available for sale' }}
                 </div>
               </div>
               <div class="ml-4">
@@ -110,5 +125,4 @@
         </div>
       </div>
     </div>
-
 </div>

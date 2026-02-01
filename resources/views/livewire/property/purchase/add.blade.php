@@ -88,7 +88,7 @@
                             <label for="plot_price" class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.plot_price') }} *</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
-                                <input type="number" wire:model="plot_price" id="plot_price" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
+                                <input type="number" wire:model.live="plot_price" id="plot_price" step="0.01" min="0" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-400 focus:border-transparent" placeholder="0.00">
                             </div>
                             @error('plot_price') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -130,20 +130,20 @@
                     <!-- Calculated Values -->
                     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Remaining Amount</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.remaining') }} {{ __('messages.amount') }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="text" value="{{ number_format($remaining, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600 font-semibold" readonly>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Auto-calculated: Installment Amount - Paid Amount</p>
+                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.auto_calculated_remaining') ?? 'Auto-calculated: Plot Price - Paid Amount' }}</p>
                         </div>
                     <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Total Amount</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('messages.total_to_pay') ?? 'Total to Pay' }}</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-slate-400">Rs</span>
                                 <input type="text" value="{{ number_format($total, 2) }}" class="w-full pl-12 pr-3 py-2 border border-slate-200 rounded-lg bg-blue-50 text-blue-700 font-semibold" readonly>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">Auto-calculated: Total installment amount</p>
+                            <p class="mt-1 text-xs text-slate-500">{{ __('messages.auto_calculated_total') ?? 'Auto-calculated: Plot Price' }}</p>
                         </div>
                     </div>
 

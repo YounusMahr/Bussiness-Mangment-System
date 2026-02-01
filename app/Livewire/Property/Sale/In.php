@@ -13,22 +13,20 @@ class In extends Component
     public $saleId;
     public $sale;
     public $date;
-    public $installment_no = '';
-    public $installment_amount = 0;
-    public $paid_amount = 0;
+    public $amount = 0;
     public $notes = '';
 
     // Calculated values
-    public $remaining = 0;
-    public $total = 0;
+    public $totalSalePrice = 0;
+    public $totalPaidSoFar = 0;
+    public $remainingToReceive = 0;
+    public $maxAllowedAmount = 0;
 
     protected function rules()
     {
         return [
             'date' => 'required|date',
-            'installment_no' => 'required|string|max:255',
-            'installment_amount' => 'required|numeric|min:0',
-            'paid_amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0.01',
             'notes' => 'nullable|string',
         ];
     }
@@ -38,79 +36,81 @@ class In extends Component
         $this->saleId = $sale->id;
         $this->sale = $sale;
         $this->date = now()->format('Y-m-d');
-        $this->calculateAmounts();
+        $this->updateAmounts();
     }
 
-    public function updatedInstallmentAmount()
+    public function updatedAmount()
     {
-        $this->calculateAmounts();
+        $this->updateAmounts();
     }
 
-    public function updatedPaidAmount()
+    public function updateAmounts()
     {
-        $this->calculateAmounts();
-    }
+        $this->totalSalePrice = (float)($this->sale->total_sale_price ?? 0);
+        $this->totalPaidSoFar = (float)($this->sale->paid ?? 0);
+        $this->remainingToReceive = max($this->totalSalePrice - $this->totalPaidSoFar, 0);
+        $this->maxAllowedAmount = $this->remainingToReceive;
 
-    public function calculateAmounts()
-    {
-        $installmentAmount = (float)($this->installment_amount ?? 0);
-        $paidAmount = (float)($this->paid_amount ?? 0);
-        
-        // Remaining = Installment Amount - Paid Amount
-        $this->remaining = max($installmentAmount - $paidAmount, 0);
-        
-        // Total = Installment Amount
-        $this->total = $installmentAmount;
+        $amount = (float)($this->amount ?? 0);
+        if ($amount > $this->maxAllowedAmount && $this->maxAllowedAmount > 0) {
+            $this->addError('amount', __('messages.payment_cannot_exceed_remaining') . ' Rs ' . number_format($this->maxAllowedAmount, 2));
+        }
     }
 
     public function save()
     {
+        $this->updateAmounts();
+        $amount = (float)($this->amount ?? 0);
+
+        if ($amount <= 0) {
+            $this->addError('amount', __('messages.please_enter_valid_amount'));
+            return;
+        }
+
+        if ($amount > $this->maxAllowedAmount) {
+            $this->addError('amount', __('messages.payment_cannot_exceed_remaining') . ' Rs ' . number_format($this->maxAllowedAmount, 2));
+            return;
+        }
+
         $this->validate();
-        $this->calculateAmounts();
 
         $sale = PlotSale::findOrFail($this->saleId);
-        
-        // Store old values
-        $oldTotalSalePrice = $sale->total_sale_price ?? 0;
-        $oldPaid = $sale->paid ?? 0;
-        $oldRemaining = $sale->remaining ?? 0;
-        
-        // Calculate new values
-        $newPaid = $oldPaid + $this->paid_amount;
-        $newRemaining = max($oldRemaining - $this->paid_amount, 0);
-        
-        // Create transaction record (Credit - payment received)
-        // For Khata: Credit = Money received, use installment_amount as the transaction amount
+        $oldTotalSalePrice = (float)($sale->total_sale_price ?? 0);
+        $oldPaid = (float)($sale->paid ?? 0);
+        $oldRemaining = (float)($sale->remaining ?? 0);
+        $newPaid = $oldPaid + $amount;
+        $newRemaining = max($oldRemaining - $amount, 0);
+
         PlotSaleTransaction::create([
             'plot_sale_id' => $this->saleId,
             'date' => $this->date,
             'type' => 'sale-in',
-            'installment_no' => $this->installment_no,
-            'installment_amount' => $this->installment_amount, // Main transaction amount
-            'paid_amount' => $this->paid_amount, // Amount actually paid/received
+            'installment_no' => null,
+            'installment_amount' => $amount,
+            'paid_amount' => $amount,
+            'payment_amount' => $amount,
             'total_sale_price_before' => $oldTotalSalePrice,
             'paid_before' => $oldPaid,
             'remaining_before' => $oldRemaining,
             'total_sale_price_after' => $oldTotalSalePrice,
             'paid_after' => $newPaid,
             'remaining_after' => $newRemaining,
-            'notes' => $this->notes ?: 'Credit transaction - Payment received: Rs ' . number_format($this->installment_amount, 2),
+            'notes' => $this->notes ?: __('messages.payment_received') . ': Rs ' . number_format($amount, 2),
         ]);
-        
-        // Update the sale record
+
         $sale->update([
             'paid' => $newPaid,
             'remaining' => $newRemaining,
             'status' => $newRemaining <= 0 ? 'paid' : 'remaining',
         ]);
-        
-        session()->flash('message', 'Credit transaction recorded successfully! Installment #' . $this->installment_no . ': Amount: Rs ' . number_format($this->installment_amount, 2) . ', Paid: Rs ' . number_format($this->paid_amount, 2) . ', Remaining: Rs ' . number_format($this->remaining, 2));
+
+        session()->flash('message', __('messages.credit_recorded_successfully') . ' Rs ' . number_format($amount, 2));
         return $this->redirectRoute('property.sale.index', ['locale' => app()->getLocale()]);
     }
 
     public function render()
     {
         return view('livewire.property.sale.in')
-            ->title('Record Credit - Property Sale');
+            ->title(__('messages.record_credit') . ' - ' . __('messages.plot_sale'));
     }
 }

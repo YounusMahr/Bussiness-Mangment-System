@@ -72,7 +72,19 @@
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">{{ __('messages.plot_price') }}:</span>
-                                <span class="text-sm font-bold text-green-600">Rs {{ number_format($purchase->plot_price, 2) }}</span>
+                                <span class="text-sm font-bold text-gray-900">Rs {{ number_format($purchase->plot_price, 2) }}</span>
+                            </div>
+                            @php
+                                $totalPaid = (float)($purchase->total_paid ?? 0);
+                                $remaining = max((float)$purchase->plot_price - $totalPaid, 0);
+                            @endphp
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.total_paid') }}:</span>
+                                <span class="text-sm font-medium text-green-600">Rs {{ number_format($totalPaid, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">{{ __('messages.remaining') }}:</span>
+                                <span class="text-sm font-bold {{ $remaining > 0 ? 'text-red-600' : 'text-green-600' }}">Rs {{ number_format($remaining, 2) }}</span>
                             </div>
                             @if($purchase->installments)
                                 <div class="flex justify-between items-center">
@@ -84,25 +96,15 @@
 
                         <!-- Action Buttons -->
                         <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
-                            <!-- Credit/Debit Buttons (Khata) -->
-                            <div class="flex gap-2">
-                                <a 
-                                    wire:navigate
-                                    href="{{ localized_route('property.purchase.in', $purchase) }}"
-                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Credit (Payment In)"
-                                >
-                                    <i class="fas fa-arrow-down mr-1"></i> Credit
-                                </a>
-                                <a 
-                                    wire:navigate
-                                    href="{{ localized_route('property.purchase.out', $purchase) }}"
-                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                    title="Debit (Payment Out)"
-                                >
-                                    <i class="fas fa-arrow-up mr-1"></i> Debit
-                                </a>
-                            </div>
+                            <!-- Debit (Pay for plot) -->
+                            <a 
+                                wire:navigate
+                                href="{{ localized_route('property.purchase.out', $purchase) }}"
+                                class="block w-full text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                title="{{ __('messages.debit') }} ({{ __('messages.pay_for_plot') ?? 'Pay for plot' }})"
+                            >
+                                <i class="fas fa-arrow-up mr-1"></i> {{ __('messages.debit') }}
+                            </a>
                             
                             <!-- Other Actions -->
                             <div class="flex items-center justify-between gap-2">

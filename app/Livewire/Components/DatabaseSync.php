@@ -88,7 +88,7 @@ class DatabaseSync extends Component
                 $totalSkipped = $results['totalSkipped'] ?? 0;
                 $syncedTables = count($results['synced']);
                 $migrationsSynced = $results['migrations_synced'] ?? false;
-                $migrationsRun = $results['migrations_run'] ?? false;
+                 $migrationsRun = $results['migrations_run'] ?? false;
                 
                 // Count transaction/history tables synced
                 $transactionTables = [];

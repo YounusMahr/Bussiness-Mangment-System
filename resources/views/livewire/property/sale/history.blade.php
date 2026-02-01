@@ -4,20 +4,20 @@
         <div class="mb-6 no-print">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Plot Sale History</h1>
-                    <p class="text-slate-600 mt-1">Transaction history for {{ $sale->customer_name }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.plot_sale_history') ?? 'Plot Sale History' }}</h1>
+                    <p class="text-slate-600 mt-1">{{ __('messages.transaction_history_for') }} {{ $sale->customer_name }}</p>
                 </div>
                 <div class="flex gap-2">
                     <a wire:navigate href="{{ localized_route('property.sale.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 px-4 py-2 bg-slate-100 rounded-lg">
                         <i class="fas fa-arrow-left"></i>
-                        Back to Sales
+                        {{ __('messages.back_to_plot_sales') }}
                     </a>
                     <button 
                         wire:click="printHistory"
                         class="inline-flex items-center gap-2 text-sm text-slate-700 bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg"
                     >
                         <i class="fas fa-print"></i>
-                        Print
+                        {{ __('messages.print') }}
                     </button>
                 </div>
             </div>
@@ -27,7 +27,7 @@
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 print-section">
             <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2 no-print"></div>
             <div class="p-6 print-content">
-                <h2 class="text-lg font-semibold text-slate-900 mb-4">Plot Sale Information</h2>
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.plot_sale_information') ?? 'Plot Sale Information' }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-grid">
                     <div>
                         <label class="text-sm font-medium text-slate-500">Customer Name</label>
@@ -77,27 +77,24 @@
             </div>
         </div>
 
-        <!-- Summary Card -->
+        <!-- Summary Card (Credit only - payments received) -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 no-print">
             <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2"></div>
             <div class="p-6">
-                <h2 class="text-lg font-semibold text-slate-900 mb-4">Summary</h2>
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.summary') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Total Credit</label>
-                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($totalCredit, 2) }}</p>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.total_sale_price') }}</label>
+                        <p class="text-xl font-bold text-gray-900">Rs {{ number_format($salePrice ?? 0, 2) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Total Debit</label>
-                        <p class="text-xl font-bold text-red-600">Rs {{ number_format($totalDebit, 2) }}</p>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.total_paid') }}</label>
+                        <p class="text-xl font-bold text-green-600">Rs {{ number_format($totalCredit ?? 0, 2) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Balance</label>
-                        <p class="text-xl font-bold {{ $finalBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            Rs {{ number_format($finalBalance, 2) }}
-                            @if($finalBalance < 0)
-                                <span class="text-sm">dr</span>
-                            @endif
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.remaining') }}</label>
+                        <p class="text-xl font-bold {{ ($remainingToReceive ?? 0) > 0 ? 'text-red-600' : 'text-green-600' }}">
+                            Rs {{ number_format($remainingToReceive ?? 0, 2) }}
                         </p>
                     </div>
                 </div>
@@ -107,26 +104,24 @@
         <!-- Transactions Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
             <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
-                <h2 class="text-lg font-semibold text-slate-900">Transaction History</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="print-table-header" style="display: none;">
-                <h2 class="text-lg font-semibold text-slate-900">Transaction History</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="overflow-x-auto print-table-container">
                 <table class="min-w-full divide-y divide-gray-200" id="history-table">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Debit (-)</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Credit (+)</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.date') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.details') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.credit') }} (+)</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('messages.balance') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($transactions ?? [] as $index => $transaction)
+                        @forelse($transactions as $index => $transaction)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{ $index + 1 }}
@@ -137,45 +132,26 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">
                                     <div>
                                         @if($transaction->notes)
-                                            <div class="font-medium">{{ $transaction->notes }}</div>
-                                        @elseif($transaction->installment_no)
-                                            <div class="font-medium">Installment #{{ $transaction->installment_no }}</div>
+                                            <div class="font-medium">{{ Str::limit($transaction->notes, 50) }}</div>
                                         @else
-                                            <div class="font-medium">{{ $transaction->type === 'sale-in' ? 'Credit' : 'Debit' }}</div>
+                                            <div class="font-medium">{{ __('messages.credit') }} ({{ __('messages.payment') }})</div>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600 text-right">
-                                    @if($transaction->type === 'sale-out')
-                                        Rs {{ number_format((float)($transaction->payment_amount ?? $transaction->installment_amount ?? 0), 2) }}
-                                    @else
-                                        --
-                                    @endif
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right bg-green-50">
+                                    Rs {{ number_format((float)($transaction->payment_amount ?? $transaction->installment_amount ?? $transaction->paid_amount ?? 0), 2) }} (+)
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 text-right">
-                                    @if($transaction->type === 'sale-in')
-                                        Rs {{ number_format((float)($transaction->installment_amount ?? $transaction->paid_amount ?? 0), 2) }}
-                                    @else
-                                        --
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->running_balance ?? 0) >= 0 ? 'text-gray-700' : 'text-red-600' }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->running_balance ?? 0) > 0 ? 'text-red-600' : 'text-gray-600' }}">
                                     Rs {{ number_format((float)($transaction->running_balance ?? 0), 2) }}
-                                    @if(($transaction->running_balance ?? 0) < 0)
-                                        <span class="text-xs">dr</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    {{ $transaction->notes ?? '--' }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
-                                        <h3 class="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
-                                        <p class="text-gray-500">No credit or debit transactions have been recorded yet for this plot sale.</p>
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_transactions_found') }}</h3>
+                                        <p class="text-gray-500">{{ __('messages.no_payment_records_for_plot_sale') ?? 'No payment records have been recorded yet for this plot sale.' }}</p>
                                     </div>
                                 </td>
                             </tr>

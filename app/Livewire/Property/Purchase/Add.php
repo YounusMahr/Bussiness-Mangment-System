@@ -45,7 +45,7 @@ class Add extends Component
         $this->calculateAmounts();
     }
 
-    public function updatedInstallmentAmount()
+    public function updatedPlotPrice()
     {
         $this->calculateAmounts();
     }
@@ -57,14 +57,14 @@ class Add extends Component
 
     public function calculateAmounts()
     {
-        $installmentAmount = (float)($this->installment_amount ?? 0);
+        $plotPrice = (float)($this->plot_price ?? 0);
         $paidAmount = (float)($this->paid_amount ?? 0);
         
-        // Remaining = Installment Amount - Paid Amount
-        $this->remaining = max($installmentAmount - $paidAmount, 0);
+        // Remaining = Plot Price - Paid Amount (total cost minus what's paid)
+        $this->remaining = max($plotPrice - $paidAmount, 0);
         
-        // Total = Installment Amount
-        $this->total = $installmentAmount;
+        // Total = Plot Price
+        $this->total = $plotPrice;
     }
 
     public function save()
@@ -80,20 +80,20 @@ class Add extends Component
             'location' => $this->location,
         ]);
 
-        // Create initial transaction record if there's an installment amount
-        // For Khata: Use installment_amount as the main transaction amount
-        if ($this->installment_amount > 0 || $this->paid_amount > 0) {
-            $amount = $this->installment_amount > 0 ? $this->installment_amount : $this->paid_amount;
+        // Create initial payment (debit) transaction if user paid amount at time of purchase
+        if ((float)($this->paid_amount ?? 0) > 0) {
+            $amount = (float)$this->paid_amount;
             PlotPurchaseTransaction::create([
                 'plot_purchase_id' => $purchase->id,
                 'date' => $this->date,
-                'type' => 'purchase-in', // Credit - initial purchase
-                'installment_no' => $this->installment_no ?: 'Initial',
-                'installment_amount' => $amount, // Main transaction amount for Khata
-                'paid_amount' => $this->paid_amount,
-                'plot_price_before' => 0,
-                'plot_price_after' => $this->plot_price,
-                'notes' => 'Initial plot purchase record created: Rs ' . number_format($amount, 2),
+                'type' => 'purchase-out', // Debit - payment for plot
+                'installment_no' => $this->installment_no ?: '1',
+                'installment_amount' => $amount,
+                'paid_amount' => $amount,
+                'payment_amount' => $amount,
+                'plot_price_before' => (float)$this->plot_price,
+                'plot_price_after' => (float)$this->plot_price,
+                'notes' => 'Initial payment (paid at plot purchase): Rs ' . number_format($amount, 2),
             ]);
         }
 

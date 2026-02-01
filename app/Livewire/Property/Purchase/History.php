@@ -23,51 +23,34 @@ class History extends Component
 
     public function render()
     {
-        // Get transactions ordered by date ascending for running balance calculation
+        // Only debit (purchase-out) transactions - user pays for plot
         $transactions = $this->purchase->transactions()
+            ->where('type', 'purchase-out')
             ->orderBy('date', 'asc')
             ->orderBy('id', 'asc')
             ->get();
-        
-        // Calculate running balance
-        // Start from initial plot price (what we owe)
-        // purchase-in = Credit (payment received, reduces debt), purchase-out = Debit (payment made, increases debt)
-        $runningBalance = (float)($this->purchase->plot_price ?? 0);
+
+        // Running balance: remaining to pay after each debit (payment)
+        // Start with total plot cost; each payment reduces remaining
+        $plotCost = (float)($this->purchase->plot_price ?? 0);
+        $runningBalance = $plotCost;
         $transactionsWithBalance = $transactions->map(function ($transaction) use (&$runningBalance) {
-            if ($transaction->type === 'purchase-in') {
-                // Credit: Subtract the installment amount (reduces what we owe)
-                $amount = (float)($transaction->installment_amount ?? $transaction->paid_amount ?? 0);
-                $runningBalance -= $amount;
-            } else {
-                // Debit: Add the payment amount (increases what we owe)
-                $amount = (float)($transaction->payment_amount ?? $transaction->installment_amount ?? 0);
-                $runningBalance += $amount;
-            }
-            $transaction->running_balance = $runningBalance;
+            $amount = (float)($transaction->payment_amount ?? $transaction->installment_amount ?? 0);
+            $runningBalance -= $amount;
+            $transaction->running_balance = max($runningBalance, 0);
             return $transaction;
         });
-        
-        // Reverse to show newest records first for display
-        $transactionsWithBalance = $transactionsWithBalance->reverse()->values();
-        
-        // Calculate totals
-        // purchase-in = Credit, purchase-out = Debit
-        // Use installment_amount as primary amount for Khata system
-        $totalCredit = $transactions->where('type', 'purchase-in')->sum(function($t) {
-            return (float)($t->installment_amount ?? $t->paid_amount ?? 0);
-        });
-        $totalDebit = $transactions->where('type', 'purchase-out')->sum(function($t) {
+
+        $totalDebit = (float) $transactions->sum(function ($t) {
             return (float)($t->payment_amount ?? $t->installment_amount ?? 0);
         });
-        // Final balance = initial plot price - total credit + total debit
-        $initialPrice = (float)($this->purchase->plot_price ?? 0);
-        $finalBalance = $initialPrice - $totalCredit + $totalDebit;
-        
+        $remainingToPay = max($plotCost - $totalDebit, 0);
+
         return view('livewire.property.purchase.history', [
             'transactions' => $transactionsWithBalance,
-            'totalCredit' => $totalCredit,
             'totalDebit' => $totalDebit,
-            'finalBalance' => $finalBalance
-        ])->title('Plot Purchase History');
+            'plotCost' => $plotCost,
+            'remainingToPay' => $remainingToPay,
+        ])->title('Plot Purchase History - Payments');
     }
 }

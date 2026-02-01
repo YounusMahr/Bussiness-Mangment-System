@@ -136,23 +136,26 @@ class Add extends Component
             'status' => $this->status,
         ]);
 
-        // Create initial transaction record for the new sale
-        // For Khata: Use total_sale_price as the main transaction amount
-        PlotSaleTransaction::create([
-            'plot_sale_id' => $sale->id,
-            'date' => $this->date,
-            'type' => 'sale-in', // Credit - initial sale
-            'installment_no' => $this->installment_no ?: 'Initial',
-            'installment_amount' => $this->total_sale_price, // Main transaction amount for Khata
-            'paid_amount' => $this->paid,
-            'total_sale_price_before' => 0,
-            'paid_before' => 0,
-            'remaining_before' => 0,
-            'total_sale_price_after' => $this->total_sale_price,
-            'paid_after' => $this->paid,
-            'remaining_after' => $this->remaining,
-            'notes' => 'Initial plot sale record created: Rs ' . number_format($this->total_sale_price, 2),
-        ]);
+        // Create initial credit (payment received) transaction when user pays at time of sale
+        if ((float)($this->paid ?? 0) > 0) {
+            $amount = (float)$this->paid;
+            PlotSaleTransaction::create([
+                'plot_sale_id' => $sale->id,
+                'date' => $this->date,
+                'type' => 'sale-in', // Credit - payment received
+                'installment_no' => null,
+                'installment_amount' => $amount,
+                'paid_amount' => $amount,
+                'payment_amount' => $amount,
+                'total_sale_price_before' => (float)$this->total_sale_price,
+                'paid_before' => 0,
+                'remaining_before' => (float)$this->total_sale_price,
+                'total_sale_price_after' => (float)$this->total_sale_price,
+                'paid_after' => $amount,
+                'remaining_after' => (float)$this->remaining,
+                'notes' => __('messages.initial_payment') . ' (' . __('messages.paid_at_plot_sale') . '): Rs ' . number_format($amount, 2),
+            ]);
+        }
 
         session()->flash('message', 'Plot sale created successfully!');
         return $this->redirectRoute('property.sale.index', ['locale' => app()->getLocale()]);

@@ -11,16 +11,26 @@ class DatabaseSyncService
 {
     protected $localConnection = 'mysql';
     protected $remoteConnection = 'mysql_remote';
+    
+    /**
+     * Cache for internet connectivity status to avoid redundant checks in same request
+     */
+    protected static $onlineStatus = null;
 
     /**
      * Check if remote database is accessible
      */
     public function isRemoteConnected(): bool
     {
+        // Fail fast if offline
+        if (!$this->isOnline()) {
+            return false;
+        }
+
         try {
-            // Set a longer timeout for remote connections
+            // Set a shorter timeout for remote connections
             config(['database.connections.' . $this->remoteConnection . '.options' => [
-                PDO::ATTR_TIMEOUT => 5,
+                PDO::ATTR_TIMEOUT => 3, // Reduced from 5 to 3
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]]);
             
@@ -42,6 +52,10 @@ class DatabaseSyncService
      */
     public function getRemoteConnectionError(): string
     {
+        if (!$this->isOnline()) {
+            return 'No internet connection available.';
+        }
+
         try {
             DB::connection($this->remoteConnection)->getPdo();
             return '';
@@ -68,36 +82,48 @@ class DatabaseSyncService
      */
     public function isOnline(): bool
     {
-        // Try multiple methods for better reliability
-        $hosts = ['www.google.com', '8.8.8.8', '1.1.1.1'];
-        $ports = [80, 53, 443];
+        // Return cached status if available
+        if (self::$onlineStatus !== null) {
+            return self::$onlineStatus;
+        }
+
+        // Try high-reliability hosts with very short timeout
+        // Port 53 (DNS) or 80 (HTTP) are usually open
+        $checks = [
+            ['host' => '8.8.8.8', 'port' => 53],        // Google DNS
+            ['host' => 'www.google.com', 'port' => 80],  // Google Web
+        ];
         
-        foreach ($hosts as $host) {
-            foreach ($ports as $port) {
-                $connected = @fsockopen($host, $port, $errno, $errstr, 3);
+        foreach ($checks as $check) {
+            try {
+                $connected = @fsockopen($check['host'], $check['port'], $errno, $errstr, 2);
                 if ($connected) {
                     fclose($connected);
+                    self::$onlineStatus = true;
                     return true;
                 }
+            } catch (Exception $e) {
+                // Ignore and try next
             }
         }
         
-        // Fallback: Try using curl if available
+        // Fallback: Try using curl if fsockopen fails/is disabled
         if (function_exists('curl_init')) {
             $ch = curl_init('https://www.google.com');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
             curl_setopt($ch, CURLOPT_NOBODY, true);
             $result = @curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             
-            if ($result !== false && $httpCode > 0) {
+            if ($result !== false) {
+                self::$onlineStatus = true;
                 return true;
             }
         }
         
+        self::$onlineStatus = false;
         return false;
     }
 
@@ -292,16 +318,41 @@ class DatabaseSyncService
                         continue;
                     }
                     
+                    // List of tables that should be updated if they already exist (State tables)
+                    $stateTables = [
+                        'users', 'customers', 'products', 'categories', 
+                        'plot_purchases', 'plot_sales', 'udaars', 'installments', 
+                        'stock_purchases', 'sales'
+                    ];
+                    $isStateTable = in_array($table, $stateTables);
+                    
                     // Check if record exists (fast lookup using array)
                     if (isset($existingKeysSet[$primaryKeyValue])) {
-                        // Record already exists, skip it (no duplicate)
-                        $skipped++;
+                        if ($isStateTable) {
+                            // For state tables, update existing record to ensure balances/status are synced
+                            $dataToUpdate = $recordArray;
+                            unset($dataToUpdate[$primaryKey]); // Don't update the primary key itself
+                            
+                            // Remove timestamps if we want remote to manage them, 
+                            // or keep them if we want to sync local timestamps
+                            unset($dataToUpdate['created_at'], $dataToUpdate['updated_at']);
+                            
+                            DB::connection($destConnection)
+                                ->table($table)
+                                ->where($primaryKey, $primaryKeyValue)
+                                ->update($dataToUpdate);
+                            
+                            $inserted++; // Counting updates as sync successes
+                        } else {
+                            // For transaction/history tables, skip existing to avoid duplication
+                            $skipped++;
+                        }
                         continue;
                     }
                     
                     // Record doesn't exist, insert it
                     // Preserve timestamps for history/transaction tables to maintain data integrity
-                    $isHistoryTable = str_contains($table, '_transactions') || str_contains($table, '_history');
+                    $isHistoryTable = str_contains($table, '_transactions') || str_contains($table, '_history') || $table === 'sale_items';
                     
                     if (!$isHistoryTable) {
                         // For regular tables, let database handle timestamps

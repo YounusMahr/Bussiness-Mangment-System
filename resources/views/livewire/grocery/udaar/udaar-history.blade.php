@@ -357,11 +357,11 @@
     </style>
 
     <!-- Print JavaScript -->
+    @script
     <script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('print-history', () => {
+        $wire.on('print-history', () => {
             window.print();
         });
-    });
     </script>
+    @endscript
 </div>

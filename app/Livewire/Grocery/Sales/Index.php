@@ -15,11 +15,16 @@ class Index extends Component
     public $sortDirection = 'desc';
     public $perPage = 10;
 
-    public function updatingSearch() { $this->resetPage(); }
-    public function sortBy($field) {
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+    public function sortBy($field)
+    {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -35,12 +40,20 @@ class Index extends Component
         }
     }
 
+    public function printTable()
+    {
+        $this->dispatch('print-table');
+    }
+
     public function render()
     {
         $sales = Sale::with('saleItems.product', 'user')
-            ->when($this->search, function($q) {
-                $q->where('customer_name', 'like', "%{$this->search}%")
-                  ->orWhere('notes', 'like', "%{$this->search}%");
+            ->when($this->search, function ($q) {
+            $q->where(function ($query) {
+                    $query->where('customer_name', 'like', "%{$this->search}%")
+                        ->orWhere('notes', 'like', "%{$this->search}%");
+                }
+                );
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);

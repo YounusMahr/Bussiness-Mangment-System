@@ -217,141 +217,87 @@
 @media print {
     @page {
         size: A4 portrait;
-        margin: 1cm;
+        margin: 0;
     }
     
-    * {
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
     
-    body {
-        font-size: 11px;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
+    body > * {
+        visibility: hidden;
     }
     
-    .no-print {
+    .max-w-7xl {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+    
+    .max-w-7xl * {
+        visibility: visible;
+    }
+    
+    .no-print, .no-print * {
         display: none !important;
+        visibility: hidden !important;
     }
     
     .print-only {
         display: block !important;
     }
     
-    .hidden {
-        display: none !important;
-    }
-    
-    .print-only.hidden {
-        display: block !important;
-    }
-    
-    /* Print Header */
     .print-header {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 2rem;
         border-bottom: 2px solid #000;
-        padding-bottom: 10px;
+        padding-bottom: 1rem;
     }
     
     .print-header h1 {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: bold;
+        text-transform: uppercase;
         margin: 0;
-        padding: 0;
     }
     
-    .print-header p {
-        font-size: 12px;
-        margin: 5px 0 0 0;
-    }
-    
-    /* Print Table */
     .print-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
-        page-break-inside: auto;
+        margin-top: 1rem;
     }
     
-    .print-table thead {
-        display: table-header-group;
-    }
-    
-    .print-table tbody {
-        display: table-row-group;
-    }
-    
-    .print-table tr {
-        page-break-inside: avoid;
-        page-break-after: auto;
-    }
-    
-    .print-table th,
-    .print-table td {
+    .print-table th, .print-table td {
         border: 1px solid #000;
-        padding: 6px 8px;
+        padding: 8px;
         text-align: left;
         font-size: 10px;
+        color: black;
     }
     
     .print-table th {
-        background-color: #e5e7eb !important;
+        background-color: #f3f4f6 !important;
         font-weight: bold;
-    }
-    
-    .print-table td {
-        background-color: #fff !important;
-    }
-    
-    /* Ensure table fits on page */
-    .print-table {
-        width: 100%;
-        table-layout: fixed;
-    }
-    
-    .print-table th:nth-child(1),
-    .print-table td:nth-child(1) {
-        width: 5%;
-    }
-    
-    .print-table th:nth-child(2),
-    .print-table td:nth-child(2) {
-        width: 20%;
-    }
-    
-    .print-table th:nth-child(3),
-    .print-table td:nth-child(3) {
-        width: 15%;
-    }
-    
-    .print-table th:nth-child(4),
-    .print-table td:nth-child(4) {
-        width: 20%;
-    }
-    
-    .print-table th:nth-child(5),
-    .print-table td:nth-child(5) {
-        width: 15%;
-    }
-    
-    .print-table th:nth-child(6),
-    .print-table td:nth-child(6) {
-        width: 25%;
     }
 }
 </style>
 
 <!-- Print JavaScript -->
+@script
 <script>
-document.addEventListener('livewire:init', () => {
-    Livewire.on('print-table', () => {
+    $wire.on('print-table', () => {
         window.print();
     });
-});
 </script>
+@endscript
 
 
 </div>

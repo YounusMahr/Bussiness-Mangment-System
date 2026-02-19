@@ -24,7 +24,8 @@ class Index extends Component
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -38,15 +39,16 @@ class Index extends Component
     public function render()
     {
         // Get products with quantity <= 10 (low stock) or quantity == 0 (empty/sold out)
-        $products = Product::where(function($query) {
-                $query->where('quantity', '<=', 10);
-            })
-            ->when($this->search, function($query) {
-                $query->where(function($q) {
+        $products = Product::where(function ($query) {
+            $query->where('quantity', '<=', 10);
+        })
+            ->when($this->search, function ($query) {
+            $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('sku', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
-                });
+                        ->orWhere('sku', 'like', '%' . $this->search . '%');
+                }
+                )
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
             })
             ->with('category')
             ->orderBy($this->sortField, $this->sortDirection)

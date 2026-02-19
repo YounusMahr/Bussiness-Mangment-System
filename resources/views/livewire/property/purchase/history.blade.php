@@ -4,7 +4,7 @@
         <div class="mb-6 no-print">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.plot_purchase_history') ?? 'Plot Purchase History' }}</h1>
+                    <h1 class="text-2xl font-bold text-slate-900">{{ __('messages.plot_purchase_history') }}</h1>
                     <p class="text-slate-600 mt-1">{{ __('messages.transaction_history_for') }} {{ $purchase->plot_area ?? 'N/A' }} @if($purchase->customer) - {{ $purchase->customer->name }}@endif</p>
                 </div>
                 <div class="flex gap-2">
@@ -27,33 +27,33 @@
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden mb-6 print-section">
             <div class="bg-gradient-to-r from-purple-700 to-pink-500 h-2 no-print"></div>
             <div class="p-6 print-content">
-                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.plot_purchase_information') ?? 'Plot Purchase Information' }}</h2>
+                <h2 class="text-lg font-semibold text-slate-900 mb-4">{{ __('messages.plot_purchase_information') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 print-grid">
                     @if($purchase->customer)
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Customer</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.customer') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $purchase->customer->name }} ({{ $purchase->customer->number }})</p>
                     </div>
                     @endif
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Plot Area</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.plot_area') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $purchase->plot_area ?? 'N/A' }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Location</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.location') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $purchase->location ?? 'N/A' }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Plot Price</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.plot_price') }}</label>
                         <p class="text-base font-semibold text-slate-900">Rs {{ number_format((float)($purchase->plot_price ?? 0), 2) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-slate-500">Purchase Date</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.buy_date') }}</label>
                         <p class="text-base font-semibold text-slate-900">{{ $purchase->date ? $purchase->date->format('Y-m-d') : 'N/A' }}</p>
                     </div>
                     @if($purchase->installments)
                     <div class="md:col-span-2 lg:col-span-4">
-                        <label class="text-sm font-medium text-slate-500">Installments</label>
+                        <label class="text-sm font-medium text-slate-500">{{ __('messages.installments') }}</label>
                         <p class="text-base text-slate-900 whitespace-pre-wrap">{{ $purchase->installments }}</p>
                     </div>
                     @endif
@@ -88,10 +88,10 @@
         <!-- Transactions Table -->
         <div class="bg-white rounded-2xl shadow-soft-xl overflow-hidden print-section">
             <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
-                <h2 class="text-lg font-semibold text-slate-900">Transaction History</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="print-table-header" style="display: none;">
-                <h2 class="text-lg font-semibold text-slate-900">Transaction History</h2>
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.transaction_history') }}</h2>
             </div>
             <div class="overflow-x-auto print-table-container">
                 <table class="min-w-full divide-y divide-gray-200" id="history-table">
@@ -137,7 +137,7 @@
                                     <div class="flex flex-col items-center">
                                         <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_transactions_found') }}</h3>
-                                        <p class="text-gray-500">{{ __('messages.no_payment_records_for_plot_purchase') ?? 'No payment records have been recorded yet for this plot purchase.' }}</p>
+                                        <p class="text-gray-500">{{ __('messages.no_payment_records_for_plot_purchase') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -150,7 +150,7 @@
 
     @script
     <script>
-        Livewire.on('print-history', () => {
+        $wire.on('print-history', () => {
             window.print();
         });
     </script>

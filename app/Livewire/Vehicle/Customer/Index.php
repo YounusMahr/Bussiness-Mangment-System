@@ -10,7 +10,7 @@ class Index extends Component
 {
     use WithPagination;
     protected $layout = 'layouts.app';
-    
+
     public $search = '';
     public $sortField = 'name';
     public $sortDirection = 'asc';
@@ -26,7 +26,8 @@ class Index extends Component
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -66,10 +67,13 @@ class Index extends Component
     {
         $customers = Customer::where('type', 'Car-installment')
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', "%{$this->search}%")
-                      ->orWhere('number', 'like', "%{$this->search}%")
-                      ->orWhere('email', 'like', "%{$this->search}%")
-                      ->orWhere('address', 'like', "%{$this->search}%");
+            $query->where(function ($q) {
+                    $q->where('name', 'like', "%{$this->search}%")
+                        ->orWhere('number', 'like', "%{$this->search}%")
+                        ->orWhere('email', 'like', "%{$this->search}%")
+                        ->orWhere('address', 'like', "%{$this->search}%");
+                }
+                );
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);

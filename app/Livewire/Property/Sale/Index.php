@@ -26,7 +26,8 @@ class Index extends Component
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -57,13 +58,17 @@ class Index extends Component
     {
         $sales = PlotSale::with(['plotPurchase', 'plotPurchase.customer'])
             ->when($this->search, function ($query) {
-                $query->where('customer_name', 'like', "%{$this->search}%")
-                      ->orWhere('customer_number', 'like', "%{$this->search}%")
-                      ->orWhereHas('plotPurchase', function($q) {
-                          $q->where('plot_area', 'like', "%{$this->search}%")
-                            ->orWhere('location', 'like', "%{$this->search}%");
-                      });
-            })
+            $query->where(function ($q) {
+                    $q->where('customer_name', 'like', "%{$this->search}%")
+                        ->orWhere('customer_number', 'like', "%{$this->search}%")
+                        ->orWhereHas('plotPurchase', function ($subQ) {
+                    $subQ->where('plot_area', 'like', "%{$this->search}%")
+                        ->orWhere('location', 'like', "%{$this->search}%");
+                }
+                );
+            }
+            );
+        })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 

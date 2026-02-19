@@ -488,5 +488,8 @@ return [
     'total_purchase_cost' => 'ټول د پیرودلو لګښت',
     'total_purchase_cost_description' => 'په ټولو پلاټ پیرودلو کې شتمني شوې ټول مقدار',
     'all_purchased_plots' => 'ټول پیرودل شوي پلاټونه',
+    'plot_purchase_history' => 'د پلاټ د پیرودلو تاریخ',
+    'plot_purchase_information' => 'د پلاټ د پیرودلو معلومات',
+    'no_payment_records_for_plot_purchase' => 'د دې پلاټ پیرود لپاره تراوسه د تادیې هیڅ ریکارډونه ندي ثبت شوي.',
 ];
 

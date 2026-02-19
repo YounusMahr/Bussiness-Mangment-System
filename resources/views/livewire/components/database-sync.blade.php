@@ -1,18 +1,27 @@
 <div class="relative" 
-     x-data="{ showStatus: false }"
-     x-init="
-         // Auto-refresh connectivity every 30 seconds
-         setInterval(() => {
-             @this.call('refreshConnectivity');
-         }, 30000);
-         
-         // Watch for sync status changes
-         Livewire.on('sync-complete', () => {
-             showStatus = true;
-             setTimeout(() => showStatus = false, 5000);
-         });
-     "
-     @connectivity-updated.window="console.log('Connectivity updated')">
+     x-data="{ 
+        showStatus: false,
+        timer: null,
+        init: function() {
+            var self = this;
+            // Auto-refresh connectivity every 30 seconds
+            this.timer = setInterval(function() {
+                if (typeof $wire !== 'undefined') {
+                    $wire.refreshConnectivity();
+                }
+            }, 30000);
+            
+            // Watch for sync status changes
+            $wire.on('sync-complete', function() {
+                self.showStatus = true;
+                setTimeout(function() { self.showStatus = false; }, 5000);
+            });
+        },
+        destroy: function() {
+            if (this.timer) clearInterval(this.timer);
+        }
+     }"
+     @connectivity-updated.window="">
     <!-- Sync Button -->
     <button 
         type="button"

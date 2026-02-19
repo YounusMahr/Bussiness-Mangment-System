@@ -1,7 +1,7 @@
 <div class="p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
-        <div class="mb-6">
+        <div class="mb-6 no-print">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.stock_purchases_management') }}</h1>
@@ -24,14 +24,14 @@
 
         <!-- Flash Messages -->
         @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 no-print">
                 <i class="fas fa-check-circle"></i>
                 {{ session('message') }}
             </div>
         @endif
 
         <!-- Search and Filters -->
-        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
+        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6 no-print">
             <div class="flex gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
@@ -41,13 +41,14 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="{{ __('messages.search_by_goods_name_seller_contact') }}"
+                            placeholder="{{ __('messages.search_by_goods_name_seller_contact') }}..."
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-full leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
                 </div>
                 <div>
                     <button 
+                        style="background-color:green;"
                         wire:click="printTable" 
                         class="bg-green-200 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2"
                     >
@@ -58,8 +59,45 @@
             </div>
         </div>
 
+        <!-- Print Table (Hidden on screen, shown when printing) -->
+        <div class="hidden print-only">
+            <div class="print-header">
+                <h1>{{ __('messages.stock_purchases_management') }}</h1>
+                <p>{{ __('messages.manage_your_stock_purchases') }}</p>
+                <p style="font-size: 10px; margin-top: 5px;">{{ __('messages.date') }}: {{ now()->format('Y-m-d H:i:s') }}</p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Seller Name</th>
+                        <th>Contact</th>
+                        <th>{{ __('messages.total_stock') }}</th>
+                        <th>{{ __('messages.given_stock') }}</th>
+                        <th>{{ __('messages.remaining_stock') }}</th>
+                        <th>{{ __('messages.date') }}</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($purchases as $index => $purchase)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $purchase->seller_name }}</td>
+                            <td>{{ $purchase->contact }}</td>
+                            <td>{{ number_format($purchase->total_stock, 2) }}</td>
+                            <td>{{ number_format($purchase->given_stock, 2) }}</td>
+                            <td>{{ number_format($purchase->remaining_stock, 2) }}</td>
+                            <td>{{ $purchase->date->format('Y-m-d') }}</td>
+                            <td>{{ $purchase->status === 'complete' ? __('messages.complete') : __('messages.incomplete') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
         <!-- Stock Purchases Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 no-print">
             @forelse($purchases as $purchase)
                 <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
                     <!-- Card Header with Gradient -->
@@ -176,7 +214,7 @@
 
         <!-- Pagination -->
         @if($purchases->hasPages())
-            <div class="flex justify-center py-6 mt-6">
+            <div class="flex justify-center py-6 mt-6 no-print">
                 {{ $purchases->links() }}
             </div>
         @endif
@@ -184,7 +222,7 @@
 
     <!-- Modal -->
     @if($showModal)
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 no-print">
             <div class="relative top-4 mx-auto p-5 border w-11/12 max-w-3xl shadow-lg rounded-2xl bg-white">
                 <div class="mt-3">
                     <div class="flex justify-between items-center mb-6">
@@ -323,7 +361,7 @@
 
     {{-- Confirmation Modal --}}
     @if($confirmingDeleteId)
-        <div class="fixed inset-0 flex items-center justify-center z-50 bg-white/30 backdrop-blur-sm transition-opacity duration-300">
+        <div class="fixed inset-0 flex items-center justify-center z-50 bg-white/30 backdrop-blur-sm transition-opacity duration-300 no-print">
             <div class="bg-white rounded-2xl shadow-lg max-w-sm w-full p-8 text-center animate-fade-in">
                 <div class="mb-5">
                     <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
@@ -343,36 +381,87 @@
     <!-- Print Styles -->
     <style>
     @media print {
-        .no-print {
-            display: none !important;
+        @page {
+            size: A4 portrait;
+            margin: 0;
         }
         
         body {
-            font-size: 12px;
+            margin: 0;
+            padding: 0;
+            background: white;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         
-        table {
-            width: 100% !important;
-            border-collapse: collapse !important;
+        body > * {
+            visibility: hidden;
         }
         
-        th, td {
-            border: 1px solid #000 !important;
-            padding: 8px !important;
+        .max-w-7xl {
+            visibility: visible;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
         }
         
-        .bg-gradient-to-r {
-            background:rgb(5, 241, 80) !important;
+        .max-w-7xl * {
+            visibility: visible;
+        }
+        
+        .no-print, .no-print * {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
+        .print-only {
+            display: block !important;
+        }
+        
+        .print-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #000;
+            padding-bottom: 1rem;
+        }
+        
+        .print-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .print-table th, .print-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+            font-size: 10px;
+            color: black;
+        }
+        
+        .print-table th {
+            background-color: #f3f4f6 !important;
+            font-weight: bold;
         }
     }
     </style>
 
     <!-- Print JavaScript -->
+    @script
     <script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('print-table', () => {
+        $wire.on('print-table', () => {
             window.print();
         });
-    });
     </script>
+    @endscript
 </div>

@@ -1,7 +1,7 @@
 <div class="p-6">
     <div class="max-w-7xl mx-auto">
-        <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center">
-<div>
+        <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center no-print">
+            <div>
                 <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.sales_management') }}</h1>
                 <p class="text-gray-600 mt-1">{{ __('messages.all_recent_pos_transactions') }}</p>
             </div>
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
+        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6 no-print">
             <div class="flex gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
@@ -24,15 +24,58 @@
                         <input 
                             type="text" 
                             wire:model.live="search" 
-                            placeholder="{{ __('messages.search_sales_by_customer_or_notes') }}"
+                            placeholder="{{ __('messages.search_sales_by_customer_or_notes') }}..."
                             class="pl-8.75 text-sm focus:shadow-soft-primary-outline w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 text-gray-700 placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
                         >
                     </div>
                 </div>
+                <div>
+                    <button 
+                        style="background-color:green;"
+                        wire:click="printTable" 
+                        class="bg-green-200 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2"
+                    >
+                        <i class="fas fa-print"></i>
+                        {{ __('messages.print') }}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Print Table (Hidden on screen, shown when printing) -->
+        <div class="hidden print-only">
+            <div class="print-header">
+                <h1>{{ __('messages.sales_management') }}</h1>
+                <p>{{ __('messages.all_recent_pos_transactions') }}</p>
+                <p style="font-size: 10px; margin-top: 5px;">{{ __('messages.date') }}: {{ now()->format('Y-m-d H:i:s') }}</p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ __('messages.customer_name') }}</th>
+                        <th>{{ __('messages.paid_amount') }}</th>
+                        <th>{{ __('messages.total_items') }}</th>
+                        <th>{{ __('messages.date') }}</th>
+                        <th>{{ __('messages.status') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sales as $index => $sale)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $sale->customer_name ?: __('messages.walk_in_customer') }}</td>
+                            <td>Rs {{ number_format($sale->paid_amount, 2) }}</td>
+                            <td>{{ $sale->saleItems->sum('quantity') }}</td>
+                            <td>{{ $sale->date->format('M d, Y') }}</td>
+                            <td>{{ Str::ucfirst($sale->status ?: 'pending') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 no-print">
             @forelse($sales as $sale)
                 @php
                     $customer = $sale->customer_name ? ($customers[$sale->customer_name] ?? null) : null;
@@ -165,9 +208,97 @@
         </div>
 
         @if($sales->hasPages())
-            <div class="flex justify-center py-6 mt-6">
+            <div class="flex justify-center py-6 mt-6 no-print">
                 {{ $sales->links() }}
             </div>
         @endif
     </div>
+    <!-- Print Styles -->
+<style>
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body > * {
+        visibility: hidden;
+    }
+    
+    .max-w-7xl {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+    
+    .max-w-7xl * {
+        visibility: visible;
+    }
+    
+    .no-print, .no-print * {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #000;
+        padding-bottom: 1rem;
+    }
+    
+    .print-header h1 {
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+    }
+    
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    
+    .print-table th, .print-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+        font-size: 10px;
+        color: black;
+    }
+    
+    .print-table th {
+        background-color: #f3f4f6 !important;
+        font-weight: bold;
+    }
+}
+</style>
+
+<!-- Print JavaScript -->
+@script
+<script>
+    $wire.on('print-table', () => {
+        window.print();
+    });
+</script>
+@endscript
+
 </div>
+

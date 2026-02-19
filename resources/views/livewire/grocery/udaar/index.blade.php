@@ -1,6 +1,6 @@
 <div class="p-6">
     <div class="max-w-7xl mx-auto">
-        <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center">
+        <div class="mb-6 flex flex-col lg:flex-row justify-between items-start sm:items-center no-print">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.udaar') }}</h1>
                 <p class="text-gray-600 mt-1">{{ __('messages.all_credit_transactions') }}</p>
@@ -17,12 +17,12 @@
         </div>
 
         @if(session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex items-center gap-2">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex items-center gap-2 no-print">
                 <i class="fas fa-check-circle"></i> {{ session('message') }}
             </div>
         @endif
 
-        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
+        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6 no-print">
             <div class="flex gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
@@ -35,10 +35,56 @@
                         >
                     </div>
                 </div>
+                <div>
+                    <button 
+                        style="background-color:green;"
+                        wire:click="printTable" 
+                        class="bg-green-200 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2"
+                    >
+                        <i class="fas fa-print"></i>
+                        {{ __('messages.print') }}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Print Table (Hidden on screen, shown when printing) -->
+        <div class="hidden print-only">
+            <div class="print-header">
+                <h1>{{ __('messages.udaar') }}</h1>
+                <p>{{ __('messages.all_credit_transactions') }}</p>
+                <p style="font-size: 10px; margin-top: 5px;">{{ __('messages.date') }}: {{ now()->format('Y-m-d H:i:s') }}</p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ __('messages.customer_name') }}</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Remaining</th>
+                        <th>Buy Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($udaars as $index => $udaar)
+                        @php
+                            $totalAmount = $udaar->paid_amount + $udaar->remaining_amount - $udaar->interest_amount;
+                        @endphp
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $udaar->customer_name ?: 'Unknown Customer' }}</td>
+                            <td>Rs {{ number_format($totalAmount, 2) }}</td>
+                            <td>Rs {{ number_format($udaar->paid_amount, 2) }}</td>
+                            <td>Rs {{ number_format($udaar->remaining_amount, 2) }}</td>
+                            <td>{{ $udaar->buy_date ? $udaar->buy_date->format('M d, Y') : '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 no-print">
             @forelse($udaars as $udaar)
                 @php
                     $customer = $udaar->customer_name ? ($customers[$udaar->customer_name] ?? null) : null;
@@ -171,9 +217,98 @@
         </div>
 
         @if($udaars->hasPages())
-            <div class="flex justify-center py-6 mt-6">
+            <div class="flex justify-center py-6 mt-6 no-print">
                 {{ $udaars->links() }}
             </div>
         @endif
     </div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body > * {
+        visibility: hidden;
+    }
+    
+    .max-w-7xl {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+    
+    .max-w-7xl * {
+        visibility: visible;
+    }
+    
+    .no-print, .no-print * {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #000;
+        padding-bottom: 1rem;
+    }
+    
+    .print-header h1 {
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+    }
+    
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    
+    .print-table th, .print-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+        font-size: 10px;
+        color: black;
+    }
+    
+    .print-table th {
+        background-color: #f3f4f6 !important;
+        font-weight: bold;
+    }
+}
+</style>
+
+<!-- Print JavaScript -->
+@script
+<script>
+    $wire.on('print-table', () => {
+        window.print();
+    });
+</script>
+@endscript
+
 </div>
+

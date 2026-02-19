@@ -26,7 +26,8 @@ class Index extends Component
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -56,11 +57,18 @@ class Index extends Component
     public function render()
     {
         $purchases = PlotPurchase::when($this->search, function ($query) {
-                $query->where('plot_area', 'like', "%{$this->search}%")
-                      ->orWhere('location', 'like', "%{$this->search}%")
-                      ->orWhere('installments', 'like', "%{$this->search}%");
-            })
-            ->withSum(['transactions as total_paid' => fn ($q) => $q->where('type', 'purchase-out')], 'payment_amount')
+            $query->where(function ($q) {
+                $q->where('plot_area', 'like', "%{$this->search}%")
+                    ->orWhere('location', 'like', "%{$this->search}%")
+                    ->orWhere('installments', 'like', "%{$this->search}%")
+                    ->orWhere('plot_price', 'like', "%{$this->search}%")
+                    ->orWhereHas('customer', function ($cq) {
+                        $cq->where('name', 'like', "%{$this->search}%")
+                            ->orWhere('number', 'like', "%{$this->search}%");
+                    });
+            });
+        })
+            ->withSum(['transactions as total_paid' => fn($q) => $q->where('type', 'purchase-out')], 'payment_amount')
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 

@@ -488,5 +488,8 @@ return [
     'total_purchase_cost' => 'کل خریداری کی لاگت',
     'total_purchase_cost_description' => 'تمام پلاٹ خریداری پر خرچ کی گئی کل رقم',
     'all_purchased_plots' => 'تمام خریدی ہوئی پلاٹ',
+    'plot_purchase_history' => 'پلاٹ خریداری کی تاریخ',
+    'plot_purchase_information' => 'پلاٹ خریداری کی معلومات',
+    'no_payment_records_for_plot_purchase' => 'اس پلاٹ خریداری کے لیے ابھی تک ادائیگی کا کوئی ریکارڈ موجود نہیں ہے۔',
 ];
 

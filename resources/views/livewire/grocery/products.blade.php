@@ -1,7 +1,7 @@
 <div class="p-6">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto print-container">
         <!-- Header Section -->
-        <div class="mb-6">
+        <div class="mb-6 no-print">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">{{ __('messages.products_management') }}</h1>
@@ -22,14 +22,14 @@
 
         <!-- Flash Messages -->
         @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 no-print">
                 <i class="fas fa-check-circle"></i>
                 {{ session('message') }}
             </div>
         @endif
 
         <!-- Search and Filters -->
-        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6">
+        <div class="bg-white shadow-soft-xl rounded-2xl p-4 mb-6 no-print">
             <div class="flex  gap-4 items-center md:justify-between">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
@@ -58,10 +58,20 @@
         </div>
 
         <!-- Products Table -->
-        <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
+        <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden print-section">
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-200 no-print">
+                <h2 class="text-lg font-semibold text-slate-900">{{ __('messages.products_management') }}</h2>
+            </div>
+            <!-- Print Header -->
+            <div class="hidden print:block p-8 border-b-2 border-black">
+                <h1 class="text-2xl font-bold text-black uppercase tracking-wider">{{ __('messages.products_management') }}</h1>
+                <p class="text-black mt-2">{{ __('messages.manage_your_product_inventory') }}</p>
+                <p class="text-black text-xs mt-4">Date: {{ now()->format('Y-m-d H:i') }}</p>
+            </div>
+            
             <!-- Desktop Table -->
-            <div class="hidden lg:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+            <div class="overflow-x-auto p-4 lg:p-0">
+                <table class="min-w-full divide-y divide-gray-200" id="products-table">
                     <thead class="bg-gradient-to-r from-purple-50 to-pink-50">
                         <tr>
                             <th wire:click="sortBy('name')" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors">
@@ -107,10 +117,10 @@
                                     @endif
                                 </div>
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider no-print">
                                 {{ __('messages.status') }}
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider no-print">
                                 {{ __('messages.actions') }}
                             </th>
                         </tr>
@@ -121,28 +131,26 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         @if($product->image)
-                                            <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded shadow-md object-cover">
+                                            <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded shadow-md object-cover no-print">
                                         @else
-                                            <span class="inline-flex items-center justify-center w-10 h-10 bg-gray-200 rounded shadow-md">
+                                            <span class="inline-flex items-center justify-center w-10 h-10 bg-gray-200 rounded shadow-md no-print">
                                                 <i class="fas fa-image text-gray-400"></i>
                                             </span>
                                         @endif
                                         <div>
                                             <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
                                             @if($product->description)
-                                                <div class="text-sm text-gray-500 truncate max-w-xs">{{ Str::limit($product->description, 50) }}</div>
+                                                <div class="text-xs text-gray-500 lg:truncate lg:max-w-xs">{{ Str::limit($product->description, 50) }}</div>
                                             @endif
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {{ $product->sku }}
-                                    </span>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ $product->sku }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     @if($product->category)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 print:bg-transparent print:text-black print:px-0 print:py-0 print:rounded-none">
                                             {{ $product->category->name }}
                                         </span>
                                     @else
@@ -151,29 +159,29 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <span class="text-sm font-medium {{ $product->quantity > 10 ? 'text-green-600' : ($product->quantity > 0 ? 'text-yellow-600' : 'text-red-600') }}">
+                                        <span class="text-sm font-medium {{ $product->quantity > 10 ? 'text-green-600' : ($product->quantity > 0 ? 'text-yellow-600' : 'text-red-600') }} print:text-black">
                                             {{ $product->quantity }}
                                         </span>
                                         @if($product->quantity <= 10 && $product->quantity > 0)
-                                            <i class="fas fa-exclamation-triangle text-yellow-500 ml-2"></i>
+                                            <i class="fas fa-exclamation-triangle text-yellow-500 ml-2 no-print"></i>
                                         @elseif($product->quantity == 0)
-                                            <i class="fas fa-times-circle text-red-500 ml-2"></i>
+                                            <i class="fas fa-times-circle text-red-500 ml-2 no-print"></i>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">Rs {{ number_format($product->price, 2) }}</div>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    Rs {{ number_format($product->price, 2) }}
                                     @if($product->cost)
-                                        <div class="text-sm text-gray-500">Cost: Rs {{ number_format($product->cost, 2) }}</div>
+                                        <div class="text-sm text-gray-500 no-print">Cost: Rs {{ number_format($product->cost, 2) }}</div>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap no-print">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         <i class="fas fa-circle mr-1 text-xs"></i>
                                         {{ $product->is_active ? __('messages.active') : __('messages.inactive') }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium no-print">
                                     <div class="flex items-center gap-2 space-x-2 ">
                                         <a
                                             wire:navigate
@@ -195,8 +203,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center">
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <div class="flex flex-col items-center no-print">
                                         <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('messages.no_products_found') }}</h3>
                                         <p class="text-gray-500 mb-4">{{ __('messages.get_started_by_creating_first_product') }}</p>
@@ -204,6 +212,7 @@
                                             {{ __('messages.add_product') }}
                                         </a>
                                     </div>
+                                    <span class="print:block hidden">{{ __('messages.no_products_found') }}</span>
                                 </td>
                             </tr>
                         @endforelse
@@ -212,7 +221,7 @@
             </div>
 
             <!-- Mobile Cards -->
-            <div class="lg:hidden">
+            <div class="lg:hidden no-print">
                 @forelse($products as $product)
                     <div class="p-4 border-b border-gray-200 last:border-b-0">
                         <div class="flex justify-between items-start mb-2">
@@ -280,7 +289,7 @@
 
             <!-- Pagination -->
             @if($products->hasPages())
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 no-print">
                     {{ $products->links() }}
                 </div>
             @endif

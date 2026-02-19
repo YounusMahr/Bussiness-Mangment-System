@@ -58,6 +58,11 @@ class Index extends Component
         }
     }
 
+    public function printTable()
+    {
+        $this->dispatch('print-table');
+    }
+
     public function render()
     {
         $categories = CategoryModel::query()

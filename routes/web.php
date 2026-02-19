@@ -134,6 +134,11 @@ Route::group([
         return redirect("/{$locale}/index");
     });
     Route::get('users', App\Livewire\User\Manage::class)->name('users.index');
+    
+    // Dashboard Redirect
+    Route::get('dashboard', function() {
+        return redirect()->route('index');
+    });
 
     // Finance Routes
     Route::get('index', App\Livewire\Finance\Index::class)->name('index');

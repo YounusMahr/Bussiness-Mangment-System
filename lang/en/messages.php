@@ -488,5 +488,8 @@ return [
     'total_purchase_cost' => 'Total Purchase Cost',
     'total_purchase_cost_description' => 'Total amount spent on all plot purchases',
     'all_purchased_plots' => 'All purchased plots',
+    'plot_purchase_history' => 'Plot Purchase History',
+    'plot_purchase_information' => 'Plot Purchase Information',
+    'no_payment_records_for_plot_purchase' => 'No payment records have been recorded yet for this plot purchase.',
 ];
 

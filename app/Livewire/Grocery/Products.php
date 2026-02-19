@@ -17,7 +17,7 @@ class Products extends Component
     public $showModal = false;
     public $editingProduct = null;
     public $confirmingDeleteId = null;
-    
+
     // Form fields
     public $name = '';
     public $sku = '';
@@ -46,7 +46,8 @@ class Products extends Component
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
+        }
+        else {
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
@@ -76,7 +77,7 @@ class Products extends Component
         if ($this->editingProduct) {
             $this->rules['sku'] = 'required|string|max:255|unique:products,sku,' . $this->editingProduct->id;
         }
-        
+
         $this->validate();
 
         $data = [
@@ -92,7 +93,8 @@ class Products extends Component
         if ($this->editingProduct) {
             $this->editingProduct->update($data);
             session()->flash('message', 'Product updated successfully!');
-        } else {
+        }
+        else {
             Product::create($data);
             session()->flash('message', 'Product created successfully!');
         }
@@ -100,17 +102,20 @@ class Products extends Component
         $this->closeModal();
     }
 
-    public function confirmDelete($id) {
+    public function confirmDelete($id)
+    {
         $this->confirmingDeleteId = $id;
     }
 
-    public function cancelDelete() {
+    public function cancelDelete()
+    {
         $this->confirmingDeleteId = null;
     }
 
     public function delete(Product $product)
     {
-        if ($this->confirmingDeleteId != $product->id) return;
+        if ($this->confirmingDeleteId != $product->id)
+            return;
         $product->delete();
         session()->flash('message', 'Product deleted successfully!');
         $this->confirmingDeleteId = null;
@@ -142,9 +147,11 @@ class Products extends Component
 
     public function render()
     {
-        $products = Product::where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('sku', 'like', '%' . $this->search . '%')
-            ->orWhere('description', 'like', '%' . $this->search . '%')
+        $products = Product::where(function ($query) {
+            $query->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('sku', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%');
+        })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 

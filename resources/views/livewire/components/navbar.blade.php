@@ -34,15 +34,42 @@ $translations = [
             <div class="flex items-center md:ml-auto hidden md:block xl:block md:pr-4">
               <div class="relative flex flex-wrap items-stretch w-full transition-all rounded-lg ease-soft">
                 <span class="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
-                  <i class="fas fa-search"></i>
+                  <i class="fas fa-search" wire:loading.remove wire:target="search"></i>
+                  <i class="fas fa-spinner fa-spin" wire:loading wire:target="search"></i>
                 </span>
                 <input 
                   type="text" 
-                  wire:model="search"
+                  wire:model.live.debounce.150ms="search"
                   wire:keydown.enter="performSearch"
+                  wire:keydown.arrow-down="incrementIndex"
+                  wire:keydown.arrow-up="decrementIndex"
+                  wire:keydown.escape="$set('suggestions', [])"
                   class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" 
                   placeholder="{{ __('messages.type_here') }}" 
+                  autocomplete="off"
                 />
+
+                @if(!empty($suggestions))
+                  <div class="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-[100] max-h-72 overflow-y-auto"
+                       @click.away="$wire.set('suggestions', [])">
+                    @foreach($suggestions as $index => $suggestion)
+                      <div 
+                        wire:click="selectSuggestion({{ $index }})"
+                        class="flex items-center px-4 py-3 cursor-pointer hover:bg-gray-100 transition-colors {{ $selectedIndex === $index ? 'bg-gray-100' : '' }}"
+                      >
+                        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-slate-500 mr-3">
+                          <i class="{{ $suggestion['icon'] }}"></i>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-sm font-semibold text-slate-700">{{ $suggestion['label'] }}</span>
+                          @if(isset($suggestion['subtext']))
+                            <span class="text-xs text-slate-400">{{ $suggestion['subtext'] }}</span>
+                          @endif
+                        </div>
+                      </div>
+                    @endforeach
+                  </div>
+                @endif
               </div>
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">

@@ -491,5 +491,7 @@ return [
     'plot_purchase_history' => 'د پلاټ د پیرودلو تاریخ',
     'plot_purchase_information' => 'د پلاټ د پیرودلو معلومات',
     'no_payment_records_for_plot_purchase' => 'د دې پلاټ پیرود لپاره تراوسه د تادیې هیڅ ریکارډونه ندي ثبت شوي.',
+    'vehicle_customers' => 'د موټر پیرودونکي',
+    'property_customers' => 'د ملکیت پیرودونکي',
 ];
 

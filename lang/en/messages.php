@@ -491,5 +491,7 @@ return [
     'plot_purchase_history' => 'Plot Purchase History',
     'plot_purchase_information' => 'Plot Purchase Information',
     'no_payment_records_for_plot_purchase' => 'No payment records have been recorded yet for this plot purchase.',
+    'vehicle_customers' => 'Vehicle Customers',
+    'property_customers' => 'Property Customers',
 ];
 

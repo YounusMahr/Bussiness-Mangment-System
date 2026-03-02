@@ -491,5 +491,7 @@ return [
     'plot_purchase_history' => 'پلاٹ خریداری کی تاریخ',
     'plot_purchase_information' => 'پلاٹ خریداری کی معلومات',
     'no_payment_records_for_plot_purchase' => 'اس پلاٹ خریداری کے لیے ابھی تک ادائیگی کا کوئی ریکارڈ موجود نہیں ہے۔',
+    'vehicle_customers' => 'گاڑی کے گاہک',
+    'property_customers' => 'پراپرٹی کے گاہک',
 ];
 

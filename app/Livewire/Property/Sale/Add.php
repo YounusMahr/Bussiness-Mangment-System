@@ -136,26 +136,26 @@ class Add extends Component
             'status' => $this->status,
         ]);
 
-        // Create initial credit (payment received) transaction when user pays at time of sale
-        if ((float)($this->paid ?? 0) > 0) {
-            $amount = (float)$this->paid;
-            PlotSaleTransaction::create([
-                'plot_sale_id' => $sale->id,
-                'date' => $this->date,
-                'type' => 'sale-in', // Credit - payment received
-                'installment_no' => null,
-                'installment_amount' => $amount,
-                'paid_amount' => $amount,
-                'payment_amount' => $amount,
-                'total_sale_price_before' => (float)$this->total_sale_price,
-                'paid_before' => 0,
-                'remaining_before' => (float)$this->total_sale_price,
-                'total_sale_price_after' => (float)$this->total_sale_price,
-                'paid_after' => $amount,
-                'remaining_after' => (float)$this->remaining,
-                'notes' => __('messages.initial_payment') . ' (' . __('messages.paid_at_plot_sale') . '): Rs ' . number_format($amount, 2),
-            ]);
-        }
+        // Always create initial transaction record for the sale to show in history
+        $amount = (float)($this->paid ?? 0);
+        PlotSaleTransaction::create([
+            'plot_sale_id' => $sale->id,
+            'date' => $this->date,
+            'type' => 'sale-in', // Credit - payment received
+            'installment_no' => null,
+            'installment_amount' => $amount,
+            'paid_amount' => $amount,
+            'payment_amount' => $amount,
+            'total_sale_price_before' => (float)$this->total_sale_price,
+            'paid_before' => 0,
+            'remaining_before' => (float)$this->total_sale_price,
+            'total_sale_price_after' => (float)$this->total_sale_price,
+            'paid_after' => $amount,
+            'remaining_after' => (float)$this->remaining,
+            'notes' => $amount > 0 
+                ? __('messages.initial_payment') . ' (' . __('messages.paid_at_plot_sale') . '): Rs ' . number_format($amount, 2)
+                : 'Initial plot sale recorded',
+        ]);
 
         session()->flash('message', 'Plot sale created successfully!');
         return $this->redirectRoute('property.sale.index', ['locale' => app()->getLocale()]);

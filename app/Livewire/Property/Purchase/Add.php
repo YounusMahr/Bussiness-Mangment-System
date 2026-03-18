@@ -80,22 +80,22 @@ class Add extends Component
             'location' => $this->location,
         ]);
 
-        // Create initial payment (debit) transaction if user paid amount at time of purchase
-        if ((float)($this->paid_amount ?? 0) > 0) {
-            $amount = (float)$this->paid_amount;
-            PlotPurchaseTransaction::create([
-                'plot_purchase_id' => $purchase->id,
-                'date' => $this->date,
-                'type' => 'purchase-out', // Debit - payment for plot
-                'installment_no' => $this->installment_no ?: '1',
-                'installment_amount' => $amount,
-                'paid_amount' => $amount,
-                'payment_amount' => $amount,
-                'plot_price_before' => (float)$this->plot_price,
-                'plot_price_after' => (float)$this->plot_price,
-                'notes' => 'Initial payment (paid at plot purchase): Rs ' . number_format($amount, 2),
-            ]);
-        }
+        // Always create initial transaction record for the purchase to show in history
+        $amount = (float)($this->paid_amount ?? 0);
+        PlotPurchaseTransaction::create([
+            'plot_purchase_id' => $purchase->id,
+            'date' => $this->date,
+            'type' => 'purchase-out', // Debit - payment for plot
+            'installment_no' => $this->installment_no ?: '1',
+            'installment_amount' => $amount,
+            'paid_amount' => $amount,
+            'payment_amount' => $amount,
+            'plot_price_before' => (float)$this->plot_price,
+            'plot_price_after' => (float)$this->plot_price,
+            'notes' => $amount > 0 
+                ? 'Initial payment (paid at plot purchase): Rs ' . number_format($amount, 2)
+                : 'Initial plot purchase recorded',
+        ]);
 
         session()->flash('message', 'Plot purchase created successfully!');
         return $this->redirectRoute('property.purchase.index', ['locale' => app()->getLocale()]);

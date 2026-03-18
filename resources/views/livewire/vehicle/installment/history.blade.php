@@ -123,13 +123,11 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->type === 'add' && ($transaction->new_car_price > 0 || $transaction->new_interest > 0)) || $transaction->type === 'return' ? 'bg-red-50 text-red-600' : 'text-gray-400' }}">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ $transaction->type === 'add' && ($transaction->new_car_price > 0 || $transaction->new_interest > 0) ? 'bg-red-50 text-red-600' : 'text-gray-400' }}">
                                     @php 
                                         $debit = 0;
                                         if($transaction->type === 'add') {
                                             $debit = (float)$transaction->new_car_price + (float)$transaction->new_interest;
-                                        } else {
-                                            $debit = (float)$transaction->return_payment;
                                         }
                                     @endphp
                                     @if($debit > 0)
@@ -138,9 +136,17 @@
                                         --
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ $transaction->type === 'add' && $transaction->new_paid > 0 ? 'bg-green-50 text-green-600' : 'text-gray-400' }}">
-                                    @if($transaction->type === 'add' && $transaction->new_paid > 0)
-                                        Rs {{ number_format((float)($transaction->new_paid ?? 0), 2) }} (+)
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-right {{ ($transaction->type === 'add' && $transaction->new_paid > 0) || ($transaction->type === 'return' && $transaction->return_payment > 0) ? 'bg-green-50 text-green-600' : 'text-gray-400' }}">
+                                    @php
+                                        $credit = 0;
+                                        if($transaction->type === 'add') {
+                                            $credit = (float)($transaction->new_paid ?? 0);
+                                        } else {
+                                            $credit = (float)($transaction->return_payment ?? 0);
+                                        }
+                                    @endphp
+                                    @if($credit > 0)
+                                        Rs {{ number_format($credit, 2) }} (+)
                                     @else
                                         --
                                     @endif

@@ -40,8 +40,8 @@ class History extends Component
                 $totalDebit += (float)($t->new_car_price ?? 0) + (float)($t->new_interest ?? 0);
                 $totalCredit += (float)($t->new_paid ?? 0);
             } elseif ($t->type === 'return') {
-                // If return_payment exists, it's usually a refund of a payment, which increases debt (Debit)
-                $totalDebit += (float)($t->return_payment ?? 0);
+                // Return payment reduces the amount owed (Credit)
+                $totalCredit += (float)($t->return_payment ?? 0);
             }
         }
 

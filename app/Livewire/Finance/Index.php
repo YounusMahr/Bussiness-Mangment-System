@@ -29,6 +29,7 @@ class Index extends Component
     // Cash Management
     public $totalCashCredit;
     public $totalCashDebit;
+    public $totalCashRemaining;
 
     public function mount()
     {

@@ -23,16 +23,31 @@
             </div>
         @endif
 
-        <!-- Total Credit and Debit Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Total Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-2"></div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_remaining') }}</p>
+                            <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalRemaining, 2) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.remaining_balance') }}</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                            <i class="fas fa-wallet text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
                 <div class="bg-gradient-to-r from-green-600 to-emerald-500 h-2"></div>
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_credit') }}</p>
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.cash_in') }}</p>
                             <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalDebit, 2) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_in_transactions') }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.total_cash_in_transactions') }}</p>
                         </div>
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-400 flex items-center justify-center">
                             <i class="fas fa-arrow-down text-white text-2xl"></i>
@@ -45,9 +60,9 @@
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.total_debit') }}</p>
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ __('messages.cash_out') }}</p>
                             <h3 class="text-2xl font-bold text-gray-900">Rs {{ number_format($totalCredit, 2) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.cash_out_transactions') }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('messages.total_cash_out_transactions') }}</p>
                         </div>
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-400 to-pink-400 flex items-center justify-center">
                             <i class="fas fa-arrow-up text-white text-2xl"></i>
@@ -109,18 +124,18 @@
                         <!-- Cash Details -->
                         <div class="border-t border-gray-200 pt-4 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-600">{{ __('messages.total_amount') }}:</span>
-                                <span class="text-lg font-bold text-gray-900">
-                                    Rs {{ number_format($customer->total_amount, 2) }}
+                                <span class="text-sm text-gray-600">{{ __('messages.remaining_balance') }}:</span>
+                                <span class="text-lg font-bold {{ $customer->remaining_balance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                    Rs {{ number_format($customer->remaining_balance, 2) }}
                                 </span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">{{ __('messages.cash_in') }}:</span>
-                                <span class="text-sm font-medium text-green-600">Rs {{ number_format($customer->total_cash_in, 2) }}</span>
+                                <span class="text-sm font-medium text-gray-700">Rs {{ number_format($customer->total_cash_in, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">{{ __('messages.cash_out') }}:</span>
-                                <span class="text-sm font-medium text-red-600">Rs {{ number_format($customer->total_cash_out, 2) }}</span>
+                                <span class="text-sm font-medium text-gray-700">Rs {{ number_format($customer->total_cash_out, 2) }}</span>
                             </div>
                         </div>
 

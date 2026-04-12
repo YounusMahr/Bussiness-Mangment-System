@@ -98,6 +98,9 @@ class Index extends Component
         
         // Total Cash Debit (Cash-Out)
         $this->totalCashDebit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
+
+        // Total Cash Remaining Balance
+        $this->totalCashRemaining = $this->totalCashCredit - $this->totalCashDebit;
     }
 
     public function render()

@@ -75,25 +75,30 @@ class Index extends Component
 
         // Calculate totals for each customer
         foreach ($customers as $customer) {
-            // Cash-in transactions (Credit)
+            // Cash-in transactions (Investment/Credit to customer)
             $customer->total_cash_in = (float)(GroceryCashTransaction::where('customer_id', $customer->id)
                 ->where('type', 'cash-in')
                 ->sum('return_amount') ?? 0);
             
-            // Cash-out transactions (Debit)
+            // Cash-out transactions (Return/Debit from customer)
             $customer->total_cash_out = (float)(GroceryCashTransaction::where('customer_id', $customer->id)
                 ->where('type', 'cash-out')
                 ->sum('returned_amount') ?? 0);
             
-            // Total = Sum of all transactions (cash_in + cash_out), never negative
-            $customer->total_amount = max(0, $customer->total_cash_in + $customer->total_cash_out);
+            // Remaining Balance = Cash In - Cash Out
+            $customer->remaining_balance = $customer->total_cash_in - $customer->total_cash_out;
         }
 
         // Calculate overall totals
-        // cash-out = Credit (Payment In), cash-in = Debit (Payment Out)
-        $totalCredit = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
-        $totalDebit = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
+        $totalCashIn = (float)(GroceryCashTransaction::where('type', 'cash-in')->sum('return_amount') ?? 0);
+        $totalCashOut = (float)(GroceryCashTransaction::where('type', 'cash-out')->sum('returned_amount') ?? 0);
+        $totalRemaining = $totalCashIn - $totalCashOut;
 
-        return view('livewire.grocery.cash.index', compact('customers', 'totalCredit', 'totalDebit'));
+        return view('livewire.grocery.cash.index', [
+            'customers' => $customers,
+            'totalCredit' => $totalCashOut,
+            'totalDebit' => $totalCashIn,
+            'totalRemaining' => $totalRemaining
+        ]);
     }
 }

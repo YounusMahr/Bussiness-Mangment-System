@@ -19,16 +19,7 @@ $translations = [
 <nav class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all shadow-none duration-250 ease-soft-in rounded-2xl lg:flex-nowrap lg:justify-start no-print" navbar-main navbar-scroll="true"
      >
         <div class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
-          <nav >
-            <!-- breadcrumb -->
-            <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
-             <li class="text-lg leading-normal hidden md:block xl:block">
-              <a wire:navigate class="opacity-75 font-bold text-slate-700  transition-opacity" href="/index">Dashboard</a>
-             </li>
-              
-            </ol>
-            
-          </nav>
+
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
             <div class="flex items-center md:ml-auto hidden md:block xl:block md:pr-4">
@@ -77,12 +68,19 @@ $translations = [
               <li class="flex items-center mr-2">
                 @livewire('components.database-sync')
               </li>
+              <li class="flex items-center">
+                <button type="button"
+                        onclick="Livewire.dispatch('open-general-entry')"
+                        class="inline-block px-4 py-2 mb-0 mr-4 text-xs font-bold text-center uppercase align-middle bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg shadow-soft-md cursor-pointer leading-pro text-white tracking-tight-soft hover:scale-101 hover:shadow-soft-lg active:scale-95 transition-all">
+                  Entry Form <i class="fas fa-plus ml-1"></i>
+                </button>
+              </li>
               <!-- Calculator btn  -->
               <li class="flex items-center">
                 <button type="button"
                         onclick="Livewire.dispatch('toggle-calculator')"
-                        class="inline-block px-8 py-2 mb-0 mr-4 text-xs font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro border-fuchsia-500 ease-soft-in hover:scale-102 active:shadow-soft-xs text-fuchsia-500 hover:border-fuchsia-500 active:bg-fuchsia-500 active:hover:text-fuchsia-500 hover:text-fuchsia-500 tracking-tight-soft hover:bg-transparent hover:opacity-75 hover:shadow-none active:text-white active:hover:bg-transparent">
-                  <i class="fas fa-calculator mr-2"></i>Cal
+                        class="inline-block px-6 py-2 mb-0 mr-4 text-xs font-bold text-center uppercase align-middle bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro border-fuchsia-500 text-fuchsia-500 tracking-tight-soft hover:scale-100 hover:opacity-100">
+                  <i class="fas fa-calculator"></i>
                 </button>
               </li>
               <!-- Language Selector -->

@@ -22,34 +22,59 @@
         }
      }"
      @connectivity-updated.window="">
-    <!-- Sync Button -->
-    <button 
-        type="button"
-        style="background-color: #000000;"
-        wire:click="sync"
-        wire:loading.attr="disabled"
-        @click="showStatus = true; setTimeout(() => showStatus = false, 5000)"
-        @if(!$isOnline) disabled @endif
-        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all
-            {{ $isOnline && $isRemoteConnected 
-                ? 'bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
-                : ($isOnline 
-                    ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
-                    : 'bg-gray-400 text-white cursor-not-allowed opacity-70') 
-            }}
-            disabled:opacity-50 disabled:cursor-not-allowed"
-        title="{{ $isOnline && $isRemoteConnected ? 'Push data to remote database' : ($isOnline ? ($connectionError ?: 'Remote database unavailable - Click to retry connection') : 'No internet connection') }}"
-    >
-        <i class="fas fa-upload {{ $syncing ? 'fa-spin' : '' }}"></i>
-        <span class="hidden sm:inline">Push</span>
-        @if($isOnline && $isRemoteConnected)
-            <span class="w-2 h-2 bg-white rounded-full animate-pulse" title="Online & Connected"></span>
-        @elseif($isOnline)
-            <span class="w-2 h-2 bg-white rounded-full" title="Online but DB unavailable"></span>
-        @else
-            <span class="w-2 h-2 bg-white rounded-full opacity-50" title="Offline"></span>
-        @endif
-    </button>
+    
+    <div class="flex items-center gap-2">
+        <!-- Pull Button -->
+        <button 
+            type="button"
+            style="background-color: #000000;"
+            wire:click="pullData"
+            wire:loading.attr="disabled"
+            @click="showStatus = true; setTimeout(() => showStatus = false, 5000)"
+            @if(!$isOnline) disabled @endif
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all
+                {{ $isOnline && $isRemoteConnected 
+                    ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
+                    : ($isOnline 
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
+                        : 'bg-gray-400 text-white cursor-not-allowed opacity-70') 
+                }}
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            title="{{ $isOnline && $isRemoteConnected ? 'Pull data from remote database' : ($isOnline ? ($connectionError ?: 'Remote database unavailable - Click to retry connection') : 'No internet connection') }}"
+        >
+            <i class="fas fa-download {{ $syncing ? 'fa-spin' : '' }}"></i>
+            <span class="hidden sm:inline">Pull</span>
+        </button>
+
+        <!-- Sync (Push) Button -->
+        <button 
+            type="button"
+            style="background-color: #000000;"
+            wire:click="sync"
+            wire:loading.attr="disabled"
+            @click="showStatus = true; setTimeout(() => showStatus = false, 5000)"
+            @if(!$isOnline) disabled @endif
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all
+                {{ $isOnline && $isRemoteConnected 
+                    ? 'bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
+                    : ($isOnline 
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg opacity-100 cursor-pointer' 
+                        : 'bg-gray-400 text-white cursor-not-allowed opacity-70') 
+                }}
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            title="{{ $isOnline && $isRemoteConnected ? 'Push data to remote database' : ($isOnline ? ($connectionError ?: 'Remote database unavailable - Click to retry connection') : 'No internet connection') }}"
+        >
+            <i class="fas fa-upload {{ $syncing ? 'fa-spin' : '' }}"></i>
+            <span class="hidden sm:inline">Push</span>
+            @if($isOnline && $isRemoteConnected)
+                <span class="w-2 h-2 bg-white rounded-full animate-pulse" title="Online & Connected"></span>
+            @elseif($isOnline)
+                <span class="w-2 h-2 bg-white rounded-full" title="Online but DB unavailable"></span>
+            @else
+                <span class="w-2 h-2 bg-white rounded-full opacity-50" title="Offline"></span>
+            @endif
+        </button>
+    </div>
 
     <!-- Status Message -->
     @if($syncStatus)
@@ -74,7 +99,7 @@
             @endif
             <div class="flex-1">
                 <p class="text-sm font-semibold {{ $syncStatus === 'success' ? 'text-green-800' : 'text-red-800' }}">
-                    {{ $syncStatus === 'success' ? 'Push Successful' : 'Push Failed' }}
+                    {{ str_contains($syncMessage, 'pulled') ? ($syncStatus === 'success' ? 'Pull Successful' : 'Pull Failed') : ($syncStatus === 'success' ? 'Push Successful' : 'Push Failed') }}
                 </p>
                 @if($syncMessage)
                     <p class="text-xs mt-1 {{ $syncStatus === 'success' ? 'text-green-700' : 'text-red-700' }}">
@@ -96,8 +121,8 @@
                 <div class="flex flex-col items-center gap-4">
                     <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     <div class="text-center">
-                        <p class="text-lg font-semibold text-gray-800">Pushing Data...</p>
-                        <p class="text-sm text-gray-600 mt-1">Please wait while we push data to remote database</p>
+                        <p class="text-lg font-semibold text-gray-800">Syncing Data...</p>
+                        <p class="text-sm text-gray-600 mt-1">Please wait while we sync data with the remote database</p>
                     </div>
                 </div>
             </div>

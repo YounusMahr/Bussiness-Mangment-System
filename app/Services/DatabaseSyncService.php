@@ -211,8 +211,10 @@ class DatabaseSyncService
         $results = [
             'success' => true,
             'synced' => [],
+            'skipped' => [],
             'errors' => [],
-            'total' => 0
+            'total' => 0,
+            'totalSkipped' => 0
         ];
 
         if (!$this->isOnline() || !$this->isRemoteConnected()) {
@@ -222,15 +224,24 @@ class DatabaseSyncService
         }
 
         $tables = $this->getTablesToSync();
+        $tables = $this->orderTablesForSync($tables);
 
         foreach ($tables as $table) {
             try {
-                $count = $this->syncTable($table, $this->remoteConnection, $this->localConnection);
-                $results['synced'][$table] = $count;
-                $results['total'] += $count;
+                // Using the optimized pushTable method, reading from remote and writing to local
+                $syncResult = $this->pushTable($table, $this->remoteConnection, $this->localConnection);
+                
+                $results['synced'][$table] = $syncResult['inserted'];
+                $results['skipped'][$table] = $syncResult['skipped'];
+                $results['total'] += $syncResult['inserted'];
+                $results['totalSkipped'] += $syncResult['skipped'];
+                
+                if ($syncResult['inserted'] > 0) {
+                    Log::info("SYNC PULL: Pulled {$syncResult['inserted']} records from table {$table} to local");
+                }
             } catch (Exception $e) {
                 $results['errors'][$table] = $e->getMessage();
-                Log::error("Sync error for table {$table}: " . $e->getMessage());
+                Log::error("Pull error for table {$table}: " . $e->getMessage());
             }
         }
 

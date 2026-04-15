@@ -35,8 +35,8 @@
                 </div>
               </div>
               <div class="w-full max-w-full px-3 lg:flex-0 shrink-0 md:w-6/12">
-                <div class="absolute top-0 hidden w-3/5 h-full -mr-32 overflow-hidden -skew-x-10 -right-40 rounded-bl-xl md:block">
-                  <div class="absolute inset-x-0 top-0 z-0 h-full -ml-16 bg-cover skew-x-10" style="background-image: url('{{ asset('assets/img/curved-images/curved6.jpg') }}')"></div>
+                <div class="absolute top-[-100px] hidden w-3/5 h-full -mr-32 overflow-hidden -skew-x-10 right-[-100px] rounded-bl-xl md:block">
+                  <div class="absolute inset-x-0 top-[0] z-0 h-full -ml-16 bg-cover skew-x-10" style="background-image: url('{{ asset('assets/img/curved-images/login-profile.png') }}')"></div>
                 </div>
               </div>
             </div>

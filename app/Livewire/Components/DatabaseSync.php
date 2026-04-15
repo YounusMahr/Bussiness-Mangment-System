@@ -143,6 +143,76 @@ class DatabaseSync extends Component
             $this->syncing = false;
         }
     }
+    public function pullData()
+    {
+        // Refresh connectivity first
+        $this->checkConnectivity();
+        
+        $this->syncing = true;
+        $this->syncStatus = null;
+        $this->syncMessage = '';
+
+        try {
+            $syncService = new DatabaseSyncService();
+            
+            // Check connectivity
+            if (!$this->isOnline) {
+                $this->syncStatus = 'error';
+                $this->syncMessage = 'No internet connection available.';
+                $this->syncing = false;
+                return;
+            }
+
+            if (!$this->isRemoteConnected) {
+                $this->checkConnectivity();
+                if (!$this->isRemoteConnected) {
+                    $this->syncStatus = 'error';
+                    $errorMsg = $this->connectionError ?: 'Cannot connect to remote database.';
+                    $this->syncMessage = $errorMsg;
+                    $this->syncing = false;
+                    return;
+                }
+            }
+
+            // Pull data from remote
+            $results = $syncService->syncFromRemote();
+
+            if ($results['success']) {
+                $this->syncStatus = 'success';
+                $totalPulled = $results['total'];
+                $totalSkipped = $results['totalSkipped'] ?? 0;
+                $syncedTables = count($results['synced']);
+                
+                $this->syncMessage = "Successfully pulled {$totalPulled} new/updated records to local database.";
+                
+                if ($totalSkipped > 0) {
+                    $this->syncMessage .= " {$totalSkipped} existing records skipped (no duplicates).";
+                }
+                
+                if (!empty($results['errors'])) {
+                    $errorCount = count($results['errors']);
+                    $errorTables = array_keys($results['errors']);
+                    $this->syncMessage .= " {$errorCount} table(s) had errors.";
+                }
+                
+                $this->dispatch('sync-complete');
+            } else {
+                $this->syncStatus = 'error';
+                $this->syncMessage = 'Pull failed: ' . implode(', ', $results['errors']);
+                $this->dispatch('sync-complete');
+            }
+
+            $this->checkConnectivity();
+
+        } catch (\Exception $e) {
+            $this->syncStatus = 'error';
+            $this->syncMessage = 'Pull failed: ' . $e->getMessage();
+            Log::error('Database pull error: ' . $e->getMessage());
+            $this->dispatch('sync-complete');
+        } finally {
+            $this->syncing = false;
+        }
+    }
 
     public function render()
     {

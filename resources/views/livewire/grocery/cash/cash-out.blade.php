@@ -83,8 +83,8 @@
 
                 <!-- Actions -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <a wire:navigate href="{{ localized_route('grocery.cash.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">{{ __('cancel') }}</a>
-                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white rounded-lg">{{ __('debit') }}</button>
+                    <a wire:navigate href="{{ localized_route('grocery.cash.index') }}" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">{{ __('cancel') }}</a>
+                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white rounded-lg shadow-soft-md transition-all active:scale-95 font-semibold">{{ __('debit') }}</button>
                 </div>
             </form>
         </div>

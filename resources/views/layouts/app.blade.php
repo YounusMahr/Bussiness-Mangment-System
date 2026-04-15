@@ -43,6 +43,9 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <x-header /> 
+        <style>
+            [x-cloak] { display: none !important; }
+        </style>
     </head>
     <body class="m-0 font-sans text-base antialiased font-normal leading-default bg-gray-50 text-slate-500">
       <!-- Loading Component -->
@@ -70,6 +73,8 @@
          
          <!-- PWA Registration Script -->
          <script src="{{ asset('pwa.js') }}"></script>
+
+         @livewire('components.general-entry')
     </body>
 </html>
 

@@ -24,7 +24,7 @@ class Add extends Component
         'number' => 'required|string|max:255',
         'email' => 'nullable|email|max:255',
         'image' => 'nullable|image|max:2048',
-        'type' => 'required|in:Grocery,Car-installment,Plot',
+        'type' => 'required|in:Grocery,Car-installment,Plot,General',
         'address' => 'nullable|string',
     ];
 

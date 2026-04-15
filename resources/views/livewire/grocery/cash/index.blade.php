@@ -9,7 +9,7 @@
                 <a 
                     wire:navigate
                     href="{{ localized_route('grocery.cash.add') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium rounded-lg shadow-md transition-colors"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white font-medium rounded-lg shadow-soft-md transition-all active:scale-95"
                 >
                     <i class="fas fa-plus"></i>
                     {{ __('add_record') }}
@@ -146,18 +146,18 @@
                                 <a 
                                     wire:navigate
                                     href="{{ localized_route('grocery.cash.cash-in', $customer) }}"
-                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-green-600 to-emerald-400 hover:from-green-700 hover:to-emerald-500 text-white text-sm font-semibold rounded-lg shadow-soft-sm transition-all active:scale-95"
                                     title="Credit (Money In)"
                                 >
-                                    <i class="fas fa-arrow-down mr-1"></i> Credit
+                                    <i class="fas fa-plus-circle mr-1"></i> Credit
                                 </a>
                                 <a 
                                     wire:navigate
                                     href="{{ localized_route('grocery.cash.cash-out', $customer) }}"
-                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                    class="flex-1 text-center px-3 py-2 bg-gradient-to-r from-red-600 to-pink-500 hover:from-red-700 hover:to-pink-600 text-white text-sm font-semibold rounded-lg shadow-soft-sm transition-all active:scale-95"
                                     title="Debit (Money Out)"
                                 >
-                                    <i class="fas fa-arrow-up mr-1"></i> Debit
+                                    <i class="fas fa-minus-circle mr-1"></i> Debit
                                 </a>
                             </div>
                             

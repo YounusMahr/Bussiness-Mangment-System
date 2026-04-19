@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class CashOut extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     protected $layout = 'layouts.app';
 
     public $customerId;
@@ -52,3 +53,4 @@ class CashOut extends Component
             ->title('Add Cash Out');
     }
 }
+

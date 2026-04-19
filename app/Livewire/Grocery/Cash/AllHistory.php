@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 
 class AllHistory extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     use WithPagination;
     
     protected $layout = 'layouts.app';
@@ -76,4 +77,5 @@ class AllHistory extends Component
         ])->title('Cash History - All Transactions');
     }
 }
+
 

@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     use WithPagination;
     protected $layout = 'layouts.app';
 
@@ -74,3 +75,4 @@ class Index extends Component
             ->title('Installments');
     }
 }
+

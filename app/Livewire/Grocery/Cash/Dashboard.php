@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     public $totalCashAdded;
     public $totalReturned;
     public $totalRemaining;
@@ -43,3 +44,4 @@ class Dashboard extends Component
         return view('livewire.grocery.cash.dashboard');
     }
 }
+

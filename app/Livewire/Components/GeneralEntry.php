@@ -207,7 +207,8 @@ class GeneralEntry extends Component
         }
 
         session()->flash('success', 'Record created successfully!');
-        $this->close();
+        $this->dispatch('record-saved');
+        $this->resetForm();
     }
 
     protected function getValidationRules()

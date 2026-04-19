@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 
 class Index extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     use WithPagination;
     
     public $search = '';
@@ -102,3 +103,4 @@ class Index extends Component
         ]);
     }
 }
+

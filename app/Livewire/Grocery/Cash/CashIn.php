@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class CashIn extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     protected $layout = 'layouts.app';
 
     public $customerId;
@@ -54,3 +55,4 @@ class CashIn extends Component
             ->title('Add Cash In');
     }
 }
+

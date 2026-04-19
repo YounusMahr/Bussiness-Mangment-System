@@ -9,6 +9,7 @@ use App\Models\Customer;
 
 class Index extends Component
 {
+    protected $listeners = ['record-saved' => '$refresh'];
     use WithPagination;
 
     public $search = '';
@@ -71,3 +72,4 @@ class Index extends Component
         return view('livewire.grocery.udaar.index', compact('udaars', 'customers'));
     }
 }
+

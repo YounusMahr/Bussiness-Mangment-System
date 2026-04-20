@@ -135,6 +135,9 @@ Route::group([
     });
     Route::get('users', App\Livewire\User\Manage::class)->name('users.index');
     
+    // Global History
+    Route::get('history', App\Livewire\History\Index::class)->name('history');
+
     // Dashboard Redirect
     Route::get('dashboard', function() {
         return redirect()->route('index');

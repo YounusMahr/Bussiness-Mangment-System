@@ -259,6 +259,15 @@
           </li>
 
           <li class="mt-0.5 w-full">
+            <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('history') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ localized_route('history') }}">
+              <div class="{{ request()->routeIs('history') ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                <i class="fas fa-history text-white text-xs"></i>
+              </div>
+              <span class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">History</span>
+            </a>
+          </li>
+
+          <li class="mt-0.5 w-full">
             <a wire:navigate class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-purple-700 to-pink-500 text-white' : 'bg-white text-slate-700' }}" href="{{ localized_route('users.index') }}">
               <div class="{{ request()->routeIs('users.*') ? 'bg-white/20' : 'bg-gradient-to-tl from-purple-700 to-pink-500' }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                 <i class="fas fa-user-cog text-white text-xs"></i>

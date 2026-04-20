@@ -11,11 +11,17 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
-    public $dateFilter = 'all';
+    public $dateFilter = 'daily';
+    public $moduleFilter = 'all';
+    public $selectedDate;
+
+    protected $listeners = ['record-saved' => '$refresh'];
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'dateFilter' => ['except' => 'all'],
+        'dateFilter' => ['except' => 'daily'],
+        'moduleFilter' => ['except' => 'all'],
+        'selectedDate' => ['except' => ''],
     ];
 
     public function updatingSearch()
@@ -23,8 +29,24 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingDateFilter()
+    public function updatingDateFilter($value)
     {
+        if ($value !== 'all') {
+            $this->selectedDate = null;
+        }
+        $this->resetPage();
+    }
+
+    public function updatingModuleFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedDate($value)
+    {
+        if ($value) {
+            $this->dateFilter = 'all';
+        }
         $this->resetPage();
     }
 
@@ -108,7 +130,10 @@ class Index extends Component
                         ->orWhere('type', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->dateFilter !== 'all', function($q) {
+            ->when($this->selectedDate, function($q) {
+                $q->whereDate('date', $this->selectedDate);
+            })
+            ->when(!$this->selectedDate && $this->dateFilter !== 'all', function($q) {
                 if ($this->dateFilter === 'daily') {
                     $q->whereDate('date', today());
                 } elseif ($this->dateFilter === 'monthly') {
@@ -117,6 +142,9 @@ class Index extends Component
                 } elseif ($this->dateFilter === 'yearly') {
                     $q->whereYear('date', now()->year);
                 }
+            })
+            ->when($this->moduleFilter !== 'all', function($q) {
+                $q->where('module', $this->moduleFilter);
             })
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')

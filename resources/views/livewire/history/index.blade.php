@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 border-b border-gray-100 bg-gray-50/50 no-print">
-                    <div class="md:col-span-6 lg:col-span-6">
+                    <div class="md:col-span-4 lg:col-span-4">
                         <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Search</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4">
@@ -79,15 +79,32 @@
                             <input type="text" wire:model.live="search" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 pl-12 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Search entity, module, notes..." />
                         </div>
                     </div>
+
+                    <div class="md:col-span-3 lg:col-span-2">
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Entry Type</label>
+                        <select wire:model.live="moduleFilter" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow">
+                            <option value="all">All Modules</option>
+                            <option value="Khata">Khata (Udhaar)</option>
+                            <option value="Credit">Credit (Grocery Cash)</option>
+                            <option value="Car Installment">Car Installment</option>
+                            <option value="Plot Sale">Plot Sale</option>
+                            <option value="Plot Purchase">Plot Purchase</option>
+                        </select>
+                    </div>
                     
-                    <div class="md:col-span-4 lg:col-span-3">
-                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Date Filter</label>
+                    <div class="md:col-span-2 lg:col-span-2">
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Quick Filter</label>
                         <select wire:model.live="dateFilter" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow">
                             <option value="all">All Time</option>
                             <option value="daily">Today</option>
                             <option value="monthly">This Month</option>
                             <option value="yearly">This Year</option>
                         </select>
+                    </div>
+
+                    <div class="md:col-span-3 lg:col-span-4">
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Specific Date</label>
+                        <input type="date" wire:model.live="selectedDate" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" />
                     </div>
                 </div>
 

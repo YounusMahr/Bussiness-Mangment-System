@@ -136,15 +136,27 @@
                                         <p class="mb-0 text-sm font-semibold leading-tight px-4 text-slate-700">{{ $transaction->module }}</p>
                                     </td>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl from-slate-600 to-slate-300 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white mx-4">
-                                            {{ str_replace(['-', '_'], ' ', $transaction->type) }}
+                                        @php
+                                            // Credit (+) = money received/coming in: payments received, returns
+                                            // Debit  (-) = money going out/lent: new debt, purchase payments, new installments
+                                            $creditTypes = ['udaar-out', 'cash-out', 'sale-in', 'return'];
+                                            $isCredit = in_array($transaction->type, $creditTypes);
+                                            $label = $isCredit ? 'Credit (+)' : 'Debit (-)';
+                                            $badgeClass = $isCredit
+                                                ? 'bg-gradient-to-tl from-green-600 to-lime-400'
+                                                : 'bg-gradient-to-tl from-red-600 to-rose-400';
+                                        @endphp
+                                        <span class="{{ $badgeClass }} px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white mx-4">
+                                            {{ $label }}
                                         </span>
                                     </td>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <p class="mb-0 text-sm font-semibold leading-tight px-4 text-slate-700">{{ $transaction->entity ?? 'N/A' }}</p>
                                     </td>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <p class="mb-0 text-sm font-bold leading-tight px-4 text-green-600">Rs. {{ number_format($transaction->amount, 2) }}</p>
+                                        <p class="mb-0 text-sm font-bold leading-tight px-4 {{ $isCredit ? 'text-green-600' : 'text-red-500' }}">
+                                            {{ $isCredit ? '+' : '-' }} Rs. {{ number_format($transaction->amount, 2) }}
+                                        </p>
                                     </td>
                                     <td class="p-2 align-middle bg-transparent border-b shadow-transparent">
                                         <p class="mb-0 text-sm leading-tight px-4 text-slate-500 max-w-xs truncate" title="{{ $transaction->notes }}">{{ $transaction->notes ?? '-' }}</p>

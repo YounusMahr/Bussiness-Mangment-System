@@ -108,20 +108,43 @@ class Add extends Component
             'type' => 'add',
             'new_car_price' => $this->car_price,
             'new_interest' => $this->interest,
-            'new_paid' => $this->paid,
+            'new_paid' => 0,
             'new_total_price' => $this->total_price,
             'car_price_before' => 0,
             'paid_before' => 0,
-            'remaining_before' => 0,
+            'remaining_before' => $this->total_price,
             'interest_before' => 0,
             'total_price_before' => 0,
             'car_price_after' => $this->car_price,
-            'paid_after' => $this->paid,
-            'remaining_after' => $this->remaining,
+            'paid_after' => 0,
+            'remaining_after' => $this->total_price,
             'interest_after' => $this->interest,
             'total_price_after' => $this->total_price,
-            'notes' => $this->note,
+            'notes' => $this->note ?: 'Initial installment recorded',
         ]);
+
+        if ($this->paid > 0) {
+            InstallmentTransaction::create([
+                'installment_id' => $installment->id,
+                'date' => $this->date,
+                'type' => 'add',
+                'new_car_price' => 0,
+                'new_interest' => 0,
+                'new_paid' => $this->paid,
+                'new_total_price' => 0,
+                'car_price_before' => $this->car_price,
+                'paid_before' => 0,
+                'remaining_before' => $this->total_price,
+                'interest_before' => $this->interest,
+                'total_price_before' => $this->total_price,
+                'car_price_after' => $this->car_price,
+                'paid_after' => $this->paid,
+                'remaining_after' => $this->remaining,
+                'interest_after' => $this->interest,
+                'total_price_after' => $this->total_price,
+                'notes' => 'Initial payment',
+            ]);
+        }
 
         session()->flash('message', __('messages.installment_created'));
         return $this->redirectRoute('vehicle.installment.index', ['locale' => app()->getLocale()]);

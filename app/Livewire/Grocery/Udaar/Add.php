@@ -102,17 +102,34 @@ class Add extends Component
             'udaar_id' => $udaar->id,
             'date' => $this->buy_date,
             'type' => 'udaar-in',
-            'new_udaar_amount' => $this->remaining_amount + $this->paid_amount - ($this->interest_amount ?? 0),
+            'new_udaar_amount' => $this->total_amount,
             'interest_amount' => $this->interest_amount ?? 0,
             'product_id' => $this->product_id ?: null,
             'time_period' => $this->time_period,
             'due_date' => $this->due_date,
             'paid_amount_before' => 0,
-            'remaining_amount_before' => 0,
-            'paid_amount_after' => $this->paid_amount,
-            'remaining_amount_after' => $this->remaining_amount,
+            'remaining_amount_before' => $this->total_amount + ($this->interest_amount ?? 0),
+            'paid_amount_after' => 0,
+            'remaining_amount_after' => $this->total_amount + ($this->interest_amount ?? 0),
             'notes' => $this->notes ?: 'Initial udhaar record created',
         ]);
+
+        if ($this->paid_amount > 0) {
+            UdaarTransaction::create([
+                'udaar_id' => $udaar->id,
+                'date' => $this->buy_date,
+                'type' => 'udaar-out',
+                'payment_amount' => $this->paid_amount,
+                'product_id' => $this->product_id ?: null,
+                'time_period' => $this->time_period,
+                'due_date' => $this->due_date,
+                'paid_amount_before' => 0,
+                'remaining_amount_before' => $this->total_amount + ($this->interest_amount ?? 0),
+                'paid_amount_after' => $this->paid_amount,
+                'remaining_amount_after' => $this->remaining_amount,
+                'notes' => 'Initial payment',
+            ]);
+        }
 
         session()->flash('message', 'Udhaar record created successfully!');
         return $this->redirectRoute('udaar.index', ['locale' => app()->getLocale()]);

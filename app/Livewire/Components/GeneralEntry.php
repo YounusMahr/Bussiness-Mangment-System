@@ -396,19 +396,42 @@ class GeneralEntry extends Component
                 'new_car_price' => $this->total_amount,
                 'new_interest' => $this->interest,
                 'new_total_price' => $this->total_amount + $this->interest,
-                'new_paid' => $this->paid_amount,
+                'new_paid' => 0,
                 'car_price_before' => 0,
                 'paid_before' => 0,
                 'interest_before' => 0,
-                'remaining_before' => 0,
+                'remaining_before' => $this->total_amount + $this->interest,
                 'total_price_before' => 0,
                 'car_price_after' => $this->total_amount,
-                'paid_after' => $this->paid_amount,
+                'paid_after' => 0,
                 'interest_after' => $this->interest,
-                'remaining_after' => $remaining,
+                'remaining_after' => $this->total_amount + $this->interest,
                 'total_price_after' => $this->total_amount + $this->interest,
                 'notes' => $this->notes ?: 'Initial installment recorded',
             ]);
+
+            if ($this->paid_amount > 0) {
+                InstallmentTransaction::create([
+                    'installment_id' => $installment->id,
+                    'date' => $this->date,
+                    'type' => 'add',
+                    'new_car_price' => 0,
+                    'new_interest' => 0,
+                    'new_total_price' => 0,
+                    'new_paid' => $this->paid_amount,
+                    'car_price_before' => $this->total_amount,
+                    'paid_before' => 0,
+                    'interest_before' => $this->interest,
+                    'remaining_before' => $this->total_amount + $this->interest,
+                    'total_price_before' => $this->total_amount + $this->interest,
+                    'car_price_after' => $this->total_amount,
+                    'paid_after' => $this->paid_amount,
+                    'interest_after' => $this->interest,
+                    'remaining_after' => $remaining,
+                    'total_price_after' => $this->total_amount + $this->interest,
+                    'notes' => 'Initial payment',
+                ]);
+            }
         } else {
             $inst = Installment::find($this->record_id);
             $before_remaining = $inst->remaining;
@@ -467,6 +490,22 @@ class GeneralEntry extends Component
                 'status' => $remaining <= 0 ? 'paid' : 'remaining',
             ]);
 
+            PlotSaleTransaction::create([
+                'plot_sale_id' => $sale->id,
+                'date' => $this->date,
+                'type' => 'sale-in',
+                'installment_amount' => 0,
+                'paid_amount' => 0,
+                'payment_amount' => $this->total_amount,
+                'total_sale_price_before' => 0,
+                'paid_before' => 0,
+                'remaining_before' => $this->total_amount,
+                'total_sale_price_after' => $this->total_amount,
+                'paid_after' => 0,
+                'remaining_after' => $this->total_amount,
+                'notes' => 'Initial plot sale recorded',
+            ]);
+
             if ($this->paid_amount > 0) {
                 PlotSaleTransaction::create([
                     'plot_sale_id' => $sale->id,
@@ -481,7 +520,7 @@ class GeneralEntry extends Component
                     'total_sale_price_after' => $this->total_amount,
                     'paid_after' => $this->paid_amount,
                     'remaining_after' => $remaining,
-                    'notes' => $this->notes ?: 'Initial plot sale recorded',
+                    'notes' => $this->notes ?: 'Initial plot sale payment',
                 ]);
             }
         } else {
@@ -528,6 +567,16 @@ class GeneralEntry extends Component
                 'plot_price' => $this->total_amount,
                 'location' => $this->location,
                 'notes' => $this->notes ?: null,
+            ]);
+
+            PlotPurchaseTransaction::create([
+                'plot_purchase_id' => $purchase->id,
+                'date' => $this->date,
+                'type' => 'purchase-out',
+                'payment_amount' => $this->total_amount,
+                'plot_price_before' => 0,
+                'plot_price_after' => $this->total_amount,
+                'notes' => 'Initial plot purchase recorded',
             ]);
 
             // Record initial paid amount as a purchase-out transaction so it shows on card & history
